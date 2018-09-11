@@ -6,6 +6,9 @@ class AnimSprite(pygame.sprite.DirtySprite):
     def __init__(self, image_path, frames, anim_delay=5, img_scale=1, anim_order=None):
         pygame.sprite.DirtySprite.__init__(self)
 
+        self.x = 0
+        self.y = 0
+
         self.anim_framecount = frames
         self.anim_speed = anim_delay
         self.anim_ticker = 0
@@ -33,7 +36,9 @@ class AnimSprite(pygame.sprite.DirtySprite):
         self.dirty = 1
 
     def setPosition(self, x, y):
+        self.x, self.y = x, y
         self.rect = self.image.get_rect(topleft=(x, y))
+        self.dirty = 1
 
     def update(self):
         self.anim_ticker += 1
@@ -43,5 +48,5 @@ class AnimSprite(pygame.sprite.DirtySprite):
             if self.anim_order_pos >= len(self.anim_order):
                 self.anim_order_pos = 0
 
-            self.dirty = 1
             self.anim_ticker = 0
+            self.dirty = 1
