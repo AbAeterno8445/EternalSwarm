@@ -1,9 +1,10 @@
 import pygame
+from pygame.locals import DOUBLEBUF
 from gameSystem import GameSystem
 
 
 def main():
-    display = pygame.display.set_mode((800, 600))
+    display = pygame.display.set_mode((800, 600), DOUBLEBUF)
     pygame.display.set_caption("Eternal Swarm")
     sys = GameSystem(display)
     sys.loop()
