@@ -20,20 +20,20 @@ class GameSystem(object):
 
         self.spritetest = MSGUI.AnimSprite("assets/Mount_Basilisk.png", frames=8)
         self.spritetest.set_position(32, 0)
-        self.canvas_main.add_sprite(self.spritetest)
+        self.canvas_main.add_element(self.spritetest)
 
         self.spritetest_2 = MSGUI.SimpleSprite("assets/carbcrystal.png")
         self.spritetest_2.set_position(32, 64)
-        self.canvas_main.add_sprite(self.spritetest_2)
+        self.canvas_main.add_element(self.spritetest_2)
 
         self.spritetest_3 = MSGUI.AnimSprite("assets/Mount_Slime.png", frames=4)
         self.spritetest_3.set_position(32, 128)
-        self.canvas_main.add_sprite(self.spritetest_3)
+        self.canvas_main.add_element(self.spritetest_3)
 
-        self.labeltest = MSGUI.Label(32, 196, 70, 24, pygame.font.Font(None, 18), "Hello Wofdaafdsadfsafdsrld!")
+        self.labeltest = MSGUI.Label(32, 196, 70, 24, pygame.font.Font(None, 18), "Hello World!")
         self.labeltest.set_font_color((100, 250, 250))
         self.labeltest.set_auto_resize(True, True)
-        self.canvas_main.add_widget(self.labeltest)
+        self.canvas_main.add_element(self.labeltest, widget=True)
 
     def loop(self):
         loop = True
@@ -44,5 +44,6 @@ class GameSystem(object):
                 self.canvas_main.handle_event(event)
 
             self.canvas_main.draw(self.display)
+            self.canvas_materials.draw(self.display)
             pygame.display.update()
             self.clock.tick(60)
