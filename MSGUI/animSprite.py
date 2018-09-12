@@ -35,7 +35,7 @@ class AnimSprite(pygame.sprite.DirtySprite):
         self.rect = self.image.get_rect()
         self.dirty = 1
 
-    def setPosition(self, x, y):
+    def set_position(self, x, y):
         self.x, self.y = x, y
         self.rect = self.image.get_rect(topleft=(x, y))
         self.dirty = 1

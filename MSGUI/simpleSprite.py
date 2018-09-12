@@ -14,7 +14,7 @@ class SimpleSprite(pygame.sprite.DirtySprite):
                                                              math.floor(self.image.get_height() * img_scale)))
         self.rect = self.image.get_rect()
 
-    def setPosition(self, x, y):
+    def set_position(self, x, y):
         self.x, self.y = x, y
         self.rect = self.image.get_rect(topleft=(x, y))
         self.dirty = 1
