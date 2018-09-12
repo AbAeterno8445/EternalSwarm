@@ -40,10 +40,10 @@ class GUICanvas(pygame.Surface):
             self.widgets_list.append(element)
 
     def handle_event(self, event):
-        try:
-            event.pos = (event.pos[0] - self.x, event.pos[1] - self.y)
-        except AttributeError:
-            pass
+        if event.type == pygame.MOUSEMOTION:
+            mouse_pos = pygame.mouse.get_pos()
+            event.pos = (mouse_pos[0] - self.x, mouse_pos[1] - self.y)
+
         for widget in self.widgets_list:
             widget.update(event)
 

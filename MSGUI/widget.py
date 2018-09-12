@@ -2,6 +2,8 @@ import pygame
 
 
 default_background = (0, 0, 0)
+default_hover = (130, 130, 130)
+default_border = (255, 255, 255)
 disabled_overlay = (150, 150, 150, 150)
 
 
@@ -27,10 +29,15 @@ class Widget(pygame.sprite.DirtySprite):
         self.image = pygame.Surface((width, height), pygame.SRCALPHA, 32)
         self._bounds = self.image.get_rect().move(x, y)
         self.rect = self._bounds.copy()
-        self._border = 0
+        self._border = False
+        self._border_color = default_border
+        self._hover = False     # Changes color when hovered
+        self._hovered = False   # Currently hovered
+        self._hover_color = default_hover
         self._focus = False
         self._active = True
         self._background = default_background
+        self._default_background = self._background
 
     def mark_dirty(self):
         """
@@ -140,13 +147,42 @@ class Widget(pygame.sprite.DirtySprite):
         """
         return self._bounds
 
-    def set_background(self, color):
+    def set_border(self, border, border_color=default_border):
+        """
+        Return the Widget's bounds
+        parameters:     boolean has border
+                        pygame.Color border color
+        return values:  -
+        """
+        self._border = border
+        self._border_color = border_color
+
+    def get_border_color(self):
+        """
+        Returns the widget's border color
+        parameters:     -
+        return values:  pygame.Color the border color
+        """
+        return self._border_color
+
+    def has_border(self):
+        """
+        Returns whether the widget has a border
+        parameters:     -
+        return values:  boolean has border
+        """
+        return self._border
+
+    def set_background(self, color, transparent=False):
         """
         Set the Widget's background-color
         parameters:     tuple a tuple of format pygame.Color representing the color to be set
         return values:  Widget Widget returned for convenience
         """
         self._background = color
+        self._default_background = color
+        if transparent:
+            self.image.set_colorkey(color)
         self.mark_dirty()
         return self
 
@@ -158,21 +194,71 @@ class Widget(pygame.sprite.DirtySprite):
         """
         return self._background
 
+    def set_hovered(self, hover, hover_color=None):
+        """
+        Set whether the widget's background changes when hovered by the mouse, sets the color as well
+        parameters:     boolean can be hovered
+                        pygame.Color hover background color
+        return values:  -
+        """
+        self._hover = hover
+        if not hover_color:
+            hover_r, hover_g, hover_b = self._background
+            self._hover_color = (min(255, hover_r + 50),
+                                 min(255, hover_g + 50),
+                                 min(255, hover_b + 50))
+        else:
+            self._hover_color = hover_color
+
+    def is_hoverable(self):
+        """
+        Return whether the widget changes background color when hovered by mouse
+        parameters:     -
+        return values:  boolean hoverable
+        """
+        return self._hover
+
     def update(self, *args):
         """
         Perform any updates on the Widget if needed;
-        basic implementation of focus, active-state and border-rendering;
+        basic implementation of focus, hover, active-state and border-rendering;
         used for interaction in more advanced, derivated Widget-classes
         parameters:     tuple arguments for the update (first argument should be an instance pygame.event.Event)
         return values:  -
         """
         if self.is_active() and len(args) > 0:
             event = args[0]
+            # Hover background color change
+            if self._hover:
+                if event.type == pygame.MOUSEMOTION:
+                    if self._bounds.collidepoint(event.pos) :
+                        self._hovered = True
+                        self._background = self._hover_color
+                        self.mark_dirty()
+                    else:
+                        self._hovered = False
+                        self._background = self._default_background
+                        self.mark_dirty()
+            elif not self._background == self._default_background:
+                self._background = self._default_background
+                self.mark_dirty()
+
+            # Set focus on click
             if event.type == pygame.MOUSEBUTTONDOWN and event.button in (1, 2, 3):
                 self.set_focused(self.rect.collidepoint(event.pos))
+
+        # Update if dirty
         if self.is_dirty():
-            self.rect = self._bounds.copy()
             self.image = self._get_appearance(*args)
+            # Change bounds size if image appearance is bigger/smaller
+            if not self.image.get_rect().size == self._bounds.size:
+                self._bounds = self.image.get_rect(topleft=self._bounds.topleft).copy()
+
+            self.rect = self._bounds.copy()
+
+            if self._border:
+                pygame.draw.rect(self.image, self._border_color, (0, 0, self.rect.width, self.rect.height), 1)
+
             if not self.is_active():
                 inactive = self.image.copy()
                 inactive.fill(disabled_overlay)
