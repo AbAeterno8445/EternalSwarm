@@ -3,11 +3,11 @@ import math
 
 
 class AnimSprite(pygame.sprite.DirtySprite):
-    def __init__(self, image_path, frames, anim_delay=5, img_scale=1, anim_order=None):
+    def __init__(self, image_path, frames, x=0, y=0, anim_delay=5, img_scale=1, anim_order=None):
         pygame.sprite.DirtySprite.__init__(self)
 
-        self.x = 0
-        self.y = 0
+        self.x = x
+        self.y = y
 
         self.anim_framecount = frames
         self.anim_speed = anim_delay
@@ -32,7 +32,7 @@ class AnimSprite(pygame.sprite.DirtySprite):
             self.image_list.append(tmp_frame)
 
         self.image = self.image_list[0]
-        self.rect = self.image.get_rect()
+        self.rect = self.image.get_rect(topleft=(x, y))
         self.dirty = 1
 
     def set_position(self, x, y):

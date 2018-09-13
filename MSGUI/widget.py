@@ -1,8 +1,8 @@
 import pygame
+import math
 
 
 default_background = (0, 0, 0)
-default_hover = (130, 130, 130)
 default_border = (255, 255, 255)
 disabled_overlay = (150, 150, 150, 150)
 
@@ -31,13 +31,11 @@ class Widget(pygame.sprite.DirtySprite):
         self.rect = self._bounds.copy()
         self._border = False
         self._border_color = default_border
-        self._hover = False     # Changes color when hovered
-        self._hovered = False   # Currently hovered
-        self._hover_color = default_hover
         self._focus = False
         self._active = True
         self._background = default_background
         self._default_background = self._background
+        self._background_transp = False
 
     def mark_dirty(self):
         """
@@ -129,12 +127,25 @@ class Widget(pygame.sprite.DirtySprite):
         """
         return self._active
 
+    def apply_scale(self, scale):
+        """
+        Apply a scale to the widget bounds, effectively resizing it
+        parameters:     float scale multiplier
+        return values:  -
+        """
+        self.image = pygame.transform.scale(self.image, (math.floor(self.image.get_width() * scale),
+                                                         math.floor(self.image.get_height() * scale)))
+        self.set_bounds(self.image.get_rect(center=self._bounds.center))
+        self.mark_dirty()
+
     def set_bounds(self, rect):
         """
         Set the Widget's bounds
         parameters:     pygame.Rect the Rect to be set
         return values:  Widget Widget returned for convenience
         """
+        if type(rect) is tuple:
+            rect = pygame.Rect(rect)
         self._bounds = rect
         self.mark_dirty()
         return self
@@ -173,7 +184,23 @@ class Widget(pygame.sprite.DirtySprite):
         """
         return self._border
 
-    def set_background(self, color, transparent=False):
+    def set_transparent(self, transp):
+        """
+        Sets transparent background
+        parameters:     boolean transparent background
+        return values:  -
+        """
+        self._background_transp = transp
+
+    def is_transparent(self):
+        """
+        Returns whether background is transparent or not
+        parameters:     -
+        return values:  boolean transparent background
+        """
+        return self._background_transp
+
+    def set_background(self, color):
         """
         Set the Widget's background-color
         parameters:     tuple a tuple of format pygame.Color representing the color to be set
@@ -181,8 +208,6 @@ class Widget(pygame.sprite.DirtySprite):
         """
         self._background = color
         self._default_background = color
-        if transparent:
-            self.image.set_colorkey(color)
         self.mark_dirty()
         return self
 
@@ -194,55 +219,16 @@ class Widget(pygame.sprite.DirtySprite):
         """
         return self._background
 
-    def set_hovered(self, hover, hover_color=None):
-        """
-        Set whether the widget's background changes when hovered by the mouse, sets the color as well
-        parameters:     boolean can be hovered
-                        pygame.Color hover background color
-        return values:  -
-        """
-        self._hover = hover
-        if not hover_color:
-            hover_r, hover_g, hover_b = self._background
-            self._hover_color = (min(255, hover_r + 50),
-                                 min(255, hover_g + 50),
-                                 min(255, hover_b + 50))
-        else:
-            self._hover_color = hover_color
-
-    def is_hoverable(self):
-        """
-        Return whether the widget changes background color when hovered by mouse
-        parameters:     -
-        return values:  boolean hoverable
-        """
-        return self._hover
-
     def update(self, *args):
         """
         Perform any updates on the Widget if needed;
-        basic implementation of focus, hover, active-state and border-rendering;
+        basic implementation of focus, active-state and border-rendering;
         used for interaction in more advanced, derivated Widget-classes
         parameters:     tuple arguments for the update (first argument should be an instance pygame.event.Event)
         return values:  -
         """
         if self.is_active() and len(args) > 0:
             event = args[0]
-            # Hover background color change
-            if self._hover:
-                if event.type == pygame.MOUSEMOTION:
-                    if self._bounds.collidepoint(event.pos) :
-                        self._hovered = True
-                        self._background = self._hover_color
-                        self.mark_dirty()
-                    else:
-                        self._hovered = False
-                        self._background = self._default_background
-                        self.mark_dirty()
-            elif not self._background == self._default_background:
-                self._background = self._default_background
-                self.mark_dirty()
-
             # Set focus on click
             if event.type == pygame.MOUSEBUTTONDOWN and event.button in (1, 2, 3):
                 self.set_focused(self.rect.collidepoint(event.pos))
@@ -250,10 +236,6 @@ class Widget(pygame.sprite.DirtySprite):
         # Update if dirty
         if self.is_dirty():
             self.image = self._get_appearance(*args)
-            # Change bounds size if image appearance is bigger/smaller
-            if not self.image.get_rect().size == self._bounds.size:
-                self._bounds = self.image.get_rect(topleft=self._bounds.topleft).copy()
-
             self.rect = self._bounds.copy()
 
             if self._border:
@@ -272,6 +254,8 @@ class Widget(pygame.sprite.DirtySprite):
         parameters:     tuple arguments for the update (first argument should be an instance pygame.event.Event)
         return values:  pygame.Surface the underlying Widget's appearance
         """
-        surface = pygame.Surface(self._bounds.size, pygame.SRCALPHA)
+        surface = pygame.Surface(self._bounds.size, pygame.SRCALPHA).convert()
+        if self._background_transp:
+            surface.set_colorkey(self._background)
         surface.fill(self._background)
         return surface

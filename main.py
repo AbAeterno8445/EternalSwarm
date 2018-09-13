@@ -26,18 +26,23 @@ def main():
     spritetest.set_position(32, 96)
     canvas_main.add_element(spritetest)
 
-    spritetest_2 = MSGUI.SimpleSprite("assets/carbcrystal.png")
-    spritetest_2.set_position(32, 32)
-    canvas_main.add_element(spritetest_2)
-
-    labeltest = MSGUI.Label(32, 196, 70, 24, pygame.font.Font(None, 18), "Hello World!")
-    labeltest.set_font_color((100, 250, 250))
+    labeltest = MSGUI.Label(32, 196, 70, 24, pygame.font.Font("assets/Dosis.otf", 32), "Hello World!")
+    labeltest.set_font_color((255, 0, 0))
     labeltest.set_auto_resize(True, True)
-    labeltest.set_padding(16)
-    labeltest.set_background((0, 0, 0), True)
+    labeltest.set_background((0, 0, 0))
+    labeltest.set_transparent(True)
     labeltest.set_border(True, (255, 0, 0))
-    labeltest.set_hovered(True, (0, 110, 0))
     canvas_main.add_element(labeltest, widget=True)
+
+    def testfunct():
+        labeltest.apply_scale(2)
+
+    buttontest = MSGUI.Button(256, 96, 128, 32, pygame.font.Font("assets/Dosis.otf", 18), "SIZEDOWN!", testfunct)
+    canvas_main.add_element(buttontest, widget=True)
+
+    icontest = MSGUI.Imagebox(256, 32, 0, 0, pygame.image.load("assets/carbcrystal.png"), True)
+    icontest.set_transparent(True)
+    canvas_main.add_element(icontest, widget=True)
 
     loop = True
     while loop:

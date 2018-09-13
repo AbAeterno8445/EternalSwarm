@@ -12,6 +12,7 @@ class GUICanvas(pygame.Surface):
         self.widgets_list = []
         self.sprite_list = pygame.sprite.LayeredDirty()
 
+        self.backg_color = default_backg_col
         self.fill(default_backg_col)
         self.background = pygame.Surface((width, height))
         self.background.convert()
@@ -25,6 +26,7 @@ class GUICanvas(pygame.Surface):
         self.border_color = default_border_col
 
     def set_background_color(self, color):
+        self.backg_color = color
         self.fill(color)
         self.background.fill(color)
         self.sprite_list.clear(self, self.background)
@@ -37,6 +39,8 @@ class GUICanvas(pygame.Surface):
         self.sprite_list.add(element)
         self.sprite_list.change_layer(element, layer)
         if widget:
+            if element.is_transparent():
+                element.set_background(self.backg_color)
             self.widgets_list.append(element)
 
     def handle_event(self, event):
