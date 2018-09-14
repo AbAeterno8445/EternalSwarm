@@ -1,8 +1,8 @@
 import pygame
-import MSGUI
+from .iconWidget import IconWidget
 
 
-class Imagebox(MSGUI.IconWidget):
+class Imagebox(IconWidget):
     """
     Imagebox for displaying surfaces/images
     """

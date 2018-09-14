@@ -25,7 +25,6 @@ class Widget(pygame.sprite.DirtySprite):
         return values:  -
         """
         super(Widget, self).__init__()
-        self.x, self.y = x, y
         self.image = pygame.Surface((width, height), pygame.SRCALPHA, 32)
         self._bounds = self.image.get_rect().move(x, y)
         self.rect = self._bounds.copy()
@@ -35,7 +34,7 @@ class Widget(pygame.sprite.DirtySprite):
         self._active = True
         self._background = default_background
         self._default_background = self._background
-        self._background_transp = False
+        self._background_transp = True
 
     def mark_dirty(self):
         """
@@ -158,6 +157,34 @@ class Widget(pygame.sprite.DirtySprite):
         """
         return self._bounds
 
+    def set_position(self, x, y):
+        """
+        Set the widget's position
+        parameters:     int top-left x coordinate
+                        int top-left y coordinate
+        return values:  -
+        """
+        self.set_bounds((x, y, self._bounds.width, self._bounds.height))
+        self.mark_dirty()
+
+    def get_position(self):
+        """
+        Return the Widget's bounds' top-left position
+        parameters:     -
+        return values:  tuple (x, y) position
+        """
+        return self._bounds.topleft
+
+    def set_size(self, width, height):
+        """
+        Set the Widget's bounds size
+        parameters:     int bounds width
+                        int bounds height
+        return values:  -
+        """
+        self.set_bounds((*self.get_position(), width, height))
+        self.mark_dirty()
+
     def set_border(self, border, border_color=default_border):
         """
         Return the Widget's bounds
@@ -243,7 +270,9 @@ class Widget(pygame.sprite.DirtySprite):
 
             if not self.is_active():
                 inactive = self.image.copy()
-                inactive.fill(disabled_overlay)
+                disabled_color = pygame.Color(*disabled_overlay)
+                inactive.fill(disabled_color)
+                inactive.set_alpha(disabled_color.a)
                 self.image.blit(inactive, (0, 0))
 
     def _get_appearance(self, *args):

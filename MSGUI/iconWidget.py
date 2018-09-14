@@ -1,8 +1,8 @@
 import pygame
-import MSGUI
+from .widget import Widget
 
 
-class IconWidget(MSGUI.Widget):
+class IconWidget(Widget):
     """
     Underlying class for Widgets using icons/surfaces/images;
     """
@@ -17,13 +17,24 @@ class IconWidget(MSGUI.Widget):
                         pygame.Surface icon/surface of the IconWidget
         return values:  -
         """
+        super(IconWidget, self).__init__(x, y, width, height)
+        self._autosize = autosize
         if icon is None:
             icon = pygame.Surface((width, height), pygame.SRCALPHA, 32)
-        elif autosize:
-            width = icon.get_width()
-            height = icon.get_height()
-        super(IconWidget, self).__init__(x, y, width, height)
+        elif type(icon) is str:
+            icon = pygame.image.load(icon)
         self.set_icon(icon)
+
+    def set_icon_autosize(self, autosize):
+        """
+        Set whether IconWidget's surface automatically resizes when setting icon
+        parameters:     boolean resizes
+        return values:  -
+        """
+        self._autosize = autosize
+
+    def _autoresize(self):
+        self.set_bounds(self._icon.get_rect(center=self._bounds.center))
 
     def set_icon(self, icon):
         """
@@ -34,6 +45,12 @@ class IconWidget(MSGUI.Widget):
         if isinstance(icon, pygame.Surface):
             self._icon = icon.convert_alpha(super(IconWidget, self)._get_appearance())
             self.mark_dirty()
+        elif type(icon) is str:
+            self._icon = pygame.image.load(icon).convert_alpha(super(IconWidget, self)._get_appearance())
+            self.mark_dirty()
+
+        if self._autosize:
+            self._autoresize()
         return self
 
     def get_icon(self):

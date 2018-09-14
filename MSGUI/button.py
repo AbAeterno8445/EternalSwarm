@@ -1,12 +1,13 @@
 import pygame
-import MSGUI
+from .label import Label
+from .imagebox import Imagebox
 
 
-default_hovered = (200, 200, 150, 50)
-default_pressed = (200, 200, 150, 100)
+default_hovered = (200, 200, 150)
+default_pressed = (200, 200, 150)
 
 
-class Button(MSGUI.TextWidget, MSGUI.Imagebox):
+class Button(Label, Imagebox):
 
     """
     Clickable buttons with alternatively an image added
@@ -27,8 +28,10 @@ class Button(MSGUI.TextWidget, MSGUI.Imagebox):
         super(Button, self).__init__(x, y, width, height, font, text)
         self._callback = callback
         self._state = 0
-        self._hoveredcolor = default_hovered
-        self._pressedcolor = default_pressed
+        self._hoveredcolor = pygame.Color(*default_hovered)
+        self._pressedcolor = pygame.Color(*default_pressed)
+
+        self.set_transparent(False)
 
     def set_hovered_color(self, color):
         """
@@ -36,7 +39,7 @@ class Button(MSGUI.TextWidget, MSGUI.Imagebox):
         parameters:     tuple a tuple of format pygame.Color representing the color to be set
         return values:  Widget Widget returned for convenience
         """
-        self._hoveredcolor = color
+        self._hoveredcolor = pygame.Color(*color)
         self.mark_dirty()
         return self
 
@@ -54,7 +57,7 @@ class Button(MSGUI.TextWidget, MSGUI.Imagebox):
         parameters:     tuple a tuple of format pygame.Color representing the color to be set
         return values:  Widget Widget returned for convenience
         """
-        self._pressedcolor = color
+        self._pressedcolor = pygame.Color(*color)
         self.mark_dirty()
         return self
 
@@ -106,8 +109,9 @@ class Button(MSGUI.TextWidget, MSGUI.Imagebox):
         parameters:     int new button state
         return values:  -
         """
-        self._state = state
-        self.mark_dirty()
+        if not self._state == state:
+            self._state = state
+            self.mark_dirty()
 
     def update(self, *args):
         """
@@ -120,12 +124,12 @@ class Button(MSGUI.TextWidget, MSGUI.Imagebox):
             if event.type == pygame.MOUSEBUTTONUP:
                 if self.rect.collidepoint(event.pos):
                     if event.button == 1:
-                        if self._state >= 2:
-                            self._change_state(1)
                         try:
                             self._callback()
                         except Exception as e:
                             print(e)
+                        if self._state >= 2:
+                            self._change_state(1)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if self.rect.collidepoint(event.pos):
                     if event.button == 1:
@@ -141,26 +145,25 @@ class Button(MSGUI.TextWidget, MSGUI.Imagebox):
                 elif self._state:
                     self._change_state(0)
 
-        super(Button, self).update(*args)
+        if self.is_dirty():
+            super(Button, self).update(*args)
 
     def _get_appearance(self, *args):
         """
-        Blits the text to the Button's Surface and returns the result.
+        Blits the Button's Surface and returns the result.
         private function
         parameters:     tuple arguments for the update (first argument should be an instance pygame.event.Event)
         return values:  pygame.Surface the underlying Widget's appearance
         """
         surface = super(Button, self)._get_appearance(*args)
-        center = surface.get_rect().center
-        size = self._font.size(self._text)
-        coords = (center[0] - size[0] / 2, center[1] - size[1] / 2)
-        surface.blit(self._font.render(str(self._text), pygame.SRCALPHA, self._font_color), coords)
+        # Button hover/press overlay
         if self._state:
             overlay = pygame.Surface(surface.get_size()).convert()
             if self._state == 2:
                 overlay.fill(self._pressedcolor)
+                overlay.set_alpha(self._pressedcolor.a)
             else:
                 overlay.fill(self._hoveredcolor)
-            overlay.set_alpha(120)
+                overlay.set_alpha(self._hoveredcolor.a)
             surface.blit(overlay, (0, 0))
         return surface

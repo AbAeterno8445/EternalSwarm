@@ -1,8 +1,8 @@
 import pygame
-import MSGUI
+from .textWidget import TextWidget
 
 
-class Label(MSGUI.TextWidget):
+class Label(TextWidget):
     def __init__(self, x, y, width, height, font, text=""):
         """
         Initialisation of a TextWidget
@@ -22,7 +22,7 @@ class Label(MSGUI.TextWidget):
         self._resize_ver = False
         self._padding = 0
 
-    def set_auto_resize(self, res_hor=False, res_ver=False, padding=0):
+    def set_text_resize(self, res_hor=False, res_ver=False, padding=0):
         """
         Set whether label surface resizes to match text width
         parameters:     boolean horizontal resizing
@@ -41,21 +41,23 @@ class Label(MSGUI.TextWidget):
         parameters:     tuple arguments for the update (first argument should be an instance pygame.event.Event)
         return values:  pygame.Surface the underlying Widget's appearance
         """
-        size = self._font.size(self._text)
-        if self._resize_hor or self._resize_ver:
-            res_hor = self._bounds.width
-            if self._resize_hor:
-                res_hor = size[0] + self._padding * 2
+        if self._text:
+            size = self._font.size(self._text)
+            if self._resize_hor or self._resize_ver:
+                res_hor = self._bounds.width
+                if self._resize_hor:
+                    res_hor = size[0] + self._padding * 2
 
-            res_ver = self._bounds.height
-            if self._resize_ver:
-                res_ver = size[1] + self._padding * 2
+                res_ver = self._bounds.height
+                if self._resize_ver:
+                    res_ver = size[1] + self._padding * 2
 
-            self.set_bounds((self.x, self.y, res_hor, res_ver))
+                self.set_size(res_hor, res_ver)
 
-        surface = super(Label, self)._get_appearance(*args)
+            surface = super(Label, self)._get_appearance(*args)
 
-        center = surface.get_rect().center
-        coords = (center[0] - size[0] / 2, center[1] - size[1] / 2)
-        surface.blit(self._font.render(str(self._text), pygame.SRCALPHA, self._font_color, self._background), coords)
-        return surface
+            center = surface.get_rect().center
+            coords = (center[0] - size[0] / 2, center[1] - size[1] / 2)
+            surface.blit(self._font.render(str(self._text), pygame.SRCALPHA, self._font_color, self._background), coords)
+            return surface
+        return super(Label, self)._get_appearance(*args)

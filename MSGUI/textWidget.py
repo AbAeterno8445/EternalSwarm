@@ -1,10 +1,10 @@
 import pygame.font as fnt
-import MSGUI
+from .widget import Widget
 
 default_font_color = (255, 255, 255)
 
 
-class TextWidget(MSGUI.Widget):
+class TextWidget(Widget):
     """
     Underlying class for Widgets using text/strings;
     """
