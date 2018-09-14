@@ -31,10 +31,16 @@ class GUICanvas(pygame.Surface):
         self.background.fill(color)
         self.sprite_list.clear(self, self.background)
 
+        # Update transparent widgets with new bg color
+        for widget in self.widgets_list:
+            if widget.is_transparent():
+                widget.set_background(color)
+
     def set_border(self, border, color=default_border_col):
         self.border = border
         self.border_color = color
 
+    # Element can be any pygame.sprite.DirtySprite object
     def add_element(self, element, layer=0, widget=False):
         self.sprite_list.add(element)
         self.sprite_list.change_layer(element, layer)
