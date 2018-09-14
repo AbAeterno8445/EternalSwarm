@@ -139,10 +139,7 @@ class Button(MSGUI.TextWidget, MSGUI.Imagebox):
                     else:
                         self._change_state(1)
                 elif self._state:
-                    if self._state >= 2:
-                        self._change_state(1)
-                    else:
-                        self._change_state(0)
+                    self._change_state(0)
 
         super(Button, self).update(*args)
 
