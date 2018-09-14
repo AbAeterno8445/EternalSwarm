@@ -3,11 +3,14 @@ from pygame.locals import DOUBLEBUF
 import MSGUI
 
 
+def testfunct():
+    print("hey it works")
+
+
 def main():
     # Init display
     display = pygame.display.set_mode((800, 600), DOUBLEBUF)
     pygame.display.set_caption("Eternal Swarm")
-    pygame.event.set_allowed([pygame.QUIT, pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN])
 
     clock = pygame.time.Clock()
 
@@ -34,10 +37,10 @@ def main():
     labeltest.set_border(True, (255, 0, 0))
     canvas_main.add_element(labeltest, widget=True)
 
-    def testfunct():
-        labeltest.apply_scale(2)
-
-    buttontest = MSGUI.Button(256, 96, 128, 32, pygame.font.Font("assets/Dosis.otf", 18), "SIZEDOWN!", testfunct)
+    buttontest = MSGUI.Button(256, 96, 128, 32, pygame.font.Font("assets/Dosis.otf", 18), "Click me!", testfunct)
+    buttontest.set_hovered_color((255, 110, 0))
+    buttontest.set_pressed_color((110, 255, 0))
+    buttontest.set_border(True)
     canvas_main.add_element(buttontest, widget=True)
 
     icontest = MSGUI.Imagebox(256, 32, 0, 0, pygame.image.load("assets/carbcrystal.png"), True)

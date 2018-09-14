@@ -44,7 +44,7 @@ class GUICanvas(pygame.Surface):
             self.widgets_list.append(element)
 
     def handle_event(self, event):
-        if event.type == pygame.MOUSEMOTION:
+        if event.type in {pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN}:
             mouse_pos = pygame.mouse.get_pos()
             event.pos = (mouse_pos[0] - self.x, mouse_pos[1] - self.y)
 
