@@ -22,7 +22,7 @@ def main():
     canvas_materials.backg_widget.set_border(1, (255, 0, 0))
     canvas_main.backg_widget.set_background((0, 110, 110))
 
-    spritetest = MSGUI.AnimSprite(32, 32, 64, 64, "assets/Mount_Basilisk.png", frames=8, autosize=False)
+    spritetest = MSGUI.AnimSprite(32, 32, 80, 40, "assets/Mount_Basilisk.png", frames=8, autosize=False)
     spritetest.set_icon_autoscale(True)
     spritetest.set_border(True)
     canvas_main.add_element(spritetest, widget=True)
@@ -51,10 +51,15 @@ def main():
 
     loop = True
     ii = 0
+    ij = False
     while loop:
         ii += 1
+        if ii % 10 == 0 and not ij:
+            tmp_size = spritetest.get_size()
+            spritetest.set_bounds_size(tmp_size[0] + 1, tmp_size[1] + 1)
         if ii > 1000:
             ii = 0
+            ij = True
         caught_events = pygame.event.get()
         for event in caught_events:
             if event.type == pygame.QUIT:

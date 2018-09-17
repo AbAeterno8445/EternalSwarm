@@ -5,6 +5,9 @@ class AnimSprite(ImageWidget):
     def __init__(self, x, y, width, height, icon=None, frames=1, autosize=True):
         super(AnimSprite, self).__init__(x, y, width, height, icon, autosize, smooth=True)
 
+        self.image_list = []
+        self.image_list_modified = []
+
         self._anim_framecount = frames
         self._anim_delay = 5
         self._anim_ticker = 0
@@ -19,6 +22,7 @@ class AnimSprite(ImageWidget):
         parameters:     pygame.Surface new icon sheet, leave as none to update current loaded sheet
         return values:  -
         """
+        self.image_list_modified = []
         if new_icon:
             og_texture = new_icon
             self._anim_order = []
@@ -32,7 +36,7 @@ class AnimSprite(ImageWidget):
         else:
             for i in range(len(self.image_list)):
                 self.set_icon(self.image_list[i])
-                self.image_list[i] = self._icon
+                self.image_list_modified.append(self._icon)
 
         if not self._anim_order:
             new_anim_order = []
@@ -48,8 +52,8 @@ class AnimSprite(ImageWidget):
         super(AnimSprite, self).set_icon_autoscale(autoscale)
         self._update_animation_set()
 
-    def set_size(self, width, height):
-        super(AnimSprite, self).set_size(width, height)
+    def set_bounds_size(self, width, height):
+        super(AnimSprite, self).set_bounds_size(width, height)
         self._update_animation_set()
 
     def set_animation_order(self, order_list):
@@ -59,7 +63,8 @@ class AnimSprite(ImageWidget):
         return values:  -
         """
         self._anim_order = order_list
-        self._anim_order_pos = 0
+        if self._anim_order_pos > len(self._anim_order):
+            self._anim_order_pos = 0
 
     def set_animation_delay(self, delay):
         """
@@ -83,7 +88,10 @@ class AnimSprite(ImageWidget):
     def update(self, *args):
         self._anim_ticker += 1
         if self._anim_ticker >= self._anim_delay:
-            self._icon = self.image_list[self._anim_order[self._anim_order_pos]]
+            if not self.image_list_modified:
+                self._icon = self.image_list[self._anim_order[self._anim_order_pos]]
+            else:
+                self._icon = self.image_list_modified[self._anim_order[self._anim_order_pos]]
             self._anim_order_pos += 1
             if self._anim_order_pos >= len(self._anim_order):
                 self._anim_order_pos = 0

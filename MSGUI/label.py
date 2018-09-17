@@ -52,7 +52,7 @@ class Label(TextWidget):
                 if self._resize_ver:
                     res_ver = size[1] + self._padding * 2
 
-                self.set_size(res_hor, res_ver)
+                self.set_bounds_size(res_hor, res_ver)
 
             surface = super(Label, self)._get_appearance(*args)
 

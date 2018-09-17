@@ -164,7 +164,7 @@ class Widget(pygame.sprite.DirtySprite):
         """
         return self._bounds.topleft
 
-    def set_size(self, width, height):
+    def set_bounds_size(self, width, height):
         """
         Set the Widget's bounds size
         parameters:     int bounds width
@@ -174,13 +174,21 @@ class Widget(pygame.sprite.DirtySprite):
         self.set_bounds((*self.get_position(), width, height))
         self.mark_dirty()
 
+    def get_size(self):
+        """
+        Return the Widget's bounds size
+        parameters:     -
+        return values:  tuple (width, height)
+        """
+        return self._bounds.size
+
     def apply_scale(self, scale):
         """
         Apply a scale to the widget bounds, effectively resizing it
         parameters:     float scale multiplier
         return values:  -
         """
-        self.set_size(math.floor(self._bounds.width * scale), math.floor(self._bounds.height * scale))
+        self.set_bounds_size(math.floor(self._bounds.width * scale), math.floor(self._bounds.height * scale))
         self.mark_dirty()
 
     def set_border(self, border, border_color=default_border):
