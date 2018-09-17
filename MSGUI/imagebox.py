@@ -19,6 +19,7 @@ class Imagebox(IconWidget):
                 return values:  -
                 """
         super(Imagebox, self).__init__(x, y, width, height, icon, autosize)
+        self.set_transparent(True)
         self._smooth = smooth
 
     def set_smooth(self, smooth):

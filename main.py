@@ -14,25 +14,26 @@ def main():
 
     clock = pygame.time.Clock()
 
-    canvas_list = []
     canvas_materials = MSGUI.GUICanvas(16, 16, 200, 500)
     canvas_main = MSGUI.GUICanvas(232, 16, 552, 500)
+    canvas_list = (canvas_materials, canvas_main)
 
-    canvas_list.append(canvas_materials)
-    canvas_list.append(canvas_main)
+    canvas_materials.backg_widget.set_background((110, 110, 0))
+    canvas_materials.backg_widget.set_border(1, (255, 0, 0))
+    canvas_main.backg_widget.set_background((0, 110, 110))
 
-    canvas_materials.set_background_color((110, 110, 0))
-    canvas_materials.set_border(1, (255, 0, 0))
-    canvas_main.set_background_color((0, 110, 110))
-
-    spritetest = MSGUI.AnimSprite(64, 64, 0, 0, "assets/Mount_Basilisk.png", frames=8)
+    spritetest = MSGUI.AnimSprite(32, 32, 80, 40, "assets/Mount_Basilisk.png", frames=8, autosize=True)
     spritetest.set_border(True)
-    canvas_main.add_element(spritetest)
+    canvas_main.add_element(spritetest, widget=True)
 
-    labeltest = MSGUI.Label(32, 196, 70, 24, pygame.font.Font("assets/Dosis.otf", 32), "Hello World!")
+    widgtest = MSGUI.Widget(32, 256, 64, 64)
+    widgtest.set_background((0, 255, 150))
+    canvas_main.add_element(widgtest, widget=True)
+
+    labeltest = MSGUI.Label(32, 196, 212, 64, pygame.font.Font("assets/Dosis.otf", 32), "Hello World!")
     labeltest.set_font_color((255, 0, 0))
-    labeltest.set_text_resize(True, True)
-    labeltest.set_background((0, 0, 0))
+    labeltest.set_text_resize(res_hor=True, padding=32)
+    labeltest.set_transparent(True)
     labeltest.set_border(True, (255, 0, 0))
     canvas_main.add_element(labeltest, widget=True)
 
@@ -47,16 +48,21 @@ def main():
     canvas_main.add_element(icontest, widget=True)
 
     loop = True
+    ii = 0
     while loop:
-        for event in pygame.event.get():
+        ii += 100
+        caught_events = pygame.event.get()
+        for event in caught_events:
             if event.type == pygame.QUIT:
                 loop = False
-            for canvas in canvas_list:
-                canvas.handle_event(event)
+                break
 
+        labeltest.set_text(str(ii))
+        upd_rects = []
         for canvas in canvas_list:
-            canvas.draw(display)
-        pygame.display.update()
+            canvas.handle_event(caught_events)
+            upd_rects += canvas.draw(display)
+        pygame.display.update(upd_rects)
         clock.tick(60)
 
 

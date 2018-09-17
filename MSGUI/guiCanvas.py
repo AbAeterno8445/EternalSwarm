@@ -1,67 +1,63 @@
 import pygame
+from .widget import Widget
 
 
 default_backg_col = (0, 0, 0)
 default_border_col = (255, 255, 255)
 
 
-class GUICanvas(pygame.Surface):
-    def __init__(self, x, y, width, height):
-        super(GUICanvas, self).__init__((width, height), pygame.SRCALPHA)
-
-        self.widgets_list = []
-        self.sprite_list = pygame.sprite.LayeredDirty()
-
-        self.backg_color = default_backg_col
-        self.fill(default_backg_col)
-        self.background = pygame.Surface((width, height))
-        self.background.convert()
-        self.background.fill(default_backg_col)
-
-        self.sprite_list.clear(self, self.background)
+class GUICanvas(object):
+    def __init__(self, x, y, width, height, bgcolor=default_backg_col):
+        self.surface = pygame.Surface((width, height)).convert()
 
         self.x = x
         self.y = y
-        self.border = 0
-        self.border_color = default_border_col
 
-    def set_background_color(self, color):
-        self.backg_color = color
-        self.fill(color)
-        self.background.fill(color)
-        self.sprite_list.clear(self, self.background)
+        self.backg_widget = Widget(0, 0, width, height)
+        self.backg_widget.set_background(bgcolor)
 
-        # Update transparent widgets with new bg color
+        self.widgets_list = [self.backg_widget]
+        self.sprite_list = pygame.sprite.LayeredDirty(self.backg_widget)
+        self.sprite_list.change_layer(self.backg_widget, -1)
+
+    def set_background(self, color):
+        self.backg_widget.set_background(color)
         for widget in self.widgets_list:
             if widget.is_transparent():
                 widget.set_background(color)
 
-    def set_border(self, border, color=default_border_col):
-        self.border = border
-        self.border_color = color
-
     # Element can be any pygame.sprite.DirtySprite object
     def add_element(self, element, layer=0, widget=False):
-        self.sprite_list.add(element)
-        self.sprite_list.change_layer(element, layer)
-        if widget:
-            if element.is_transparent():
-                element.set_background(self.backg_color)
-            self.widgets_list.append(element)
+        if element not in self.sprite_list:
+            self.sprite_list.add(element)
+            self.sprite_list.change_layer(element, layer)
+            if widget:
+                if element.is_transparent():
+                    element.set_background(self.backg_widget.get_background())
+                self.widgets_list.append(element)
 
-    def handle_event(self, event):
-        if event.type in {pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN}:
-            mouse_pos = pygame.mouse.get_pos()
-            event.pos = (mouse_pos[0] - self.x, mouse_pos[1] - self.y)
+    def remove_element(self, element):
+        if element in self.sprite_list:
+            self.sprite_list.remove(element)
+        if element in self.widgets_list:
+            self.widgets_list.remove(element)
 
-        for widget in self.widgets_list:
-            widget.update(event)
+    def handle_event(self, event_list):
+        for event in event_list:
+            if event.type in {pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN}:
+                mouse_pos = pygame.mouse.get_pos()
+                event.pos = (mouse_pos[0] - self.x, mouse_pos[1] - self.y)
+
+            for widget in self.widgets_list:
+                widget.handle_event(event)
 
     def draw(self, tgt_surface):
-        self.sprite_list.update()
-        self.sprite_list.draw(self)
+        upd_rects = []
 
-        tgt_surface.blit(self, (self.x, self.y))
-        if self.border > 0:
-            pygame.draw.rect(tgt_surface, self.border_color,
-                             (self.x, self.y, self.get_width(), self.get_height()), self.border)
+        self.sprite_list.update()
+        upd_rects += self.sprite_list.draw(self.surface)
+        tgt_surface.blit(self.surface, (self.x, self.y))
+
+        for i, rect in enumerate(upd_rects):
+            upd_rects[i] = upd_rects[i].move(self.x, self.y)
+        return upd_rects

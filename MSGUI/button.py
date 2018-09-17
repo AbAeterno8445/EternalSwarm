@@ -113,40 +113,37 @@ class Button(Label, Imagebox):
             self._state = state
             self.mark_dirty()
 
-    def update(self, *args):
+    def handle_event(self, event):
         """
         Handles the clicking of the Button and calls the function given in the constructor.
         parameters: tuple arguments for the update (first argument should be an instance pygame.event.Event)
         return values: -
         """
-        if len(args) > 0 and self.is_active():
-            event = args[0]
-            if event.type == pygame.MOUSEBUTTONUP:
-                if self.rect.collidepoint(event.pos):
-                    if event.button == 1:
-                        try:
-                            self._callback()
-                        except Exception as e:
-                            print(e)
-                        if self._state >= 2:
-                            self._change_state(1)
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if self.rect.collidepoint(event.pos):
-                    if event.button == 1:
-                        self._change_state(2)
-                    else:
-                        self._change_state(1)
-            elif event.type == pygame.MOUSEMOTION:
-                if self.rect.collidepoint(event.pos):
-                    if event.buttons[0]:
-                        self._change_state(2)
-                    else:
-                        self._change_state(1)
-                elif self._state:
-                    self._change_state(0)
+        super(Button, self).handle_event(event)
 
-        if self.is_dirty():
-            super(Button, self).update(*args)
+        if event.type == pygame.MOUSEBUTTONUP:
+            if self.rect.collidepoint(event.pos):
+                if event.button == 1:
+                    try:
+                        self._callback()
+                    except Exception as e:
+                        print(e)
+                    if self._state >= 2:
+                        self._change_state(1)
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(event.pos):
+                if event.button == 1:
+                    self._change_state(2)
+                else:
+                    self._change_state(1)
+        elif event.type == pygame.MOUSEMOTION:
+            if self.rect.collidepoint(event.pos):
+                if event.buttons[0]:
+                    self._change_state(2)
+                else:
+                    self._change_state(1)
+            elif self._state:
+                self._change_state(0)
 
     def _get_appearance(self, *args):
         """

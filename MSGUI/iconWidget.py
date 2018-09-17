@@ -1,4 +1,5 @@
 import pygame
+import math
 from .widget import Widget
 
 
@@ -34,7 +35,7 @@ class IconWidget(Widget):
         self._autosize = autosize
 
     def _autoresize(self):
-        self.set_bounds(self._icon.get_rect(center=self._bounds.center))
+        self.set_bounds(self._icon.get_rect(topleft=self._bounds.topleft))
 
     def set_icon(self, icon):
         """

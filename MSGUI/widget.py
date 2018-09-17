@@ -34,7 +34,7 @@ class Widget(pygame.sprite.DirtySprite):
         self._active = True
         self._background = default_background
         self._default_background = self._background
-        self._background_transp = True
+        self._background_transp = False
 
     def mark_dirty(self):
         """
@@ -126,17 +126,6 @@ class Widget(pygame.sprite.DirtySprite):
         """
         return self._active
 
-    def apply_scale(self, scale):
-        """
-        Apply a scale to the widget bounds, effectively resizing it
-        parameters:     float scale multiplier
-        return values:  -
-        """
-        self.image = pygame.transform.scale(self.image, (math.floor(self.image.get_width() * scale),
-                                                         math.floor(self.image.get_height() * scale)))
-        self.set_bounds(self.image.get_rect(center=self._bounds.center))
-        self.mark_dirty()
-
     def set_bounds(self, rect):
         """
         Set the Widget's bounds
@@ -183,6 +172,15 @@ class Widget(pygame.sprite.DirtySprite):
         return values:  -
         """
         self.set_bounds((*self.get_position(), width, height))
+        self.mark_dirty()
+
+    def apply_scale(self, scale):
+        """
+        Apply a scale to the widget bounds, effectively resizing it
+        parameters:     float scale multiplier
+        return values:  -
+        """
+        self.set_size(math.floor(self._bounds.width * scale), math.floor(self._bounds.height * scale))
         self.mark_dirty()
 
     def set_border(self, border, border_color=default_border):
@@ -246,6 +244,11 @@ class Widget(pygame.sprite.DirtySprite):
         """
         return self._background
 
+    def handle_event(self, event):
+        # Set focus on click
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button in (1, 2, 3):
+            self.set_focused(self.rect.collidepoint(event.pos))
+
     def update(self, *args):
         """
         Perform any updates on the Widget if needed;
@@ -256,9 +259,12 @@ class Widget(pygame.sprite.DirtySprite):
         """
         if self.is_active() and len(args) > 0:
             event = args[0]
-            # Set focus on click
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button in (1, 2, 3):
-                self.set_focused(self.rect.collidepoint(event.pos))
+            if event:
+                if type(event) is list:
+                    for ev in event:
+                        self.handle_event(ev)
+                else:
+                    self.handle_event(event)
 
         # Update if dirty
         if self.is_dirty():
@@ -278,7 +284,7 @@ class Widget(pygame.sprite.DirtySprite):
     def _get_appearance(self, *args):
         """
         Return the underlying Widget's appearance;
-        basic implementation of background-coloring
+        basic implementation of background-coloring and transparent background
         private function
         parameters:     tuple arguments for the update (first argument should be an instance pygame.event.Event)
         return values:  pygame.Surface the underlying Widget's appearance

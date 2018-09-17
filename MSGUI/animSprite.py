@@ -2,8 +2,9 @@ from .imagebox import Imagebox
 
 
 class AnimSprite(Imagebox):
-    def __init__(self, x, y, width, height, icon=None, frames=1):
-        super(AnimSprite, self).__init__(x, y, width, height, icon, True)
+    def __init__(self, x, y, width, height, icon=None, frames=1, autosize=True):
+        super(AnimSprite, self).__init__(x, y, width, height, icon, autosize)
+        self.set_transparent(True)
 
         self._anim_framecount = frames
         self._anim_delay = 5
@@ -74,7 +75,6 @@ class AnimSprite(Imagebox):
 
         self.set_icon(self.image_list[0])
         self.rect = self.image.get_rect(topleft=self.get_position())
-        self.mark_dirty()
 
     def update(self, *args):
         self._anim_ticker += 1
