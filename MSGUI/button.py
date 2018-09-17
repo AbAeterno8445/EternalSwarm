@@ -1,13 +1,13 @@
 import pygame
 from .label import Label
-from .imagebox import Imagebox
+from .imageWidget import ImageWidget
 
 
 default_hovered = (200, 200, 150)
 default_pressed = (200, 200, 150)
 
 
-class Button(Label, Imagebox):
+class Button(Label, ImageWidget):
 
     """
     Clickable buttons with alternatively an image added

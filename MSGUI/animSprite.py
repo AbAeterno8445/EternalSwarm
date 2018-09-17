@@ -1,10 +1,9 @@
-from .imagebox import Imagebox
+from .imageWidget import ImageWidget
 
 
-class AnimSprite(Imagebox):
+class AnimSprite(ImageWidget):
     def __init__(self, x, y, width, height, icon=None, frames=1, autosize=True):
-        super(AnimSprite, self).__init__(x, y, width, height, icon, autosize)
-        self.set_transparent(True)
+        super(AnimSprite, self).__init__(x, y, width, height, icon, autosize, smooth=True)
 
         self._anim_framecount = frames
         self._anim_delay = 5
@@ -12,6 +11,45 @@ class AnimSprite(Imagebox):
         self._anim_order = []
         self._anim_order_pos = 0
 
+        self._update_animation_set(self._icon)
+
+    def _update_animation_set(self, new_icon=None):
+        """
+        Updates the icon sheet for the sprite
+        parameters:     pygame.Surface new icon sheet, leave as none to update current loaded sheet
+        return values:  -
+        """
+        if new_icon:
+            og_texture = new_icon
+            self._anim_order = []
+            self.image_list = []
+            frame_height = og_texture.get_height() / self._anim_framecount
+            frame_width = og_texture.get_width()
+            for i in range(self._anim_framecount):
+                tmp_frame = og_texture.subsurface((0, i * frame_height, frame_width, frame_height))
+                self.set_icon(tmp_frame)
+                self.image_list.append(self._icon)
+        else:
+            for i in range(len(self.image_list)):
+                self.set_icon(self.image_list[i])
+                self.image_list[i] = self._icon
+
+        if not self._anim_order:
+            new_anim_order = []
+            for i in range(self._anim_framecount):
+                new_anim_order.append(i)
+            self.set_animation_order(new_anim_order)
+
+    def set_icon_autosize(self, autosize):
+        super(AnimSprite, self).set_icon_autosize(autosize)
+        self._update_animation_set()
+
+    def set_icon_autoscale(self, autoscale):
+        super(AnimSprite, self).set_icon_autoscale(autoscale)
+        self._update_animation_set()
+
+    def set_size(self, width, height):
+        super(AnimSprite, self).set_size(width, height)
         self._update_animation_set()
 
     def set_animation_order(self, order_list):
@@ -21,6 +59,7 @@ class AnimSprite(Imagebox):
         return values:  -
         """
         self._anim_order = order_list
+        self._anim_order_pos = 0
 
     def set_animation_delay(self, delay):
         """
@@ -30,56 +69,21 @@ class AnimSprite(Imagebox):
         """
         self._anim_delay = delay
 
-    def set_animation_data(self, frames, anim_delay=5, anim_order=None):
+    def set_icon_animated(self, icon, frames, anim_delay=5, anim_order=None):
         """
-        Set animation data for the sprite -> frame count, delay between frames and animation order
-        parameters:     int frame count
-                        int frame delay
-                        list of ints animation order
+        Set animation info and icon for the sprite
+        parameters:     list of ints for each frame ID in order
         return values:  -
         """
         self._anim_framecount = frames
         self.set_animation_delay(anim_delay)
-        if anim_order:
-            self.set_animation_order(anim_order)
-        else:
-            self.set_animation_order([0])
-        self._update_animation_set()
-
-    def set_icon_animated(self, icon, frames, anim_delay=5, anim_order=None):
-        """
-        Set animation info for the sprite
-        parameters:     list of ints for each frame ID in order
-        return values:  -
-        """
-        self.set_icon(icon)
-        self.set_animation_data(frames, anim_delay, anim_order)
-
-    def _update_animation_set(self):
-        """
-        Updates the icon sheet for the sprite
-        parameters:     -
-        return values:  -
-        """
-        self.image_list = []
-        og_texture = self.get_icon()
-        frame_height = og_texture.get_height() / self._anim_framecount
-        frame_width = og_texture.get_width()
-        for i in range(self._anim_framecount):
-            tmp_frame = og_texture.subsurface((0, i * frame_height, frame_width, frame_height))
-            self.image_list.append(tmp_frame)
-
-        if not self._anim_order:
-            for i in range(self._anim_framecount):
-                self._anim_order.append(i)
-
-        self.set_icon(self.image_list[0])
-        self.rect = self.image.get_rect(topleft=self.get_position())
+        self.set_animation_order(anim_order)
+        self._update_animation_set(icon)
 
     def update(self, *args):
         self._anim_ticker += 1
         if self._anim_ticker >= self._anim_delay:
-            self.set_icon(self.image_list[self._anim_order[self._anim_order_pos]])
+            self._icon = self.image_list[self._anim_order[self._anim_order_pos]]
             self._anim_order_pos += 1
             if self._anim_order_pos >= len(self._anim_order):
                 self._anim_order_pos = 0
