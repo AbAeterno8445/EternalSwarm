@@ -58,6 +58,6 @@ class GUICanvas(object):
         upd_rects += self.sprite_list.draw(self.surface)
         tgt_surface.blit(self.surface, (self.x, self.y))
 
-        for i, rect in enumerate(upd_rects):
-            upd_rects[i] = upd_rects[i].move(self.x, self.y)
+        for rect in upd_rects:
+            rect.move_ip(self.x, self.y)
         return upd_rects

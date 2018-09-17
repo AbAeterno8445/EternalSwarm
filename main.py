@@ -53,6 +53,8 @@ def main():
     ii = 0
     while loop:
         ii += 1
+        if ii > 1000:
+            ii = 0
         caught_events = pygame.event.get()
         for event in caught_events:
             if event.type == pygame.QUIT:

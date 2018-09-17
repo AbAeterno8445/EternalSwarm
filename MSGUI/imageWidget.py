@@ -1,5 +1,4 @@
 import pygame
-import math
 from .widget import Widget
 
 
@@ -101,12 +100,15 @@ class ImageWidget(Widget):
         """
         surface = super(ImageWidget, self)._get_appearance(*args)
 
+        centerpos_x = abs(self._bounds.width / 2 - self._icon.get_width() / 2)
+        centerpos_y = abs(self._bounds.height / 2 - self._icon.get_height() / 2)
+
         for tries in range(2):
             try:
                 if self._smooth:
-                    surface.blit(pygame.transform.smoothscale(self._icon, self._icon.get_size()), (0, 0))
+                    surface.blit(pygame.transform.smoothscale(self._icon, self._icon.get_size()), (centerpos_x, centerpos_y))
                 else:
-                    surface.blit(pygame.transform.scale(self._icon, self._icon.get_size()), (0, 0))
+                    surface.blit(pygame.transform.scale(self._icon, self._icon.get_size()), (centerpos_x, centerpos_y))
 
                 break
             except:
