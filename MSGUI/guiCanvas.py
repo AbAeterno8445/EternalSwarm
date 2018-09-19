@@ -1,5 +1,5 @@
 import pygame
-from .widget import Widget
+from .imageWidget import ImageWidget
 
 
 default_backg_col = (0, 0, 0)
@@ -16,7 +16,8 @@ class GUICanvas(object):
         self.focus_hovered = False
         self.focus_clicked = False
 
-        self.backg_widget = Widget(0, 0, width, height)
+        self.backg_widget = ImageWidget(0, 0, width, height)
+        self.backg_widget.set_transparent(False)
         self.backg_widget.set_background(bgcolor)
 
         self.widgets_dict = {"background": self.backg_widget}
