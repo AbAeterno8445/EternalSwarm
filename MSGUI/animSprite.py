@@ -15,6 +15,7 @@ class AnimSprite(ImageWidget):
         self._anim_order_pos = 0
 
         self._update_animation_set(self._icon)
+        self.set_icon_autoscale(True)
 
     def _update_animation_set(self, new_icon=None):
         """

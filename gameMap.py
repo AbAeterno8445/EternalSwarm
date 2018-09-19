@@ -1,11 +1,11 @@
 import pygame
 import MSGUI
-from TileTest.mapTile import MapTile
+from mapTile import MapTile
 from random import randint
 
 
 class GameMap(MSGUI.Widget):
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y, width, height, regions=None):
         widget_width = 16 + width * 48
         widget_height = 16 + height * 48
         super(GameMap, self).__init__(x, y, widget_width, widget_height)
@@ -15,29 +15,43 @@ class GameMap(MSGUI.Widget):
         self.height = height
 
         self.tilelist = pygame.sprite.LayeredDirty()
+        self.tilemap_surface = pygame.Surface(self.get_size()).convert()
+        self.tilemap_surface.set_colorkey((0, 0, 0))
 
         self.map_data = []
+        self.regions = []
+        if regions:
+            self.add_region_multiple(regions)
 
-        for i in range(height):
+    # Add a region to the map, rarity is 0-100 chance to spawn
+    def add_region(self, name, reg_image, gen=True):
+        self.regions.append(MapRegion(name, reg_image))
+        if gen:
+            self.generate_tilemap()
+
+    # Add multiple regions, regions is a list of tuples (name, img, rarity)
+    def add_region_multiple(self, regions):
+        for reg in regions:
+            self.add_region(*reg, gen=False)
+        self.generate_tilemap()
+
+    def generate_tilemap(self):
+        self.map_data.clear()
+
+        regions_len = len(self.regions) - 1
+        for i in range(self.height):
             self.map_data.append([])
-            for j in range(width):
-                self.map_data[i].append(randint(0, 1))
-
-        self.tilemap_surface = pygame.Surface(self.get_size()).convert()
+            for j in range(self.width):
+                self.map_data[i].append(randint(0, regions_len))
         self.update_tilemap()
 
     def update_tilemap(self):
-        tile_0 = pygame.image.load("assets/tiletest/tile_grass.png")
-        tile_1 = pygame.image.load("assets/tiletest/tile_hallow.png")
         for i in range(self.height):
             for j in range(self.width):
                 cur_tile_id = self.map_data[i][j]
                 tile_x = j * 48
                 tile_y = i * 48
-                if cur_tile_id == 0:
-                    tmp_tile = MapTile(tile_x, tile_y, 64, 64, tile_0)
-                else:
-                    tmp_tile = MapTile(tile_x, tile_y, 64, 64, tile_1)
+                tmp_tile = MapTile(tile_x, tile_y, 64, 64, self.regions[cur_tile_id].img)
 
                 neighbor_top = False
                 if i > 0:
@@ -136,6 +150,10 @@ class GameMap(MSGUI.Widget):
         self.tilelist.draw(self.tilemap_surface)
 
     def _get_appearance(self, *args):
-        surface = super(GameMap, self)._get_appearance(*args)
-        surface.blit(self.tilemap_surface, (0, 0))
-        return surface
+        return self.tilemap_surface
+
+
+class MapRegion(object):
+    def __init__(self, name, img):
+        self.name = name
+        self.img = img
