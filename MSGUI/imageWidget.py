@@ -23,7 +23,7 @@ class ImageWidget(Widget):
         self._autosize = autosize
         self._autoscale = False
         if icon is None:
-            icon = pygame.Surface((width, height), pygame.SRCALPHA, 32)
+            icon = pygame.Surface((width, height), pygame.SRCALPHA).convert()
         elif type(icon) is str:
             icon = pygame.image.load(icon)
         self.set_icon(icon)

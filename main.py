@@ -17,23 +17,13 @@ def main():
     canvas_list = (canvas_materials, canvas_main)
 
     loop = True
-    ii = 0
-    ij = False
     while loop:
-        ii += 1
-        if ii % 10 == 0 and not ij:
-            tmp_size = canvas_main.get_widget("spritetest").get_size()
-            canvas_main.get_widget("spritetest").set_bounds_size(tmp_size[0] + 1, tmp_size[1] + 1)
-        if ii > 1000:
-            ii = 0
-            ij = True
         caught_events = pygame.event.get()
         for event in caught_events:
             if event.type == pygame.QUIT:
                 loop = False
                 break
 
-        canvas_main.get_widget("labeltest").set_text(str(ii))
         upd_rects = []
         for canvas in canvas_list:
             canvas.handle_event(caught_events)

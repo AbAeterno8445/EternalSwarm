@@ -33,7 +33,6 @@ class Widget(pygame.sprite.DirtySprite):
         self._focus = False
         self._active = True
         self._background = default_background
-        self._default_background = self._background
         self._background_transp = False
 
     def mark_dirty(self):
@@ -240,7 +239,6 @@ class Widget(pygame.sprite.DirtySprite):
         return values:  Widget Widget returned for convenience
         """
         self._background = color
-        self._default_background = color
         self.mark_dirty()
         return self
 

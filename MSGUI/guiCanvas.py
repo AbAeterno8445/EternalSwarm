@@ -32,8 +32,8 @@ class GUICanvas(object):
     def set_background(self, color):
         self.backg_widget.set_background(color)
         for widget in self.widgets_dict:
-            if widget.is_transparent():
-                widget.set_background(color)
+            if self.widgets_dict[widget].is_transparent():
+                self.widgets_dict[widget].set_background(color)
 
     # Element can be any pygame.sprite.DirtySprite object
     def add_element(self, element, layer=0, widget=None):
@@ -52,7 +52,7 @@ class GUICanvas(object):
         if element in self.sprite_list:
             self.sprite_list.remove(element)
         if element in self.widgets_dict:
-            self.widgets_dict.remove(element)
+            self.widgets_dict.pop(element)
 
     def get_widget(self, widget_name):
         try:
