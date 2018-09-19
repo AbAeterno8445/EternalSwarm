@@ -24,7 +24,7 @@ class Widget(pygame.sprite.DirtySprite):
                         int height of the Widget
         return values:  -
         """
-        super(Widget, self).__init__()
+        super().__init__()
         self.image = pygame.Surface((width, height), pygame.SRCALPHA, 32)
         self._bounds = self.image.get_rect().move(x, y)
         self.rect = self._bounds.copy()

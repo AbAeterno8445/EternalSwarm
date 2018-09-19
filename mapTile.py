@@ -30,7 +30,7 @@ class MapTile(MSGUI.ImageWidget):
             "corner_bottomleft", "edge_bottom", "corner_bottomright"
         ]
 
-        super(MapTile, self).__init__(x, y, width, height, icon)
+        super().__init__(x, y, width, height, icon)
 
     def _get_sheet_tiles(self, *args):
         tile_surfaces = []
@@ -43,7 +43,7 @@ class MapTile(MSGUI.ImageWidget):
 
     # Receives tile sheet as icon
     def set_icon(self, icon):
-        super(MapTile, self).set_icon(icon)
+        super().set_icon(icon)
 
         # Load necessary tiles from the provided sheet
         self.tile_variations["edge_left"] = self._get_sheet_tiles(0, 13, 26)
@@ -64,7 +64,7 @@ class MapTile(MSGUI.ImageWidget):
         self.tile_distrib = distrib
 
     def _get_appearance(self, *args):
-        icon_surface = super(MapTile, self)._get_appearance(*args)
+        icon_surface = super()._get_appearance(*args)
         icon_surface.set_colorkey((0, 0, 0))
 
         for i in range(9):

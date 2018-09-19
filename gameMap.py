@@ -8,7 +8,7 @@ class GameMap(MSGUI.Widget):
     def __init__(self, x, y, width, height, regions=None):
         widget_width = 16 + width * 48
         widget_height = 16 + height * 48
-        super(GameMap, self).__init__(x, y, widget_width, widget_height)
+        super().__init__(x, y, widget_width, widget_height)
         self.set_transparent(True)
 
         self.width = width

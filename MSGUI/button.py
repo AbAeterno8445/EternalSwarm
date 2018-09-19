@@ -25,7 +25,7 @@ class Button(Label, ImageWidget):
                         function callback function to be called when Button is pressed
                 return values:  -
                 """
-        super(Button, self).__init__(x, y, width, height, font, text)
+        super().__init__(x, y, width, height, font, text)
         self._callback = callback
         self._state = 0
         self._hoveredcolor = pygame.Color(*default_hovered)
@@ -119,7 +119,7 @@ class Button(Label, ImageWidget):
         parameters: tuple arguments for the update (first argument should be an instance pygame.event.Event)
         return values: -
         """
-        super(Button, self).handle_event(event)
+        super().handle_event(event)
 
         if event.type == pygame.MOUSEBUTTONUP:
             if self.rect.collidepoint(event.pos):
@@ -152,7 +152,7 @@ class Button(Label, ImageWidget):
         parameters:     tuple arguments for the update (first argument should be an instance pygame.event.Event)
         return values:  pygame.Surface the underlying Widget's appearance
         """
-        surface = super(Button, self)._get_appearance(*args)
+        surface = super()._get_appearance(*args)
         # Button hover/press overlay
         if self._state:
             overlay = pygame.Surface(surface.get_size()).convert()

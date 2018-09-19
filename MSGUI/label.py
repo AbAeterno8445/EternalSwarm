@@ -14,7 +14,7 @@ class Label(TextWidget):
                         string text of the TextWidget
         return values:  -
         """
-        super(Label, self).__init__(x, y, width, height, font, text)
+        super().__init__(x, y, width, height, font, text)
         self._text = text
         self._font = font
 
@@ -54,10 +54,10 @@ class Label(TextWidget):
 
                 self.set_bounds_size(res_hor, res_ver)
 
-            surface = super(Label, self)._get_appearance(*args)
+            surface = super()._get_appearance(*args)
 
             center = surface.get_rect().center
             coords = (center[0] - size[0] / 2, center[1] - size[1] / 2)
             surface.blit(self._font.render(str(self._text), pygame.SRCALPHA, self._font_color, self._background), coords)
             return surface
-        return super(Label, self)._get_appearance(*args)
+        return super()._get_appearance(*args)

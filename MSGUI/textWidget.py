@@ -20,7 +20,7 @@ class TextWidget(Widget):
                         pygame.font.Font font of the TextWidget
         return values:  -
         """
-        super(TextWidget, self).__init__(x, y, width, height)
+        super().__init__(x, y, width, height)
         self._text = text
         self._font = font
         self._font_color = default_font_color

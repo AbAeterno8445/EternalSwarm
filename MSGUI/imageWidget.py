@@ -17,13 +17,13 @@ class ImageWidget(Widget):
                         pygame.Surface icon/surface of the ImageWidget
         return values:  -
         """
-        super(ImageWidget, self).__init__(x, y, width, height)
+        super().__init__(x, y, width, height)
         self.set_transparent(True)
         self._smooth = smooth
         self._autosize = autosize
         self._autoscale = False
         if icon is None:
-            icon = super(ImageWidget, self)._get_appearance()
+            icon = super()._get_appearance()
         elif type(icon) is str:
             icon = pygame.image.load(icon)
         self.set_icon(icon)
@@ -71,9 +71,9 @@ class ImageWidget(Widget):
         return values:  ImageWidget ImageWidget returned for convenience
         """
         if isinstance(icon, pygame.Surface):
-            self._icon = icon.convert_alpha(super(ImageWidget, self)._get_appearance())
+            self._icon = icon.convert_alpha(super()._get_appearance())
         elif type(icon) is str:
-            self._icon = pygame.image.load(icon).convert_alpha(super(ImageWidget, self)._get_appearance())
+            self._icon = pygame.image.load(icon).convert_alpha(super()._get_appearance())
 
         if self._autosize:
             self._apply_autosize()
@@ -98,7 +98,7 @@ class ImageWidget(Widget):
         parameters:     tuple arguments for the update (first argument should be an instance pygame.event.Event)
         return values:  pygame.Surface the underlying Widget's appearance
         """
-        surface = super(ImageWidget, self)._get_appearance(*args)
+        surface = super()._get_appearance(*args)
 
         centerpos_x = abs(self._bounds.width / 2 - self._icon.get_width() / 2)
         centerpos_y = abs(self._bounds.height / 2 - self._icon.get_height() / 2)

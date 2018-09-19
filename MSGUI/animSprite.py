@@ -3,7 +3,7 @@ from .imageWidget import ImageWidget
 
 class AnimSprite(ImageWidget):
     def __init__(self, x, y, width, height, icon=None, frames=1, autosize=True):
-        super(AnimSprite, self).__init__(x, y, width, height, icon, autosize, smooth=True)
+        super().__init__(x, y, width, height, icon, autosize, smooth=True)
 
         self.image_list = []
         self.image_list_modified = []
@@ -46,15 +46,15 @@ class AnimSprite(ImageWidget):
             self.set_animation_order(new_anim_order)
 
     def set_icon_autosize(self, autosize):
-        super(AnimSprite, self).set_icon_autosize(autosize)
+        super().set_icon_autosize(autosize)
         self._update_animation_set()
 
     def set_icon_autoscale(self, autoscale):
-        super(AnimSprite, self).set_icon_autoscale(autoscale)
+        super().set_icon_autoscale(autoscale)
         self._update_animation_set()
 
     def set_bounds_size(self, width, height):
-        super(AnimSprite, self).set_bounds_size(width, height)
+        super().set_bounds_size(width, height)
         self._update_animation_set()
 
     def set_animation_order(self, order_list):
@@ -100,4 +100,4 @@ class AnimSprite(ImageWidget):
             self._anim_ticker = 0
             self.mark_dirty()
 
-        super(AnimSprite, self).update(*args)
+        super().update(*args)
