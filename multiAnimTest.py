@@ -6,6 +6,7 @@ import math
 
 def main():
     display = pygame.display.set_mode((800, 600), DOUBLEBUF)
+    pygame.display.set_caption("MSGUI Multiple animated sprites test")
     clock = pygame.time.Clock()
 
     canvas = MSGUI.GUICanvas(0, 0, 800, 600, (0, 0, 60))
