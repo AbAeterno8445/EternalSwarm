@@ -1,5 +1,5 @@
 import pygame
-from .imageWidget import ImageWidget
+from .image_widget import ImageWidget
 
 
 default_backg_col = (0, 0, 0)
@@ -29,6 +29,15 @@ class GUICanvas(object):
 
     def is_focused(self):
         return self.focus_clicked
+
+    def get_width(self):
+        return self.backg_widget.get_size()[0]
+
+    def get_height(self):
+        return self.backg_widget.get_size()[1]
+
+    def get_size(self):
+        return self.backg_widget.get_size()
 
     def set_background(self, color):
         self.backg_widget.set_background(color)

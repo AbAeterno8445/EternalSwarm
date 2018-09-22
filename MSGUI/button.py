@@ -1,6 +1,6 @@
 import pygame
 from .label import Label
-from .imageWidget import ImageWidget
+from .image_widget import ImageWidget
 
 
 default_hovered = (200, 200, 150)

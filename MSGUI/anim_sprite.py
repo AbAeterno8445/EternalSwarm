@@ -1,4 +1,4 @@
-from .imageWidget import ImageWidget
+from .image_widget import ImageWidget
 
 
 class AnimSprite(ImageWidget):

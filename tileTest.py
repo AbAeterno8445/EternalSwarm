@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import DOUBLEBUF
 import MSGUI
-from gameMap import GameMap
+from game_map import GameMap
 
 
 def main():

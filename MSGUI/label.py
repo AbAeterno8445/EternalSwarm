@@ -1,5 +1,5 @@
 import pygame
-from .textWidget import TextWidget
+from .text_widget import TextWidget
 
 
 class Label(TextWidget):
@@ -33,6 +33,20 @@ class Label(TextWidget):
         self._resize_hor = res_hor
         self._resize_ver = res_ver
         self._padding = padding
+        self._apply_text_resize()
+
+    def _apply_text_resize(self):
+        if self._resize_hor or self._resize_ver:
+            size = self._font.size(self._text)
+            res_hor = self._bounds.width
+            if self._resize_hor:
+                res_hor = size[0] + self._padding * 2
+
+            res_ver = self._bounds.height
+            if self._resize_ver:
+                res_ver = size[1] + self._padding * 2
+
+            self.set_bounds_size(res_hor, res_ver)
 
     def _get_appearance(self, *args):
         """
@@ -42,18 +56,9 @@ class Label(TextWidget):
         return values:  pygame.Surface the underlying Widget's appearance
         """
         if self._text:
+            self._apply_text_resize()
+
             size = self._font.size(self._text)
-            if self._resize_hor or self._resize_ver:
-                res_hor = self._bounds.width
-                if self._resize_hor:
-                    res_hor = size[0] + self._padding * 2
-
-                res_ver = self._bounds.height
-                if self._resize_ver:
-                    res_ver = size[1] + self._padding * 2
-
-                self.set_bounds_size(res_hor, res_ver)
-
             surface = super()._get_appearance(*args)
 
             center = surface.get_rect().center

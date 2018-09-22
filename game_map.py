@@ -1,6 +1,6 @@
 import pygame
 import MSGUI
-from mapTile import MapTile
+from maptile import MapTile
 from random import randint
 
 

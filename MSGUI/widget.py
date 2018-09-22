@@ -173,6 +173,12 @@ class Widget(pygame.sprite.DirtySprite):
         self.set_bounds((*self.get_position(), width, height))
         self.mark_dirty()
 
+    def get_width(self):
+        return self._bounds.width
+
+    def get_height(self):
+        return self._bounds.height
+
     def get_size(self):
         """
         Return the Widget's bounds size

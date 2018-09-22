@@ -45,6 +45,8 @@ class ImageWidget(Widget):
         return values:  -
         """
         self._autoscale = autoscale
+        if self._icon:
+            self.set_icon(self._icon)
 
     def set_icon_autosize(self, autosize):
         """
@@ -53,6 +55,8 @@ class ImageWidget(Widget):
         return values:  -
         """
         self._autosize = autosize
+        if self._icon:
+            self.set_icon(self._icon)
 
     def _apply_autosize(self):
         self.set_bounds(self._icon.get_rect(topleft=self._bounds.topleft))
