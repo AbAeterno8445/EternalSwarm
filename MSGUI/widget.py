@@ -302,7 +302,9 @@ class Widget(pygame.sprite.DirtySprite):
         return values:  pygame.Surface the underlying Widget's appearance
         """
         surface = pygame.Surface(self._bounds.size, pygame.SRCALPHA).convert()
+        backg_color = pygame.Color(*self._background)
         if self._background_transp:
-            surface.set_colorkey(self._background)
-        surface.fill(self._background)
+            surface.set_colorkey(backg_color)
+        surface.fill(backg_color)
+        surface.set_alpha(backg_color.a)
         return surface
