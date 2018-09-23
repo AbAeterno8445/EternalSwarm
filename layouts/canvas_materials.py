@@ -5,7 +5,7 @@ import MSGUI
 def canvas_materials_create(canvas_data, player_data):
     canvas_materials = MSGUI.GUICanvas(*canvas_data)
     canvas_materials.backg_widget.set_background((40, 0, 40))
-    canvas_materials.backg_widget.set_border(True, (150, 0, 0))
+    canvas_materials.backg_widget.set_border(True, (110, 40, 110))
 
     font_18 = pygame.font.Font("assets/Dosis.otf", 18)
     font_12 = pygame.font.Font("assets/Dosis.otf", 12)

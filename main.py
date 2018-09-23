@@ -22,7 +22,7 @@ def main():
 
     tmp_x = cv_materials.get_width() + 32
     tmp_width = disp_w - tmp_x - 16
-    cv_main = layouts.canvas_main_create((tmp_x, 16, tmp_width, 500))
+    cv_main = layouts.CanvasMain(tmp_x, 16, tmp_width, 500)
 
     tmp_y = cv_main.get_height() + 24
     cv_shortcuts = layouts.canvas_shortcuts_create((tmp_x, tmp_y, tmp_width, 46))
