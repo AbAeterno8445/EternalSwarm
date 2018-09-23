@@ -18,14 +18,14 @@ def main():
     player_data.ccps = 3453
 
     # Init all canvas
-    cv_materials = layouts.canvas_materials_create((16, 16, 200, 500), player_data)
+    cv_materials = layouts.CanvasMaterials(16, 16, 200, 500)
 
     tmp_x = cv_materials.get_width() + 32
     tmp_width = disp_w - tmp_x - 16
     cv_main = layouts.CanvasMain(tmp_x, 16, tmp_width, 500)
 
     tmp_y = cv_main.get_height() + 24
-    cv_shortcuts = layouts.canvas_shortcuts_create((tmp_x, tmp_y, tmp_width, 46))
+    cv_shortcuts = layouts.CanvasShortcuts(tmp_x, tmp_y, tmp_width, 46)
     cv_list = (cv_materials, cv_main, cv_shortcuts)
 
     frame = 0
@@ -41,9 +41,7 @@ def main():
 
         if frame % 5 == 0:
             player_data.ccps_tick(12)
-            # Update crystal amount text / ccps
-            cv_materials.get_widget("crystal_amt_text").set_text(player_data.get_carbcrystals_str())
-            cv_materials.get_widget("ccps_text").set_text(player_data.get_ccps_str() + " CCps")
+            cv_materials.update_data(player_data)
 
         upd_rects = []
         for canvas in cv_list:

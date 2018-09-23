@@ -11,19 +11,19 @@ class CanvasMain(MSGUI.GUICanvas):
 
         self.gamemap = GameMap(0, 0, 16, 16)
         self.gamemap.load_regions_json("assets/map_regions")
-        self.add_element(self.gamemap, widget="gamemap")
+        self.add_element(self.gamemap)
 
         self.camera = MapCamera(*self.gamemap.get_position())
         self.camera_drag = False
 
         self.mouse_hover = MSGUI.ImageWidget(0, 0, 48, 48)
         self.mouse_hover.set_border(True, (255, 255, 255))
-        self.add_element(self.mouse_hover, widget="mouse_hover")
+        self.add_element(self.mouse_hover)
 
         self.label_tileinfo = MSGUI.Label(8, 8, 200, 22, pygame.font.Font("assets/Dosis.otf", 18))
         self.label_tileinfo.set_background(self.backg_widget.get_background())
         self.label_tileinfo.set_border(True, self.backg_widget.get_border_color())
-        self.add_element(self.label_tileinfo, widget="label_tileinfo")
+        self.add_element(self.label_tileinfo)
 
     def handle_event(self, event_list):
         super().handle_event(event_list)

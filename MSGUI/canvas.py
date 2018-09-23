@@ -1,5 +1,6 @@
 import pygame
 from .image_widget import ImageWidget
+from .widget import Widget
 
 
 default_backg_col = (0, 0, 0)
@@ -20,7 +21,7 @@ class GUICanvas(object):
         self.backg_widget.set_transparent(False)
         self.backg_widget.set_background(bgcolor)
 
-        self.widgets_dict = {"background": self.backg_widget}
+        self.widgets_list = []
         self.sprite_list = pygame.sprite.LayeredDirty(self.backg_widget)
         self.sprite_list.change_layer(self.backg_widget, -1)
 
@@ -41,34 +42,26 @@ class GUICanvas(object):
 
     def set_background(self, color):
         self.backg_widget.set_background(color)
-        for widget in self.widgets_dict:
-            if self.widgets_dict[widget].is_transparent():
-                self.widgets_dict[widget].set_background(color)
+        for widget in self.widgets_list:
+            if widget.is_transparent():
+                widget.set_background(color)
 
     # Element can be any pygame.sprite.DirtySprite object
-    def add_element(self, element, layer=0, widget=None):
-        if widget and widget in self.widgets_dict:
-            raise Exception("Widget with that name already exists! (%s)" % widget)
-
+    # Objects inherited from Widget class get event handling
+    def add_element(self, element, layer=0):
         if element not in self.sprite_list:
             self.sprite_list.add(element)
             self.sprite_list.change_layer(element, layer)
-            if widget:
+            if isinstance(element, Widget):
+                self.widgets_list.append(element)
                 if element.is_transparent():
                     element.set_background(self.backg_widget.get_background())
-                self.widgets_dict[widget] = element
 
     def remove_element(self, element):
         if element in self.sprite_list:
             self.sprite_list.remove(element)
-        if element in self.widgets_dict:
-            self.widgets_dict.pop(element)
-
-    def get_widget(self, widget_name):
-        try:
-            return self.widgets_dict[widget_name]
-        except KeyError:
-            return None
+        if element in self.widgets_list:
+            self.widgets_list.remove(element)
 
     def handle_event(self, event_list):
         for event in event_list:
@@ -88,8 +81,8 @@ class GUICanvas(object):
                     else:
                         self.focus_clicked = False
 
-            for widget in self.widgets_dict:
-                self.widgets_dict[widget].handle_event(event)
+            for widget in self.widgets_list:
+                widget.handle_event(event)
 
     def draw(self, tgt_surface):
         upd_rects = []
