@@ -10,7 +10,7 @@ class CanvasTerrain(MSGUI.GUICanvas):
 
         self.backg_widget.set_border(True, (0, 150, 150))
 
-        self.gamemap = GameMap(0, 0, 16, 16)
+        self.gamemap = GameMap(0, 0, 24, 24)
         self.gamemap.load_regions_json("assets/map_regions.json")
         self.add_element(self.gamemap)
 
