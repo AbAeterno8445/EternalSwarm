@@ -1,5 +1,6 @@
 import pygame
 import json
+import math
 import MSGUI
 from maptile import MapTile
 from random import randint
@@ -19,7 +20,7 @@ class GameMap(MSGUI.Widget):
         self.tilemap_surface = pygame.Surface(self.get_size()).convert()
         self.tilemap_surface.set_colorkey((0, 0, 0))
 
-        self.spawn_point = (0, 0)
+        self.spawn_point = (math.floor((width + randint(0, 1)) / 2), math.floor((height + randint(0, 1)) / 2))
         self.map_data = []  # 2d list of ints - each int is the regions list index # for that tile
         self.regions = []
         if regions_json:
@@ -33,7 +34,7 @@ class GameMap(MSGUI.Widget):
             tmp_img = pygame.image.load("assets/regions/" + reg["img_path"])
             tmp_region = MapRegion(reg["name"], tmp_img)
 
-            region_attr = ["spawn_dist", "max_size", "decor", "decor_density", "freq"]
+            region_attr = ["spawn_dist", "max_size", "decor", "decor_density", "freq", "expansion"]
             for attr in region_attr:
                 if attr in reg:
                     if attr == "decor":  # Preemptively load decor images
@@ -58,7 +59,7 @@ class GameMap(MSGUI.Widget):
             return False
 
         created = 0
-        create_chance = 33
+        create_chance = max(5, region.expansion)
         created_tiles = [(start_x, start_y)]
         closed_tiles = []
 
@@ -248,3 +249,4 @@ class MapRegion(object):
         self.decor = []
         self.decor_density = 2
         self.freq = 100
+        self.expansion = 33

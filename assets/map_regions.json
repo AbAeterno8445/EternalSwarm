@@ -10,6 +10,7 @@
     "decor": ["tree1.png", "tree2.png"],
     "decor_density": 1,
     "max_size": 8,
-    "freq": 4
+    "freq": 5,
+    "expansion": 50
   }
 ]
