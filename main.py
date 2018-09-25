@@ -53,7 +53,7 @@ def main():
 
         # Shortcuts canvas - switch main canvas
         sel_shortcut = cv_shortcuts.get_sel_shortcut()
-        if sel_shortcut:
+        if sel_shortcut and not sel_shortcut == current_main_canvas:
             current_main_canvas = sel_shortcut
             cv_main[current_main_canvas].backg_widget.mark_dirty()  # Update whole canvas on switch
 
