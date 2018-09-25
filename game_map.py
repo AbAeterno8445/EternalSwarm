@@ -33,7 +33,7 @@ class GameMap(MSGUI.Widget):
             tmp_img = pygame.image.load("assets/regions/" + reg["img_path"])
             tmp_region = MapRegion(reg["name"], tmp_img)
 
-            region_attr = ["spawn_dist", "max_size", "decor", "freq"]
+            region_attr = ["spawn_dist", "max_size", "decor", "decor_density", "freq"]
             for attr in region_attr:
                 if attr in reg:
                     if attr == "decor":  # Preemptively load decor images
@@ -100,15 +100,6 @@ class GameMap(MSGUI.Widget):
             for j in range(self.width):
                 self.map_data[i].append(0)
 
-        # if len(self.regions) > 1:
-        #     for reg in self.regions[1:]:
-        #         for i in range(1, randint(3, 5)):
-        #             while True:
-        #                 rand_x = randint(0, self.width - 1)
-        #                 rand_y = randint(0, self.height - 1)
-        #                 if self.get_tile_distance(self.spawn_point, (rand_x, rand_y)) > reg.spawn_dist:
-        #                     break
-        #             self._generate_region_at(reg, rand_x, rand_y)
         if len(self.regions) > 1:
             for i in range(self.height):
                 for j in range(self.width):
@@ -230,7 +221,7 @@ class GameMap(MSGUI.Widget):
 
                 # Decor images
                 if len(cur_region.decor) > 0:
-                    for k in range(randint(3, 7)):
+                    for k in range(randint(1 + cur_region.decor_density, 4 + cur_region.decor_density)):
                         img = cur_region.decor[randint(0, len(cur_region.decor) - 1)]
 
                         tmp_decor = pygame.sprite.DirtySprite(self.tilelist)
@@ -255,4 +246,5 @@ class MapRegion(object):
         self.spawn_dist = 0  # Distance from spawnpoint, used in generation
         self.max_size = 1
         self.decor = []
+        self.decor_density = 2
         self.freq = 100

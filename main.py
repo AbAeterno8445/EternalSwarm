@@ -15,18 +15,26 @@ def main():
 
     # Player data holder
     player_data = PlayerData("Player")
-    player_data.ccps = 3453
+    player_data.ccps = 34535
 
     # Init all canvas
-    cv_materials = layouts.CanvasMaterials(16, 16, 200, 500)
+    cv_materials = layouts.CanvasMaterials(16, 16, 200, disp_h - 100)
 
+    # Main canvas variations and dictionary
     tmp_x = cv_materials.get_width() + 32
     tmp_width = disp_w - tmp_x - 16
-    cv_main = layouts.CanvasMain(tmp_x, 16, tmp_width, 500)
+    cv_terrain = layouts.CanvasTerrain(tmp_x, 16, tmp_width, disp_h - 100)
+    cv_units = layouts.CanvasUnits(tmp_x, 16, *cv_terrain.get_size())
 
-    tmp_y = cv_main.get_height() + 24
+    current_main_canvas = "terrain"
+    cv_main = {
+        "terrain": cv_terrain,
+        "units": cv_units
+    }
+
+    tmp_y = cv_terrain.get_height() + 24
     cv_shortcuts = layouts.CanvasShortcuts(tmp_x, tmp_y, tmp_width, 46)
-    cv_list = (cv_materials, cv_main, cv_shortcuts)
+    cv_list = (cv_materials, cv_shortcuts)
 
     frame = 0
     loop = True
@@ -43,10 +51,21 @@ def main():
             player_data.ccps_tick(12)
             cv_materials.update_data(player_data)
 
+        # Shortcuts canvas - switch main canvas
+        sel_shortcut = cv_shortcuts.get_sel_shortcut()
+        if sel_shortcut:
+            current_main_canvas = sel_shortcut
+            cv_main[current_main_canvas].backg_widget.mark_dirty()  # Update whole canvas on switch
+
         upd_rects = []
+        # Draw main canvas
+        cv_main[current_main_canvas].handle_event(caught_events)
+        upd_rects += cv_main[current_main_canvas].draw(display)
+        # Draw other canvases
         for canvas in cv_list:
             canvas.handle_event(caught_events)
             upd_rects += canvas.draw(display)
+
         pygame.display.update(upd_rects)
         clock.tick(60)
 

@@ -4,13 +4,14 @@ import math
 from game_map import GameMap
 
 
-class CanvasMain(MSGUI.GUICanvas):
+class CanvasTerrain(MSGUI.GUICanvas):
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, (0, 110, 110))
+
         self.backg_widget.set_border(True, (0, 150, 150))
 
         self.gamemap = GameMap(0, 0, 16, 16)
-        self.gamemap.load_regions_json("assets/map_regions")
+        self.gamemap.load_regions_json("assets/map_regions.json")
         self.add_element(self.gamemap)
 
         self.camera = MapCamera(*self.gamemap.get_position())
