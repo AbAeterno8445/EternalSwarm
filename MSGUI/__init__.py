@@ -5,3 +5,4 @@ from .canvas import GUICanvas
 from .text_widget import TextWidget
 from .label import Label
 from .button import Button
+from .widget_collection import WidgetCollection

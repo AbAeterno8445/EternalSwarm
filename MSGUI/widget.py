@@ -145,6 +145,15 @@ class Widget(pygame.sprite.DirtySprite):
         """
         return self._bounds
 
+    def get_bounds_at(self, x, y):
+        """
+        Return the Widget's bounds offset by a given position
+        parameters:     int x offset
+                        int y offset
+        return values:  pygame.Rect the bounds of the Widget, with offset
+        """
+        return self._bounds.move(x, y)
+
     def set_position(self, x, y):
         """
         Set the widget's position

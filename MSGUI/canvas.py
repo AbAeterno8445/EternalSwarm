@@ -49,6 +49,11 @@ class GUICanvas(object):
     # Element can be any pygame.sprite.DirtySprite object
     # Objects inherited from Widget class get event handling
     def add_element(self, element, layer=0):
+        if type(element) is list:
+            for e in element:
+                self.add_element(e, layer)
+            return
+
         if element not in self.sprite_list:
             self.sprite_list.add(element)
             self.sprite_list.change_layer(element, layer)
