@@ -30,3 +30,7 @@ class TerrainLevelinfo(MSGUI.WidgetCollection):
         capture_button.set_hovered_color((150, 150, 150, 100))
         capture_button.set_pressed_color((100, 100, 100, 150))
         self.add_widget(capture_button, "capture_button")
+
+    def update_data(self, selected_tile, region):
+        self["region_label"].set_text(region.name)
+        self["diff_label"].set_text("Diff: " + str(selected_tile.difficulty))
