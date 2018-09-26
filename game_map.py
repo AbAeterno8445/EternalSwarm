@@ -1,6 +1,7 @@
 import pygame
 import json
 import math
+import os
 import MSGUI
 from tile_splitter import split_tile
 from random import randint
@@ -8,9 +9,8 @@ from random import randint
 
 class GameMap(MSGUI.Widget):
     def __init__(self, x, y, width, height, regions_json=None):
-        widget_width = 16 + width * 48
-        widget_height = 16 + height * 48
-        super().__init__(x, y, widget_width, widget_height)
+        super().__init__(x, y, width, height)
+        self.set_map_size(width, height)
         self.set_transparent(True)
 
         self.width = width
@@ -26,10 +26,19 @@ class GameMap(MSGUI.Widget):
         if regions_json:
             self.load_regions_json(regions_json)
 
-    def load_regions_json(self, json_path):
+    # Width, height in tiles, automatically adapts bounds size
+    def set_map_size(self, width, height):
+        self.width = width
+        self.height = height
+        widget_width = 16 + width * 48
+        widget_height = 16 + height * 48
+        super().set_bounds_size(widget_width, widget_height)
+
+    def load_regions_json(self, json_path, gen_map=True):
         with open(json_path, "r") as json_file:
             loaded_regions = json.loads(json_file.read())
 
+        self.regions.clear()
         for reg in loaded_regions:
             tmp_img = pygame.image.load("assets/regions/" + reg["img_path"])
             tmp_region = MapRegion(reg["name"], tmp_img)
@@ -44,10 +53,14 @@ class GameMap(MSGUI.Widget):
 
             self.regions.append(tmp_region)
 
-        self.generate_tilemap()
+        if gen_map:
+            self.generate_tilemap()
 
     def get_region_at(self, x, y):
         return self.regions[self.map_data[y][x].region_id]
+
+    def get_tile_at(self, x, y):
+        return self.map_data[y][x]
 
     @staticmethod
     def get_tile_distance(tile_start, tile_end):
@@ -96,14 +109,18 @@ class GameMap(MSGUI.Widget):
             return
         self.map_data.clear()
 
+        # Create tile instances
         for i in range(self.height):
             self.map_data.append([])
             for j in range(self.width):
                 tile_x = j * 48
                 tile_y = i * 48
-                tmp_tile = MapTile(tile_x, tile_y, 0)
+                tile_diff = 1 + math.floor(self.get_tile_distance(self.spawn_point, (j, i)) / 6) + randint(0, 2)
+                tmp_tile = MapTile(tile_x, tile_y, 0, tile_diff)
+
                 self.map_data[i].append(tmp_tile)
 
+        # Create regions
         if len(self.regions) > 1:
             for i in range(self.height):
                 for j in range(self.width):
@@ -111,6 +128,21 @@ class GameMap(MSGUI.Widget):
                         picked_region = randint(1, len(self.regions) - 1)
                         if randint(0, 100) < self.regions[picked_region].freq:
                             self._generate_region_at(self.regions[picked_region], j, i)
+
+        # Assign levels to tiles based on region
+        # for i in range(self.height):
+        #     for j in range(self.width):
+        #         cur_tile = self.map_data[j][i]
+        #         cur_region = self.regions[cur_tile.region_id]
+        #         level_path = "levels/" + cur_region.name.lower() + "/"
+        #         try:
+        #             levels_list = os.listdir(level_path)
+        #         except FileNotFoundError:
+        #             continue
+        #         if "regions.json" in levels_list:
+        #             levels_list.remove("regions.json")
+        #
+        #         cur_tile.level_file = level_path + levels_list[randint(0, len(levels_list) - 1)]
 
         self.update_tilemap()
 
@@ -261,3 +293,4 @@ class MapTile(object):
         self.y = y
         self.region_id = region_id
         self.difficulty = difficulty
+        self.level_file = ""
