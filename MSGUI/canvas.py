@@ -47,11 +47,12 @@ class GUICanvas(object):
                 widget.set_background(color)
 
     # Element can be any pygame.sprite.DirtySprite object
+    # Element can also be a list of tuples (element, layer)
     # Objects inherited from Widget class get event handling
     def add_element(self, element, layer=0):
         if type(element) is list:
             for e in element:
-                self.add_element(e, layer)
+                self.add_element(e[0], e[1])
             return
 
         if element not in self.sprite_list:

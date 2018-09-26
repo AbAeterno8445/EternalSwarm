@@ -129,6 +129,9 @@ class GameMap(MSGUI.Widget):
                         if randint(0, 100) < self.regions[picked_region].freq:
                             self._generate_region_at(self.regions[picked_region], j, i)
 
+        # Set spawn point as owned by player
+        self.get_tile_at(*self.spawn_point).owned = True
+
         # Assign levels to tiles based on region
         # for i in range(self.height):
         #     for j in range(self.width):
@@ -156,29 +159,42 @@ class GameMap(MSGUI.Widget):
                 tile_x = j * 48
                 tile_y = i * 48
 
+                # Regional tile neighbors
                 neighbor_top = False
+                neighbor_top_owned = False
                 if i > 0:
-                    neighbor_id = self.map_data[i - 1][j].region_id
+                    neighbor = self.map_data[i - 1][j]
+                    neighbor_id = neighbor.region_id
                     if neighbor_id == cur_tile.region_id:
                         neighbor_top = True
+                    neighbor_top_owned = neighbor.owned
 
                 neighbor_bottom = False
+                neighbor_bottom_owned = False
                 if i < self.height - 1:
-                    neighbor_id = self.map_data[i + 1][j].region_id
+                    neighbor = self.map_data[i + 1][j]
+                    neighbor_id = neighbor.region_id
                     if neighbor_id == cur_tile.region_id:
                         neighbor_bottom = True
+                    neighbor_bottom_owned = neighbor.owned
 
                 neighbor_left = False
+                neighbor_left_owned = False
                 if j > 0:
-                    neighbor_id = self.map_data[i][j - 1].region_id
+                    neighbor = self.map_data[i][j - 1]
+                    neighbor_id = neighbor.region_id
                     if neighbor_id == cur_tile.region_id:
                         neighbor_left = True
+                    neighbor_left_owned = neighbor.owned
 
                 neighbor_right = False
+                neighbor_right_owned = False
                 if j < self.width - 1:
-                    neighbor_id = self.map_data[i][j + 1].region_id
+                    neighbor = self.map_data[i][j + 1]
+                    neighbor_id = neighbor.region_id
                     if neighbor_id == cur_tile.region_id:
                         neighbor_right = True
+                    neighbor_right_owned = neighbor.owned
 
                 # Tile piece distribution based on neighbors
                 tile_distrib = []
@@ -255,11 +271,32 @@ class GameMap(MSGUI.Widget):
                 tmp_tile_sprite.rect = tmp_tile_sprite.image.get_rect(topleft=(tile_x, tile_y))
                 self.tilelist.change_layer(tmp_tile_sprite, -cur_tile.region_id)
 
+                # Owned tile overlay
+                if cur_tile.owned:
+                    tmp_owned_sprite = pygame.sprite.DirtySprite(self.tilelist)
+                    tmp_owned_sprite.image = pygame.Surface((50, 50)).convert()
+                    tmp_owned_sprite.image.set_colorkey((0, 0, 0))
+                    # Draw edges based on neighbors
+                    if not neighbor_top_owned:
+                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 255), (1, 1), (48, 1), 2)
+                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 115), (1, 1), (48, 1), 1)
+                    if not neighbor_right_owned:
+                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 255), (48, 1), (48, 48), 2)
+                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 115), (48, 1), (48, 48), 1)
+                    if not neighbor_left_owned:
+                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 255), (1, 1), (1, 48), 2)
+                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 115), (1, 1), (1, 48), 1)
+                    if not neighbor_bottom_owned:
+                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 255), (1, 48), (48, 48), 2)
+                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 115), (1, 48), (48, 48), 1)
+
+                    tmp_owned_sprite.rect = tmp_owned_sprite.image.get_rect(topleft=(tile_x + 8, tile_y + 8))
+                    self.tilelist.change_layer(tmp_owned_sprite, 10)
+
                 # Decor images
                 if len(cur_region.decor) > 0:
                     for k in range(randint(1 + cur_region.decor_density, 4 + cur_region.decor_density)):
                         img = cur_region.decor[randint(0, len(cur_region.decor) - 1)]
-
                         tmp_decor = pygame.sprite.DirtySprite(self.tilelist)
                         self.tilelist.change_layer(tmp_decor, 5)
                         tmp_decor.image = img.copy()
@@ -293,4 +330,5 @@ class MapTile(object):
         self.y = y
         self.region_id = region_id
         self.difficulty = difficulty
+        self.owned = False
         self.level_file = ""

@@ -17,7 +17,10 @@ class CanvasTerrain(MSGUI.GUICanvas):
         self.gamemap = GameMap(0, 0, 32, 32, "assets/map_regions.json")
         self.add_element(self.gamemap)
 
-        self.camera = MapCamera(*self.gamemap.get_position())
+        sp_x, sp_y = self.gamemap.spawn_point
+        cam_x = -sp_x * 48 + math.floor(self.get_width() / 2) - 24
+        cam_y = -sp_y * 48 + math.floor(self.get_height() / 2) - 24
+        self.camera = MapCamera(cam_x, cam_y)
         self.camera_drag = False
 
         self.mouse_hover = MSGUI.ImageWidget(0, 0, 48, 48)
@@ -28,6 +31,8 @@ class CanvasTerrain(MSGUI.GUICanvas):
         self.panel_tileinfo = TerrainLevelinfo(4, 4, 150, 200)
         self.panel_tileinfo.set_visible(False)
         self.add_element(self.panel_tileinfo.get_widgets_list())
+
+        self.gamemap.set_position(*self.camera.get_position())
 
     def handle_event(self, event_list):
         super().handle_event(event_list)
@@ -65,9 +70,6 @@ class CanvasTerrain(MSGUI.GUICanvas):
                                 else:
                                     self.selected_tile = None
                                     self.panel_tileinfo.set_visible(False)
-                        else:
-                            # Stop camera drag
-                            self.camera_drag = False
 
                     elif event.type == pygame.MOUSEMOTION:
                         tmp_visible = True
@@ -96,6 +98,9 @@ class CanvasTerrain(MSGUI.GUICanvas):
                                 self.camera.begin_drag()
                         else:
                             self.gamemap.set_position(*self.camera.drag())
+            # Stop camera drag
+            if event.type == pygame.MOUSEBUTTONUP:
+                self.camera_drag = False
 
 
 class MapCamera(object):
@@ -106,7 +111,7 @@ class MapCamera(object):
         self.drag_y = 0
 
     def get_position(self):
-        return (self.x, self.y)
+        return self.x, self.y
 
     def begin_drag(self):
         mouse_x, mouse_y = pygame.mouse.get_pos()
