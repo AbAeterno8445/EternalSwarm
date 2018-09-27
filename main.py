@@ -15,7 +15,6 @@ def main():
 
     # Player data holder
     player_data = PlayerData("Player")
-    player_data.ccps = 34535
 
     # Init all canvas
     game_running = False
@@ -67,8 +66,14 @@ def main():
                 cv_main[current_main_canvas].backg_widget.mark_dirty()  # Update whole canvas on switch
 
             # Draw main canvas
-            cv_main[current_main_canvas].handle_event(caught_events)
-            upd_rects += cv_main[current_main_canvas].draw(display)
+            cur_canvas = cv_main[current_main_canvas]
+            cur_canvas.handle_event(caught_events)
+            upd_rects += cur_canvas.draw(display)
+            if isinstance(cur_canvas, layouts.CanvasTerrain):
+                if cur_canvas.start_game:
+                    cv_game.init_data(cur_canvas.selected_tile)
+                    cur_canvas.start_game = False
+                    game_running = True
             # Draw other canvases
             for canvas in cv_list:
                 canvas.handle_event(caught_events)

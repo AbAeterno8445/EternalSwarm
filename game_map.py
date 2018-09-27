@@ -82,8 +82,6 @@ class GameMap(MSGUI.Widget):
 
             x, y = cur_tile
             self.map_data[y][x].region_id = self.regions.index(region)
-            if self.map_data[y][x].region_id == 1:
-                self.map_data[y][x].owned = True
             created += 1
             if created >= region.max_size:
                 break
@@ -115,10 +113,8 @@ class GameMap(MSGUI.Widget):
         for i in range(self.height):
             self.map_data.append([])
             for j in range(self.width):
-                tile_x = j * 48
-                tile_y = i * 48
                 tile_diff = 1 + math.floor(self.get_tile_distance(self.spawn_point, (j, i)) / 6) + randint(0, 2)
-                tmp_tile = MapTile(tile_x, tile_y, 0, tile_diff)
+                tmp_tile = MapTile(j, i, 0, tile_diff)
 
                 self.map_data[i].append(tmp_tile)
 

@@ -2,6 +2,7 @@ class WidgetCollection(object):
     def __init__(self):
         self.widgets_dict = {}
         self.inv_widgets = []
+        self.visible = True
 
     def __getitem__(self, item):
         if item in self.widgets_dict:
@@ -26,9 +27,13 @@ class WidgetCollection(object):
             self[widget].set_visible(True)
 
     def set_visible(self, visible):
+        self.visible = visible
         for widg in self.widgets_dict:
             if not visible or visible and widg not in self.inv_widgets:
                 self[widg].set_visible(visible)
+
+    def is_visible(self):
+        return self.visible
 
     def get_widgets_list(self):
         widg_list = []
