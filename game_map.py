@@ -128,19 +128,19 @@ class GameMap(MSGUI.Widget):
         self.get_tile_at(*self.spawn_point).owned = True
 
         # Assign levels to tiles based on region
-        # for i in range(self.height):
-        #     for j in range(self.width):
-        #         cur_tile = self.map_data[j][i]
-        #         cur_region = self.regions[cur_tile.region_id]
-        #         level_path = "levels/" + cur_region.name.lower() + "/"
-        #         try:
-        #             levels_list = os.listdir(level_path)
-        #         except FileNotFoundError:
-        #             continue
-        #         if "regions.json" in levels_list:
-        #             levels_list.remove("regions.json")
-        #
-        #         cur_tile.level_file = level_path + levels_list[randint(0, len(levels_list) - 1)]
+        for i in range(self.height):
+            for j in range(self.width):
+                cur_tile = self.map_data[j][i]
+                cur_region = cur_tile.region
+                level_path = "levels/" + cur_region.name.lower() + "/"
+                try:
+                    levels_list = os.listdir(level_path)
+                except FileNotFoundError:
+                    continue
+                if "regions.json" in levels_list:
+                    levels_list.remove("regions.json")
+
+                cur_tile.level_id = randint(1, len(levels_list))
 
         self.update_tilemap()
 
@@ -322,4 +322,4 @@ class MapTile(object):
         self.region = region
         self.difficulty = difficulty
         self.owned = False
-        self.level_file = ""
+        self.level_id = 1

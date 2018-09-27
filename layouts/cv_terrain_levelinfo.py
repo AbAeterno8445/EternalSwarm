@@ -9,33 +9,33 @@ class TerrainLevelinfo(MSGUI.WidgetCollection):
         backg_widget = MSGUI.Widget(x, y, width, height)
         backg_widget.set_background((20, 20, 20, 150))
         backg_widget.set_border(True)
-        self.add_widget(backg_widget, "background", layer=0)
+        self.add_widget(backg_widget, "background", layer=2)
 
         font = pygame.font.Font("assets/Dosis.otf", 18)
         # Region name
         region_label = MSGUI.Label(8, 8, 0, 22, font)
         region_label.set_text_resize(res_hor=True, padding=4)
         region_label.set_transparent(True)
-        self.add_widget(region_label, "region_label", layer=1)
+        self.add_widget(region_label, "region_label", layer=3)
 
         # Level difficulty
         diff_label = MSGUI.Label(8, 34, 0, 22, font)
         diff_label.set_text_resize(res_hor=True, padding=4)
         diff_label.set_transparent(True)
-        self.add_widget(diff_label, "diff_label", layer=1)
+        self.add_widget(diff_label, "diff_label", layer=3)
 
         # Capture terrain (begin level) button
         capture_button = MSGUI.Button(8, height - 28, width - 8, 24, font, "Capture")
         capture_button.set_border(True)
         capture_button.set_hovered_color((150, 150, 150, 100))
         capture_button.set_pressed_color((100, 100, 100, 150))
-        self.add_widget(capture_button, "capture_button", layer=1)
+        self.add_widget(capture_button, "capture_button", layer=3)
 
         # Owned terrain label
         owned_label = MSGUI.Label(8, height - 28, width - 8, 24, font, "Owned")
         owned_label.set_transparent(True)
         owned_label.set_visible(False)
-        self.add_widget(owned_label, "owned_label", layer=1)
+        self.add_widget(owned_label, "owned_label", layer=3)
 
     def update_data(self, selected_tile):
         self["region_label"].set_text(selected_tile.region.name)

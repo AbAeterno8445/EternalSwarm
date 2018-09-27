@@ -1,0 +1,8 @@
+[
+  {
+    "name": "Woods",
+    "img_path": "tile_grass_woods.png",
+    "decor": ["tree1.png", "tree2.png"],
+    "decor_density": 1
+  }
+]
