@@ -37,8 +37,8 @@ class TerrainLevelinfo(MSGUI.WidgetCollection):
         owned_label.set_visible(False)
         self.add_widget(owned_label, "owned_label", layer=1)
 
-    def update_data(self, selected_tile, region):
-        self["region_label"].set_text(region.name)
+    def update_data(self, selected_tile):
+        self["region_label"].set_text(selected_tile.region.name)
         self["diff_label"].set_text("Diff: " + str(selected_tile.difficulty))
 
         if selected_tile.owned:

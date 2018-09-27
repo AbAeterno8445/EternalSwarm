@@ -56,9 +56,6 @@ class GameMap(MSGUI.Widget):
         if gen_map:
             self.generate_tilemap()
 
-    def get_region_at(self, x, y):
-        return self.regions[self.map_data[y][x].region_id]
-
     def get_tile_at(self, x, y):
         return self.map_data[y][x]
 
@@ -81,7 +78,7 @@ class GameMap(MSGUI.Widget):
             closed_tiles.append(cur_tile)
 
             x, y = cur_tile
-            self.map_data[y][x].region_id = self.regions.index(region)
+            self.map_data[y][x].region = region
             created += 1
             if created >= region.max_size:
                 break
@@ -93,7 +90,7 @@ class GameMap(MSGUI.Widget):
                         if i == 0 or j == 0 and not (i == 0 and j == 0):
                             nx, ny = tile[0] + i, tile[1] + j
                             if 0 <= nx < self.width and 0 <= ny < self.height and (nx, ny) not in closed_tiles:
-                                if self.get_tile_distance((nx, ny), self.spawn_point) > region.spawn_dist and self.map_data[ny][nx].region_id == 0:
+                                if self.get_tile_distance((nx, ny), self.spawn_point) > region.spawn_dist and self.map_data[ny][nx].region == self.regions[0]:
                                     neighbors.append((nx, ny))
 
             for n_tile in neighbors:
@@ -114,7 +111,7 @@ class GameMap(MSGUI.Widget):
             self.map_data.append([])
             for j in range(self.width):
                 tile_diff = 1 + math.floor(self.get_tile_distance(self.spawn_point, (j, i)) / 6) + randint(0, 2)
-                tmp_tile = MapTile(j, i, 0, tile_diff)
+                tmp_tile = MapTile(j, i, self.regions[0], tile_diff)
 
                 self.map_data[i].append(tmp_tile)
 
@@ -122,7 +119,7 @@ class GameMap(MSGUI.Widget):
         if len(self.regions) > 1:
             for i in range(self.height):
                 for j in range(self.width):
-                    if self.map_data[j][i].region_id == 0:
+                    if self.map_data[j][i].region == self.regions[0]:
                         picked_region = randint(1, len(self.regions) - 1)
                         if randint(0, 100) < self.regions[picked_region].freq:
                             self._generate_region_at(self.regions[picked_region], j, i)
@@ -153,7 +150,7 @@ class GameMap(MSGUI.Widget):
         for i in range(self.height):
             for j in range(self.width):
                 cur_tile = self.map_data[i][j]
-                cur_region = self.regions[cur_tile.region_id]
+                cur_region = cur_tile.region
                 tile_x = j * 48
                 tile_y = i * 48
 
@@ -162,8 +159,7 @@ class GameMap(MSGUI.Widget):
                 neighbor_top_owned = False
                 if i > 0:
                     neighbor = self.map_data[i - 1][j]
-                    neighbor_id = neighbor.region_id
-                    if neighbor_id == cur_tile.region_id:
+                    if neighbor.region == cur_tile.region:
                         neighbor_top = True
                     neighbor_top_owned = neighbor.owned
 
@@ -171,8 +167,7 @@ class GameMap(MSGUI.Widget):
                 neighbor_bottom_owned = False
                 if i < self.height - 1:
                     neighbor = self.map_data[i + 1][j]
-                    neighbor_id = neighbor.region_id
-                    if neighbor_id == cur_tile.region_id:
+                    if neighbor.region == cur_tile.region:
                         neighbor_bottom = True
                     neighbor_bottom_owned = neighbor.owned
 
@@ -180,8 +175,7 @@ class GameMap(MSGUI.Widget):
                 neighbor_left_owned = False
                 if j > 0:
                     neighbor = self.map_data[i][j - 1]
-                    neighbor_id = neighbor.region_id
-                    if neighbor_id == cur_tile.region_id:
+                    if neighbor.region == cur_tile.region:
                         neighbor_left = True
                     neighbor_left_owned = neighbor.owned
 
@@ -189,8 +183,7 @@ class GameMap(MSGUI.Widget):
                 neighbor_right_owned = False
                 if j < self.width - 1:
                     neighbor = self.map_data[i][j + 1]
-                    neighbor_id = neighbor.region_id
-                    if neighbor_id == cur_tile.region_id:
+                    if neighbor.region == cur_tile.region:
                         neighbor_right = True
                     neighbor_right_owned = neighbor.owned
 
@@ -267,7 +260,7 @@ class GameMap(MSGUI.Widget):
                 tmp_tile_sprite = pygame.sprite.DirtySprite(self.tilelist)
                 tmp_tile_sprite.image = split_tile(cur_region.img, tile_distrib)
                 tmp_tile_sprite.rect = tmp_tile_sprite.image.get_rect(topleft=(tile_x, tile_y))
-                self.tilelist.change_layer(tmp_tile_sprite, -cur_tile.region_id)
+                self.tilelist.change_layer(tmp_tile_sprite, -self.regions.index(cur_region))
 
                 # Owned tile overlay
                 if cur_tile.owned:
@@ -323,10 +316,10 @@ class MapRegion(object):
 
 
 class MapTile(object):
-    def __init__(self, x, y, region_id, difficulty=1):
+    def __init__(self, x, y, region, difficulty=1):
         self.x = x
         self.y = y
-        self.region_id = region_id
+        self.region = region
         self.difficulty = difficulty
         self.owned = False
         self.level_file = ""

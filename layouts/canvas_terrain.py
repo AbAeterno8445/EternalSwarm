@@ -74,7 +74,7 @@ class CanvasTerrain(MSGUI.GUICanvas):
                                 if mouse_inside:
                                     if 0 <= tile_x < self.gamemap.width and 0 <= tile_y < self.gamemap.height:
                                         self.selected_tile = self.gamemap.get_tile_at(tile_x, tile_y)
-                                        self.panel_tileinfo.update_data(self.selected_tile, self.gamemap.get_region_at(tile_x, tile_y))
+                                        self.panel_tileinfo.update_data(self.selected_tile)
                                 else:
                                     self.selected_tile = None
 
