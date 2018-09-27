@@ -1,6 +1,5 @@
 import pygame
 import MSGUI
-import math
 from game_map import GameMap
 from map_collection import MapCollection
 from .cv_terrain_levelinfo import TerrainLevelinfo
