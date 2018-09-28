@@ -110,7 +110,10 @@ class GameMap(MSGUI.Widget):
         for i in range(self.height):
             self.map_data.append([])
             for j in range(self.width):
-                tile_diff = 1 + math.floor(self.get_tile_distance(self.spawn_point, (j, i)) / 6) + randint(0, 2)
+                if self.spawn_point == (j, i):
+                    tile_diff = 1
+                else:
+                    tile_diff = 1 + math.floor(self.get_tile_distance(self.spawn_point, (j, i)) / 6) + randint(0, 2)
                 tmp_tile = MapTile(j, i, self.regions[0], tile_diff)
 
                 self.map_data[i].append(tmp_tile)
@@ -154,7 +157,7 @@ class GameMap(MSGUI.Widget):
                 tile_x = j * 48
                 tile_y = i * 48
 
-                # Regional tile neighbors
+                # Tile neighbors - checks region, owned and capturable
                 neighbor_top = False
                 neighbor_top_owned = False
                 if i > 0:
@@ -162,6 +165,8 @@ class GameMap(MSGUI.Widget):
                     if neighbor.region == cur_tile.region:
                         neighbor_top = True
                     neighbor_top_owned = neighbor.owned
+                    if cur_tile.owned:
+                        neighbor.capturable = True
 
                 neighbor_bottom = False
                 neighbor_bottom_owned = False
@@ -170,6 +175,8 @@ class GameMap(MSGUI.Widget):
                     if neighbor.region == cur_tile.region:
                         neighbor_bottom = True
                     neighbor_bottom_owned = neighbor.owned
+                    if cur_tile.owned:
+                        neighbor.capturable = True
 
                 neighbor_left = False
                 neighbor_left_owned = False
@@ -178,6 +185,8 @@ class GameMap(MSGUI.Widget):
                     if neighbor.region == cur_tile.region:
                         neighbor_left = True
                     neighbor_left_owned = neighbor.owned
+                    if cur_tile.owned:
+                        neighbor.capturable = True
 
                 neighbor_right = False
                 neighbor_right_owned = False
@@ -186,6 +195,8 @@ class GameMap(MSGUI.Widget):
                     if neighbor.region == cur_tile.region:
                         neighbor_right = True
                     neighbor_right_owned = neighbor.owned
+                    if cur_tile.owned:
+                        neighbor.capturable = True
 
                 # Tile piece distribution based on neighbors
                 tile_distrib = []
@@ -322,4 +333,5 @@ class MapTile(object):
         self.region = region
         self.difficulty = difficulty
         self.owned = False
+        self.capturable = False
         self.level_id = 1

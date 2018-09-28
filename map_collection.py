@@ -19,7 +19,7 @@ class MapCollection(MSGUI.WidgetCollection):
         self.selected_tile = None
         self.hovered = True
 
-        self.add_widget(map_obj, "map")
+        self.add_widget(map_obj, "map", layer=-1)
 
         # Camera
         sp_x, sp_y = map_obj.spawn_point

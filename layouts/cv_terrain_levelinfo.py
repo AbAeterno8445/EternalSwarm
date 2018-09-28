@@ -32,20 +32,32 @@ class TerrainLevelinfo(MSGUI.WidgetCollection):
         self.add_widget(capture_button, "capture_button", layer=3)
 
         # Owned terrain label
-        owned_label = MSGUI.Label(8, height - 28, width - 8, 24, font, "Owned")
-        owned_label.set_transparent(True)
-        owned_label.set_visible(False)
-        self.add_widget(owned_label, "owned_label", layer=3)
+        level_info_label = MSGUI.Label(8, height - 28, width - 8, 24, font, "Owned")
+        level_info_label.set_transparent(True)
+        level_info_label.set_visible(False)
+        self.add_widget(level_info_label, "level_info_label", layer=3)
 
     def update_data(self, selected_tile):
         self["region_label"].set_text(selected_tile.region.name)
         self["diff_label"].set_text("Diff: " + str(selected_tile.difficulty))
 
         if selected_tile.owned:
+            # Tile owned - deactivate capture button and activate info label
             self.set_widget_visible("capture_button", False)
             self["capture_button"].set_active(False)
-            self.set_widget_visible("owned_label", True)
-        else:
+
+            self["level_info_label"].set_text("Owned")
+            self.set_widget_visible("level_info_label", True)
+        elif selected_tile.capturable:
+            # Capturable tile - activate capture button and deactivate info label
             self.set_widget_visible("capture_button", True)
             self["capture_button"].set_active(True)
-            self.set_widget_visible("owned_label", False)
+
+            self.set_widget_visible("level_info_label", False)
+        else:
+            # Non-capturable tile - deactivate capture button, change and activate info label
+            self.set_widget_visible("capture_button", False)
+            self["capture_button"].set_active(False)
+
+            self["level_info_label"].set_text("Not capturable")
+            self.set_widget_visible("level_info_label", True)
