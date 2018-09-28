@@ -43,13 +43,12 @@ class GameMap(MSGUI.Widget):
             tmp_img = pygame.image.load("assets/regions/" + reg["img_path"])
             tmp_region = MapRegion(reg["name"], tmp_img)
 
-            region_attr = ["spawn_dist", "max_size", "decor", "decor_density", "freq", "expansion"]
-            for attr in region_attr:
-                if attr in reg:
+            for attr in reg:
+                if hasattr(tmp_region, attr):
                     if attr == "decor":  # Preemptively load decor images
                         tmp_region.decor = [pygame.image.load("assets/regions/decor/" + img) for img in reg[attr]]
                     else:
-                        tmp_region.__setattr__(attr, reg[attr])
+                        setattr(tmp_region, attr, reg[attr])
 
             self.regions.append(tmp_region)
 
