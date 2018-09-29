@@ -42,6 +42,7 @@ class CanvasTerrain(MSGUI.GUICanvas):
         self.map_collection.handle_event(event_list)
         self.map_collection.update()
 
+    def draw(self, tgt_surface):
         sel_tile = self.map_collection.selected_tile
         if sel_tile:
             if not self.panel_tileinfo.is_visible():
@@ -50,3 +51,5 @@ class CanvasTerrain(MSGUI.GUICanvas):
         else:
             if self.panel_tileinfo.is_visible():
                 self.panel_tileinfo.set_visible(False)
+
+        return super().draw(tgt_surface)
