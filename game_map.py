@@ -275,23 +275,23 @@ class GameMap(MSGUI.Widget):
                 # Owned tile overlay
                 if cur_tile.owned:
                     tmp_owned_sprite = pygame.sprite.DirtySprite(self.tilelist)
-                    tmp_owned_sprite.image = pygame.Surface((50, 50)).convert()
+                    tmp_owned_sprite.image = pygame.Surface((52, 52)).convert()
                     tmp_owned_sprite.image.set_colorkey((0, 0, 0))
                     # Draw edges based on neighbors
                     if not neighbor_top_owned:
-                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 255), (0, 0), (46, 0), 2)
-                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 115), (0, 0), (46, 0), 1)
+                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 255), (0, 0), (48, 0), 2)
+                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 115), (0, 0), (48, 0), 1)
                     if not neighbor_right_owned:
-                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 255), (46, 0), (46, 46), 2)
-                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 115), (46, 0), (46, 46), 1)
+                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 255), (48, 0), (48, 48), 2)
+                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 115), (48, 0), (48, 48), 1)
                     if not neighbor_left_owned:
-                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 255), (0, 0), (0, 46), 2)
-                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 115), (0, 0), (0, 46), 1)
+                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 255), (0, 0), (0, 48), 2)
+                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 115), (0, 0), (0, 48), 1)
                     if not neighbor_bottom_owned:
-                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 255), (0, 46), (46, 46), 2)
-                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 115), (0, 46), (46, 46), 1)
+                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 255), (0, 48), (48, 48), 2)
+                        pygame.draw.line(tmp_owned_sprite.image, (255, 255, 115), (0, 48), (48, 48), 1)
 
-                    tmp_owned_sprite.rect = tmp_owned_sprite.image.get_rect(topleft=(tile_x + 8, tile_y + 8))
+                    tmp_owned_sprite.rect = tmp_owned_sprite.image.get_rect(topleft=(tile_x + 7, tile_y + 7))
                     self.tilelist.change_layer(tmp_owned_sprite, 10)
 
                 # Decor images
