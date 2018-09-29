@@ -1,0 +1,10 @@
+{
+  "Slime": {
+    "img_data": {
+      "img": "dark_slime.png",
+      "frames": 2,
+      "anim_delay": 8
+    },
+    "speed": 1
+  }
+}

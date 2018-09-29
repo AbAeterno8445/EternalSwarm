@@ -1,6 +1,8 @@
-[
-  {
-    "name": "Basic Spawner",
-    "base_img": "base1.png"
+{
+  "Slime Spawner": {
+    "base_img": "base1.png",
+    "type": "spawner",
+    "spawn_time": 4,
+    "spawn_unit": "Slime"
   }
-]
+}

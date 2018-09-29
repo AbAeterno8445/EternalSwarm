@@ -18,7 +18,7 @@ def main():
 
     # Init all canvas
     game_running = False
-    cv_game = layouts.CanvasGame(0, 0, disp_w, disp_h)
+    cv_game = layouts.CanvasGame(0, 0, disp_w, disp_h, player_data)
 
     cv_materials = layouts.CanvasMaterials(16, 16, 200, disp_h - 100)
 

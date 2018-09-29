@@ -34,16 +34,19 @@ class MapCollection(MSGUI.WidgetCollection):
         mouse_hover = MSGUI.ImageWidget(0, 0, 48, 48)
         mouse_hover.set_border(True, (255, 255, 255))
         mouse_hover.set_visible(False)
-        self.add_widget(mouse_hover, "mouse_hover")
+        self.add_widget(mouse_hover, "mouse_hover", layer=1)
 
         # Selected tile widget
         selected_tile_widg = MSGUI.ImageWidget(0, 0, 48, 48, "assets/selected_tile.png")
         selected_tile_widg.set_border(True, (1, 1, 1))
         selected_tile_widg.set_visible(False)
-        self.add_widget(selected_tile_widg, "selected_tile_widg", layer=1)
+        self.add_widget(selected_tile_widg, "selected_tile_widg", layer=2)
 
     def set_hovered(self, hovered):
         self.hovered = hovered
+
+    def get_camera_position(self):
+        return self.camera.get_position()
 
     def handle_event(self, event_list):
         for event in event_list:
@@ -77,9 +80,8 @@ class MapCollection(MSGUI.WidgetCollection):
                             if 0 <= tile_x < self["map"].width and 0 <= tile_y < self["map"].height:
                                 mh_x = tile_x * 48 + self.camera.x + 8
                                 mh_y = tile_y * 48 + self.camera.y + 8
-                                self["mouse_hover"].set_position(mh_x, mh_y)
-                                if not self["mouse_hover"].is_visible():
-                                    self["mouse_hover"].set_visible(True)
+                                if not self["mouse_hover"].get_position() == (mh_x, mh_y):
+                                    self["mouse_hover"].set_position(mh_x, mh_y)
                             else:
                                 tmp_visible = False
                         else:

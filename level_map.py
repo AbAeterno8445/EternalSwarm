@@ -1,7 +1,5 @@
 import pygame
-import json
 from game_map import GameMap, MapTile
-from level_building import Building
 
 
 class LevelMap(GameMap):
@@ -10,12 +8,6 @@ class LevelMap(GameMap):
 
         self.level_surface = pygame.Surface(self._bounds.size).convert()
         self.level_surface.set_colorkey((0, 0, 0))
-
-        self.building_list = []
-        with open("assets/buildings.json", "r") as file:
-            tmp_buildings = json.loads(file.read())
-        for b in tmp_buildings:
-            self.create_building_at(2, 3, b)
 
     def load_level(self, region_name, level_id):
         region_name = region_name.lower()
@@ -37,20 +29,11 @@ class LevelMap(GameMap):
                 for j in range(self.width):
                     region_id = int(tmp_regionmap[i][j])
                     tmp_tile = LevelTile(j, i, self.regions[region_id])
+                    if j < 3:
+                        tmp_tile.owned = True
                     self.map_data[i].append(tmp_tile)
 
         self.update_tilemap()
-
-    def create_building_at(self, x, y, building_dict):
-        tmp_building = Building(x, y, building_dict)
-        self.building_list.append(tmp_building)
-
-    def _get_appearance(self, *args):
-        surface = super()._get_appearance(*args)
-        self.level_surface.blit(surface, (0, 0))
-        for b in self.building_list:
-            self.level_surface.blit(b.get_image(), b.get_draw_position())
-        return self.level_surface
 
 
 class LevelTile(MapTile):
