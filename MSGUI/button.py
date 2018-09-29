@@ -27,6 +27,7 @@ class Button(Label, ImageWidget):
                 """
         super().__init__(x, y, width, height, font, text)
         self._callback = callback
+        self._callback_args = []
         self._state = 0
         self._hoveredcolor = pygame.Color(*default_hovered)
         self._pressedcolor = pygame.Color(*default_pressed)
@@ -69,7 +70,7 @@ class Button(Label, ImageWidget):
         """
         return self._pressedcolor
 
-    def set_callback(self, callback):
+    def set_callback(self, callback, callback_args=None):
         """
         Set the Button's callback-function
         parameters:     function function that executes on click
@@ -77,6 +78,8 @@ class Button(Label, ImageWidget):
         """
         if callable(callback):
             self._callback = callback
+        if callback_args:
+            self._callback_args = callback_args
         return self
 
     def get_callback(self):
@@ -126,7 +129,7 @@ class Button(Label, ImageWidget):
                 if self.rect.collidepoint(event.pos):
                     if event.button == 1:
                         try:
-                            self._callback()
+                            self._callback(*self._callback_args)
                         except Exception as e:
                             print(e)
                         if self._state >= 2:

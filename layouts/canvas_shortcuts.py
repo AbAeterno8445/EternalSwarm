@@ -13,7 +13,8 @@ class CanvasShortcuts(MSGUI.GUICanvas):
 
         font = pygame.font.Font("assets/Dosis.otf", 18)
         # Terrain button
-        self.button_terrain = MSGUI.Button(12, 10, 0, 26, font, "Terrain", self._switch_cv_terrain)
+        self.button_terrain = MSGUI.Button(12, 10, 0, 26, font, "Terrain")
+        self.button_terrain.set_callback(self._switch_canvas, ["terrain"])
         self.button_terrain.set_text_resize(res_hor=True, padding=8)
         self.button_terrain.set_font_color((0, 200, 0))
         self.button_terrain.set_border(True, (50, 100, 50))
@@ -23,7 +24,8 @@ class CanvasShortcuts(MSGUI.GUICanvas):
 
         tmp_x = self.button_terrain.get_width() + 24
         # Upgrades button
-        self.button_upgrades = MSGUI.Button(tmp_x, 10, 0, 26, font, "Units", self._switch_cv_units)
+        self.button_upgrades = MSGUI.Button(tmp_x, 10, 0, 26, font, "Units")
+        self.button_upgrades.set_callback(self._switch_canvas, ["units"])
         self.button_upgrades.set_text_resize(res_hor=True, padding=8)
         self.button_upgrades.set_font_color((0, 200, 200))
         self.button_upgrades.set_border(True, (50, 100, 100))
@@ -34,8 +36,5 @@ class CanvasShortcuts(MSGUI.GUICanvas):
     def get_sel_shortcut(self):
         return self.sel_shortcut
 
-    def _switch_cv_terrain(self):
-        self.sel_shortcut = "terrain"
-
-    def _switch_cv_units(self):
-        self.sel_shortcut = "units"
+    def _switch_canvas(self, canvas_name):
+        self.sel_shortcut = canvas_name
