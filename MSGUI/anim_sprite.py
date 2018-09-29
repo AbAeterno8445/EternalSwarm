@@ -1,3 +1,4 @@
+import pygame
 from .image_widget import ImageWidget
 
 
@@ -25,6 +26,8 @@ class AnimSprite(ImageWidget):
         """
         self.image_list_modified = []
         if new_icon:
+            if type(new_icon) is str:
+                new_icon = pygame.image.load(new_icon)
             og_texture = new_icon
             self._anim_order = []
             self.image_list = []
@@ -83,7 +86,8 @@ class AnimSprite(ImageWidget):
         """
         self._anim_framecount = frames
         self.set_animation_delay(anim_delay)
-        self.set_animation_order(anim_order)
+        if anim_order:
+            self.set_animation_order(anim_order)
         self._update_animation_set(icon)
 
     def update(self, *args):
