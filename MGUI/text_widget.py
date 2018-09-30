@@ -31,8 +31,9 @@ class TextWidget(Widget):
         parameters:     string the text to be set
         return values:  TextWidget TextWidget returned for convenience
         """
-        self._text = str(text)
-        self.mark_dirty()
+        if not text == self._text:
+            self._text = str(text)
+            self.mark_dirty()
         return self
 
     def get_text(self):

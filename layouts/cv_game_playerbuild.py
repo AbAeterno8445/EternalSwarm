@@ -31,7 +31,7 @@ class PlayerBuildMenu(MGUI.WidgetCollection):
             bdata = self.base_buildings[bname]
 
             button_x = x + 4
-            button_y = button_start_y + 68 * i
+            button_y = button_start_y + 90 * i
 
             # Background
             tmp_bg = MGUI.Widget(button_x, button_y, width - 8, button_height)

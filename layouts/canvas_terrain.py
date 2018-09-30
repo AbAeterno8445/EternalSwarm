@@ -30,14 +30,16 @@ class CanvasTerrain(MGUI.GUICanvas):
     def handle_event(self, event_list):
         super().handle_event(event_list)
 
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        info_hovered = self.panel_tileinfo.is_visible() and \
-                       self.panel_tileinfo["background"].get_bounds_at(self.x, self.y).collidepoint(mouse_x, mouse_y)
+        for event in event_list:
+            if event.type in {pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN}:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                info_hovered = self.panel_tileinfo.is_visible() and \
+                               self.panel_tileinfo["background"].get_bounds_at(self.x, self.y).collidepoint(mouse_x, mouse_y)
 
-        if not info_hovered and self.focus_hovered:
-            self.map_coll.set_hovered(True)
-        else:
-            self.map_coll.set_hovered(False)
+                if not info_hovered and self.focus_hovered:
+                    self.map_coll.set_hovered(True)
+                else:
+                    self.map_coll.set_hovered(False)
 
         self.map_coll.handle_event(event_list)
         self.map_coll.update()

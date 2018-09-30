@@ -64,13 +64,14 @@ class MapCollection(MGUI.WidgetCollection):
                     tile_y = math.floor((mouse_y - self.y - self.camera.y - 8) / 48)
 
                 if event.type == pygame.MOUSEBUTTONUP:
-                    # Select tile
-                    if not self.camera_drag and self.hovered:
-                        if mouse_in_map:
-                            if 0 <= tile_x < self["map"].width and 0 <= tile_y < self["map"].height:
-                                self.selected_tile = self["map"].get_tile_at(tile_x, tile_y)
-                        else:
-                            self.selected_tile = None
+                    if event.button == 1:
+                        # Select tile
+                        if not self.camera_drag and self.hovered:
+                            if mouse_in_map:
+                                if 0 <= tile_x < self["map"].width and 0 <= tile_y < self["map"].height:
+                                    self.selected_tile = self["map"].get_tile_at(tile_x, tile_y)
+                            else:
+                                self.selected_tile = None
 
                 elif event.type == pygame.MOUSEMOTION:
                     tmp_visible = True

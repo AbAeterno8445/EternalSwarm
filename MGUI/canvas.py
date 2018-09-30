@@ -25,6 +25,13 @@ class GUICanvas(object):
         self.sprite_list = pygame.sprite.LayeredDirty(self.backg_widget)
         self.sprite_list.change_layer(self.backg_widget, -1)
 
+    def set_position(self, x, y):
+        self.x = x
+        self.y = y
+
+    def get_position(self):
+        return self.x, self.y
+
     def is_hovered(self):
         return self.focus_hovered
 
@@ -91,16 +98,15 @@ class GUICanvas(object):
                 widget.handle_event(event)
 
     def draw(self, tgt_surface):
-        upd_rects = []
-
         # Transparency
         if self.backg_widget.is_transparent() and not self.surface.get_colorkey() == self.backg_widget.get_background():
             self.surface.set_colorkey(self.backg_widget.get_background())
 
         self.sprite_list.update()
-        upd_rects += self.sprite_list.draw(self.surface)
-        tgt_surface.blit(self.surface, (self.x, self.y))
+        upd_rects = self.sprite_list.draw(self.surface)
+        if len(upd_rects) > 0:
+            tgt_surface.blit(self.surface, self.get_position())
 
-        for rect in upd_rects:
-            rect.move_ip(self.x, self.y)
+            for rect in upd_rects:
+                rect.move_ip(self.x, self.y)
         return upd_rects

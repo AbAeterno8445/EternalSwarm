@@ -39,7 +39,6 @@ class CanvasMaterials(MGUI.GUICanvas):
         self.add_element(self.ccps_text)
 
     def update_data(self, player_data):
-        if self.plname_label.get_text() != player_data.name:
-            self.plname_label.set_text(player_data.name)
+        self.plname_label.set_text(player_data.name)
         self.crystal_amt_text.set_text(player_data.get_carbcrystals_str())
         self.ccps_text.set_text(player_data.get_ccps_str() + " CCps")

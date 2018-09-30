@@ -275,19 +275,9 @@ class Widget(pygame.sprite.DirtySprite):
         Perform any updates on the Widget if needed;
         basic implementation of focus, active-state and border-rendering;
         used for interaction in more advanced, derivated Widget-classes
-        parameters:     tuple arguments for the update (first argument should be an instance pygame.event.Event)
+        parameters:     tuple arguments for the update
         return values:  -
         """
-        if self.is_active() and len(args) > 0:
-            event = args[0]
-            if event:
-                if type(event) is list:
-                    for ev in event:
-                        self.handle_event(ev)
-                else:
-                    self.handle_event(event)
-
-        # Update if dirty
         if self.is_dirty():
             self.image = self._get_appearance(*args)
             self.rect = self._bounds.copy()
