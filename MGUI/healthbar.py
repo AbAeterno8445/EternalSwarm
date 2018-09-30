@@ -32,9 +32,10 @@ class Healthbar(Widget):
 
     # Sets draw mode to value based
     def set_maximum_value(self, maxval):
-        self._max_val = maxval
-        self._mode = 1
-        self.mark_dirty()
+        if not self._max_val == maxval:
+            self._max_val = maxval
+            self._mode = 1
+            self.mark_dirty()
 
     def set_color(self, color):
         self._color = color

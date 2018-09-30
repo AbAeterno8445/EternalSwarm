@@ -93,6 +93,10 @@ class GUICanvas(object):
     def draw(self, tgt_surface):
         upd_rects = []
 
+        # Transparency
+        if self.backg_widget.is_transparent() and not self.surface.get_colorkey() == self.backg_widget.get_background():
+            self.surface.set_colorkey(self.backg_widget.get_background())
+
         self.sprite_list.update()
         upd_rects += self.sprite_list.draw(self.surface)
         tgt_surface.blit(self.surface, (self.x, self.y))
