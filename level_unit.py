@@ -4,9 +4,9 @@ import MGUI
 class Unit(MGUI.AnimSprite):
     def __init__(self, x, y, unit_data=None):
         super().__init__(x, y, 1, 1)
+        self.draw_x = x
+        self.draw_y = y
         self.speed = 0
-        self.x = x
-        self.y = y
 
         if unit_data:
             self.load_unit(unit_data)
@@ -20,5 +20,23 @@ class Unit(MGUI.AnimSprite):
                     self.set_animation_delay(anim_data["anim_delay"])
                 if "anim_order" in anim_data:
                     self.set_animation_order(anim_data["anim_order"])
+                if "rotate" in anim_data:
+                    self.set_rotation(anim_data["rotate"])
+                flip_hor = "flip_hor" in anim_data
+                flip_ver = "flip_ver" in anim_data
+                if flip_hor or flip_ver:
+                    self.set_flip(flip_hor, flip_ver)
+
             elif hasattr(self, attr):
                 setattr(self, attr, unit_data[attr])
+
+    def set_draw_position(self, x, y):
+        self.draw_x = x
+        self.draw_y = y
+
+    def get_draw_position(self):
+        return self.draw_x, self.draw_y
+
+    def tick(self):
+        mx, my = self.get_draw_position()
+        self.set_draw_position(mx + self.speed, my)

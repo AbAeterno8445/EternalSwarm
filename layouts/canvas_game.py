@@ -1,10 +1,10 @@
-import pygame
-import MGUI
-import json
+import pygame, MGUI, json, math
 from millify import millify_num
 from level_map import LevelMap
 from map_collection import MapCollection
 from .cv_game_playerbuild import PlayerBuildMenu
+import level_building as buildings
+import level_unit as units
 
 
 class CanvasGame(MGUI.GUICanvas):
@@ -24,7 +24,7 @@ class CanvasGame(MGUI.GUICanvas):
 
         self.backg_widget.set_border(True, (200, 200, 200))
 
-        self.levelmap = LevelMap(0, 0, 12, 8, self.base_buildings, self.base_units)
+        self.levelmap = LevelMap(0, 0, 12, 8)
         self.levelmap.set_visible(False)
 
         self.map_coll = MapCollection(x, y, width, height, self.levelmap)
@@ -33,6 +33,19 @@ class CanvasGame(MGUI.GUICanvas):
         self.buildmenu = PlayerBuildMenu(4, 4, 200, height - 8, self.base_buildings, player_data, self.place_building)
         self.buildmenu.set_visible(False)
         self.add_element(self.buildmenu.get_widgets_list())
+
+        # Buildings data
+        self.building_list = []
+
+        # Units data
+        self.unit_list = []
+        self.unit_layer = MGUI.GUICanvas(0, 0, *self.get_size())
+        self.unit_layer.backg_widget.set_transparent(True)
+
+        for i in range(8):
+            self.create_unit_at(0, i, "Selenian")
+            for j in range(12):
+                self.create_building_at(j, i, True, "Slime Spawner")
 
         font = pygame.font.Font("assets/Dosis.otf", 18)
         # Energy img & label
@@ -58,10 +71,42 @@ class CanvasGame(MGUI.GUICanvas):
         if self.energy >= bdata["cost"]:
             self.energy -= bdata["cost"]
         self.buildmenu.update_data(self.energy)
-        self.levelmap.create_building_at(sel_tile.x, sel_tile.y, True, building_name)
+        self.create_building_at(sel_tile.x, sel_tile.y, True, building_name)
+
+    def create_building_at(self, x, y, player_owned, building_name):
+        building_data = self.base_buildings[building_name]
+        new_building = None
+        if "type" in building_data:
+            # Create building based on type
+            b_type = building_data["type"]
+
+            # Unit spawner
+            if b_type == buildings.buildtype_spawner:
+                new_building = buildings.BuildingSpawner(x, y, player_owned, building_data)
+
+        if not new_building:
+            new_building = buildings.Building(x, y, player_owned, building_data)
+
+        self.building_list.append(new_building)
+        self.add_element(new_building, layer=1)
+
+    def create_unit_at(self, x, y, unit_name):
+        unit_data = self.base_units[unit_name]
+        new_unit = units.Unit(0, 0, unit_data)
+
+        # Set position to center of tile (x, y)
+        unit_x = 32 + x * 48 - math.floor(new_unit.get_width() / 2)
+        unit_y = 42 + y * 48 - new_unit.get_height()
+        new_unit.set_draw_position(unit_x, unit_y)
+
+        self.unit_list.append(new_unit)
+        self.add_element(new_unit, layer=2)
 
     def tick(self):
-        self.levelmap.tick()
+        for b in self.building_list:
+            b.tick()
+        for u in self.unit_list:
+            u.tick()
 
         if self.ticker == 0:
             self.energy += self.energy_ps
@@ -89,6 +134,17 @@ class CanvasGame(MGUI.GUICanvas):
         self.map_coll.handle_event(event_list)
         self.map_coll.update()
 
+        cam_x, cam_y = self.map_coll.get_camera_position()
+        # Update buildings
+        for b in self.building_list:
+            bx, by = b.get_draw_position()
+            if not b.get_position() == (bx + cam_x, by + cam_y):
+                b.set_position(bx + cam_x, by + cam_y)
+        # Update units
+        for u in self.unit_list:
+            ux, uy = u.get_draw_position()
+            if not u.get_position() == (ux + cam_x, uy + cam_y):
+                u.set_position(ux + cam_x, uy + cam_y)
         # Open buildings panel when selecting tile
         sel_tile = self.map_coll.selected_tile
         if sel_tile and sel_tile.owned and not self.levelmap.get_building_at(sel_tile.x, sel_tile.y):

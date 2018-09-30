@@ -6,5 +6,14 @@
       "anim_delay": 8
     },
     "speed": 1
+  },
+  "Selenian": {
+    "img_data": {
+      "img": "selenian.png",
+      "frames": 17,
+      "anim_order": [9, 10, 11, 12, 13, 14, 15, 16],
+      "flip_hor": 1
+    },
+    "speed": 2
   }
 }
