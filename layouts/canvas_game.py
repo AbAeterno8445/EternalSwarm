@@ -42,11 +42,6 @@ class CanvasGame(MGUI.GUICanvas):
         self.unit_layer = MGUI.GUICanvas(0, 0, *self.get_size())
         self.unit_layer.backg_widget.set_transparent(True)
 
-        for i in range(8):
-            self.create_unit_at(0, i, "Selenian")
-            for j in range(12):
-                self.create_building_at(j, i, True, "Slime Spawner")
-
         font = pygame.font.Font("assets/Dosis.otf", 18)
         # Energy img & label
         self.energy_label = MGUI.Label(width / 2, 8, 0, 0, font, millify_num(self.energy) + " energy")
@@ -90,9 +85,15 @@ class CanvasGame(MGUI.GUICanvas):
         self.building_list.append(new_building)
         self.add_element(new_building, layer=1)
 
-    def create_unit_at(self, x, y, unit_name):
+    def get_building_at(self, x, y):
+        for b in self.building_list:
+            if b.x == x and b.y == y:
+                return b
+        return None
+
+    def create_unit_at(self, x, y, player_owned, unit_name):
         unit_data = self.base_units[unit_name]
-        new_unit = units.Unit(0, 0, unit_data)
+        new_unit = units.Unit(0, 0, player_owned, unit_data)
 
         # Set position to center of tile (x, y)
         unit_x = 32 + x * 48 - math.floor(new_unit.get_width() / 2)
@@ -105,8 +106,22 @@ class CanvasGame(MGUI.GUICanvas):
     def tick(self):
         for b in self.building_list:
             b.tick()
+            if b.type == buildings.buildtype_spawner:
+                if b.is_unit_ready():
+                    self.create_unit_at(b.x, b.y, b.player_owned, b.spawn_unit)
+                    b.reset_spawn()
+
+        remove_units = []
+        mapx, mapy = self.levelmap.get_position()
         for u in self.unit_list:
             u.tick()
+            ux, uy = u.get_position()
+            u_mapx = math.floor(abs(mapx - ux) / 48)
+            if u_mapx >= self.levelmap.width:
+                remove_units.append(u)
+        for u in remove_units:
+            self.unit_list.remove(u)
+            self.remove_element(u)
 
         if self.ticker == 0:
             self.energy += self.energy_ps
@@ -145,9 +160,10 @@ class CanvasGame(MGUI.GUICanvas):
             ux, uy = u.get_draw_position()
             if not u.get_position() == (ux + cam_x, uy + cam_y):
                 u.set_position(ux + cam_x, uy + cam_y)
+
         # Open buildings panel when selecting tile
         sel_tile = self.map_coll.selected_tile
-        if sel_tile and sel_tile.owned and not self.levelmap.get_building_at(sel_tile.x, sel_tile.y):
+        if sel_tile and sel_tile.owned and not self.get_building_at(sel_tile.x, sel_tile.y):
             if not self.buildmenu.is_visible():
                 self.buildmenu.set_visible(True)
                 self.buildmenu.update_data(self.energy)

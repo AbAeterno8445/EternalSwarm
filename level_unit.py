@@ -2,11 +2,12 @@ import MGUI
 
 
 class Unit(MGUI.AnimSprite):
-    def __init__(self, x, y, unit_data=None):
+    def __init__(self, x, y, player_owned, unit_data=None):
         super().__init__(x, y, 1, 1)
         self.draw_x = x
         self.draw_y = y
         self.speed = 0
+        self.player_owned = player_owned
 
         if unit_data:
             self.load_unit(unit_data)
@@ -26,7 +27,6 @@ class Unit(MGUI.AnimSprite):
                 flip_ver = "flip_ver" in anim_data
                 if flip_hor or flip_ver:
                     self.set_flip(flip_hor, flip_ver)
-
             elif hasattr(self, attr):
                 setattr(self, attr, unit_data[attr])
 

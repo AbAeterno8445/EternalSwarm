@@ -12,6 +12,7 @@ class Building(MGUI.ImageWidget):
         self.set_transparent(True)
         self.x = x
         self.y = y
+        self.type = ""
         self.player_owned = player_owned
 
         if building_data:
