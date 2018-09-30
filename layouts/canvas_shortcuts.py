@@ -1,8 +1,8 @@
 import pygame
-import MSGUI
+import MGUI
 
 
-class CanvasShortcuts(MSGUI.GUICanvas):
+class CanvasShortcuts(MGUI.GUICanvas):
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, (0, 0, 50))
 
@@ -13,7 +13,7 @@ class CanvasShortcuts(MSGUI.GUICanvas):
 
         font = pygame.font.Font("assets/Dosis.otf", 18)
         # Terrain button
-        self.button_terrain = MSGUI.Button(12, 10, 0, 26, font, "Terrain")
+        self.button_terrain = MGUI.Button(12, 10, 0, 26, font, "Terrain")
         self.button_terrain.set_callback(self._switch_canvas, ["terrain"])
         self.button_terrain.set_text_resize(res_hor=True, padding=8)
         self.button_terrain.set_font_color((0, 200, 0))
@@ -24,7 +24,7 @@ class CanvasShortcuts(MSGUI.GUICanvas):
 
         tmp_x = self.button_terrain.get_width() + 24
         # Upgrades button
-        self.button_upgrades = MSGUI.Button(tmp_x, 10, 0, 26, font, "Units")
+        self.button_upgrades = MGUI.Button(tmp_x, 10, 0, 26, font, "Units")
         self.button_upgrades.set_callback(self._switch_canvas, ["units"])
         self.button_upgrades.set_text_resize(res_hor=True, padding=8)
         self.button_upgrades.set_font_color((0, 200, 200))

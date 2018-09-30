@@ -1,7 +1,7 @@
-import MSGUI
+import MGUI
 
 
-class Unit(MSGUI.AnimSprite):
+class Unit(MGUI.AnimSprite):
     def __init__(self, x, y, unit_data=None):
         super().__init__(x, y, 1, 1)
         self.speed = 0

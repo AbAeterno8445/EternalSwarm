@@ -1,38 +1,38 @@
 import pygame
-import MSGUI
+import MGUI
 
 
-class TerrainLevelinfo(MSGUI.WidgetCollection):
+class TerrainLevelinfo(MGUI.WidgetCollection):
     def __init__(self, x, y, width, height):
         super().__init__()
 
-        backg_widget = MSGUI.Widget(x, y, width, height)
+        backg_widget = MGUI.Widget(x, y, width, height)
         backg_widget.set_background((20, 20, 20, 150))
         backg_widget.set_border(True)
         self.add_widget(backg_widget, "background", layer=2)
 
         font = pygame.font.Font("assets/Dosis.otf", 18)
         # Region name
-        region_label = MSGUI.Label(8, 8, 0, 22, font)
+        region_label = MGUI.Label(8, 8, 0, 22, font)
         region_label.set_text_resize(res_hor=True, padding=4)
         region_label.set_transparent(True)
         self.add_widget(region_label, "region_label", layer=3)
 
         # Level difficulty
-        diff_label = MSGUI.Label(8, 34, 0, 22, font)
+        diff_label = MGUI.Label(8, 34, 0, 22, font)
         diff_label.set_text_resize(res_hor=True, padding=4)
         diff_label.set_transparent(True)
         self.add_widget(diff_label, "diff_label", layer=3)
 
         # Capture terrain (begin level) button
-        capture_button = MSGUI.Button(8, height - 28, width - 8, 24, font, "Capture")
+        capture_button = MGUI.Button(8, height - 28, width - 8, 24, font, "Capture")
         capture_button.set_border(True)
         capture_button.set_hovered_color((150, 150, 150, 100))
         capture_button.set_pressed_color((100, 100, 100, 150))
         self.add_widget(capture_button, "capture_button", layer=3)
 
         # Owned terrain label
-        level_info_label = MSGUI.Label(8, height - 28, width - 8, 24, font, "Owned")
+        level_info_label = MGUI.Label(8, height - 28, width - 8, 24, font, "Owned")
         level_info_label.set_transparent(True)
         level_info_label.set_visible(False)
         self.add_widget(level_info_label, "level_info_label", layer=3)

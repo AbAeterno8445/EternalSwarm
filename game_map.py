@@ -2,12 +2,12 @@ import pygame
 import json
 import math
 import os
-import MSGUI
+import MGUI
 from tile_splitter import split_tile
 from random import randint
 
 
-class GameMap(MSGUI.Widget):
+class GameMap(MGUI.Widget):
     def __init__(self, x, y, width, height, regions_json=None):
         super().__init__(x, y, width, height)
         self.set_map_size(width, height)
@@ -21,7 +21,7 @@ class GameMap(MSGUI.Widget):
         self.tilemap_surface.set_colorkey((0, 0, 0))
 
         self.spawn_point = (math.floor((width + randint(0, 1)) / 2), math.floor((height + randint(0, 1)) / 2))
-        self.map_data = []  # 2d list of ints - each int is the regions list index # for that tile
+        self.map_data = []
         self.regions = []
         if regions_json:
             self.load_regions_json(regions_json)

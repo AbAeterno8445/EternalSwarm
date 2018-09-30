@@ -1,9 +1,9 @@
 import pygame
-import MSGUI
+import MGUI
 import math
 
 
-class MapCollection(MSGUI.WidgetCollection):
+class MapCollection(MGUI.WidgetCollection):
     """
     Widget collection for game/level map.
     Handles mouse hovering over tiles and tile selection of given map object.
@@ -31,13 +31,13 @@ class MapCollection(MSGUI.WidgetCollection):
         map_obj.set_position(cam_x, cam_y)
 
         # Mouse-hover rectangle widget
-        mouse_hover = MSGUI.ImageWidget(0, 0, 48, 48)
+        mouse_hover = MGUI.ImageWidget(0, 0, 48, 48)
         mouse_hover.set_border(True, (255, 255, 255))
         mouse_hover.set_visible(False)
         self.add_widget(mouse_hover, "mouse_hover", layer=1)
 
         # Selected tile widget
-        selected_tile_widg = MSGUI.ImageWidget(0, 0, 48, 48, "assets/selected_tile.png")
+        selected_tile_widg = MGUI.ImageWidget(0, 0, 48, 48, "assets/selected_tile.png")
         selected_tile_widg.set_border(True, (1, 1, 1))
         selected_tile_widg.set_visible(False)
         self.add_widget(selected_tile_widg, "selected_tile_widg", layer=2)

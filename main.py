@@ -71,7 +71,7 @@ def main():
             upd_rects += cur_canvas.draw(display)
             if isinstance(cur_canvas, layouts.CanvasTerrain):
                 if cur_canvas.start_game:
-                    cv_game.init_data(cur_canvas.map_collection.selected_tile)
+                    cv_game.init_data(cur_canvas.map_coll.selected_tile)
                     cur_canvas.start_game = False
                     game_running = True
             # Draw other canvases

@@ -7,6 +7,8 @@ class PlayerData(object):
 
         self.carb_crystals = 0
         self.ccps = 0  # Carbonic crystals per second
+
+        self.start_energy = 50
         self.owned_buildings = ["Slime Spawner"]
 
     def get_carbcrystals_str(self):
