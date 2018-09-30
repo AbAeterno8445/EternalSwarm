@@ -12,6 +12,9 @@ class CanvasGame(MGUI.GUICanvas):
         super().__init__(x, y, width, height)
         self.player_data = player_data
         self.energy = player_data.start_energy
+        self.energy_ps = player_data.start_energyps
+
+        self.ticker = 0
 
         # Load base buildings/units
         with open("assets/buildings.json", "r") as file:
@@ -55,19 +58,33 @@ class CanvasGame(MGUI.GUICanvas):
         if self.energy >= bdata["cost"]:
             self.energy -= bdata["cost"]
         self.buildmenu.update_data(self.energy)
-        self.levelmap.create_building_at(sel_tile.x, sel_tile.y, building_name)
+        self.levelmap.create_building_at(sel_tile.x, sel_tile.y, True, building_name)
+
+    def tick(self):
+        self.levelmap.tick()
+
+        if self.ticker == 0:
+            self.energy += self.energy_ps
+            if self.buildmenu.is_visible():
+                self.buildmenu.update_data(self.energy)
+
+        self.ticker = (self.ticker + 1) % 60
 
     def handle_event(self, event_list):
         super().handle_event(event_list)
 
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        buildmenu_hovered = self.buildmenu.is_visible() and \
-                            self.buildmenu["background"].get_bounds_at(self.x, self.y).collidepoint(mouse_x, mouse_y)
+        self.tick()
 
-        if not buildmenu_hovered:
-            self.map_coll.set_hovered(True)
-        else:
-            self.map_coll.set_hovered(False)
+        for event in event_list:
+            if event.type in {pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN}:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                buildmenu_hovered = self.buildmenu.is_visible() and \
+                                    self.buildmenu["background"].get_bounds_at(self.x, self.y).collidepoint(mouse_x, mouse_y)
+
+                if not buildmenu_hovered:
+                    self.map_coll.set_hovered(True)
+                else:
+                    self.map_coll.set_hovered(False)
 
         self.map_coll.handle_event(event_list)
         self.map_coll.update()

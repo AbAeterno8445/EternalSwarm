@@ -5,5 +5,9 @@
     "type": "spawner",
     "spawn_time": 4,
     "spawn_unit": "Slime"
+  },
+  "Shrine": {
+    "cost": 45,
+    "base_img": "shrine.png"
   }
 }
