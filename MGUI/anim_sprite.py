@@ -60,6 +60,14 @@ class AnimSprite(ImageWidget):
         super().set_bounds_size(width, height)
         self._update_animation_set()
 
+    def set_rotation(self, angle):
+        super().set_rotation(angle)
+        self._update_animation_set()
+
+    def set_flip(self, flip_hor=False, flip_ver=False):
+        super().set_flip(flip_hor, flip_ver)
+        self._update_animation_set()
+
     def set_animation_order(self, order_list):
         """
         Sets the frame animation order for the sprite

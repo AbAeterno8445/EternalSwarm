@@ -22,6 +22,9 @@ class ImageWidget(Widget):
         self._smooth = smooth
         self._autosize = autosize
         self._autoscale = False
+        self._rotation = 0
+        self._flip_hor = False
+        self._flip_ver = False
         if icon is None:
             icon = super()._get_appearance()
         elif type(icon) is str:
@@ -58,6 +61,15 @@ class ImageWidget(Widget):
         if self._icon:
             self.set_icon(self._icon)
 
+    def set_rotation(self, angle):
+        self._rotation = angle
+        self.mark_dirty()
+
+    def set_flip(self, flip_hor=False, flip_ver=False):
+        self._flip_hor = flip_hor
+        self._flip_ver = flip_ver
+        self.mark_dirty()
+
     def _apply_autosize(self):
         self.set_bounds(self._icon.get_rect(topleft=self._bounds.topleft))
 
@@ -67,6 +79,12 @@ class ImageWidget(Widget):
             self._icon = pygame.transform.smoothscale(self._icon, rect_fit.size)
         else:
             self._icon = pygame.transform.scale(self._icon, rect_fit.size)
+
+    def _apply_rotation(self):
+        self._icon = pygame.transform.rotate(self._icon, self._rotation)
+
+    def _apply_flip(self):
+        self._icon = pygame.transform.flip(self._icon, self._flip_hor, self._flip_ver)
 
     def set_icon(self, icon):
         """
@@ -83,6 +101,11 @@ class ImageWidget(Widget):
             self._apply_autosize()
         elif self._autoscale:
             self._apply_autoscale()
+
+        if self._rotation:
+            self._apply_rotation()
+        if self._flip_hor or self._flip_ver:
+            self._apply_flip()
 
         self.mark_dirty()
         return self
