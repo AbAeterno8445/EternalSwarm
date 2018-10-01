@@ -9,8 +9,7 @@
       "grass/grass16.png", "grass/grass17.png", "grass/grass18.png", "grass/grass19.png", "grass/grass20.png",
       "grass/grass21.png", "grass/grass22.png", "grass/grass23.png"
     ],
-    "decor_density": -1,
-    "max_size": 15
+    "decor_density": -1
   },
   {
     "name": "Grassland woods",
@@ -18,7 +17,7 @@
     "decor": ["tree1.png", "tree2.png"],
     "decor_density": 1,
     "max_size": 8,
-    "freq": 5,
+    "freq": 14,
     "expansion": 50
   },
   {
@@ -27,7 +26,7 @@
     "decor": ["snowytree1.png", "snowytree2.png"],
     "decor_density": 1,
     "max_size": 18,
-    "freq": 5,
+    "freq": 12,
     "expansion": 50
   },
   {
@@ -35,7 +34,7 @@
     "img_path": "tile_stone.png",
     "decor": ["mountain.png"],
     "max_size": 5,
-    "freq": 5
+    "freq": 12
   },
   {
     "name": "Lake",
@@ -43,7 +42,15 @@
     "decor": ["lake/lilypad1.png", "lake/lilypad2.png", "lake/lilypad3.png"],
     "decor_density": -2,
     "max_size": 10,
-    "freq": 3,
+    "freq": 10,
     "expansion": 25
+  },
+  {
+    "name": "Desert",
+    "img_path": "tile_sand.png",
+    "decor": ["cactus.png"],
+    "decor_density": -1,
+    "max_size": 10,
+    "freq": 10
   }
 ]

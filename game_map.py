@@ -77,7 +77,7 @@ class GameMap(MGUI.Widget):
             closed_tiles.append(cur_tile)
 
             x, y = cur_tile
-            self.map_data[y][x].region = region
+            self.get_tile_at(x, y).region = region
             created += 1
             if created >= region.max_size:
                 break
@@ -89,7 +89,8 @@ class GameMap(MGUI.Widget):
                         if i == 0 or j == 0 and not (i == 0 and j == 0):
                             nx, ny = tile[0] + i, tile[1] + j
                             if 0 <= nx < self.width and 0 <= ny < self.height and (nx, ny) not in closed_tiles:
-                                if self.get_tile_distance((nx, ny), self.spawn_point) > region.spawn_dist and self.map_data[ny][nx].region == self.regions[0]:
+                                if self.get_tile_distance((nx, ny), self.spawn_point) > region.spawn_dist \
+                                        and self.get_tile_at(nx, ny).region == self.regions[0]:
                                     neighbors.append((nx, ny))
 
             for n_tile in neighbors:
@@ -121,7 +122,7 @@ class GameMap(MGUI.Widget):
         if len(self.regions) > 1:
             for i in range(self.height):
                 for j in range(self.width):
-                    if self.map_data[j][i].region == self.regions[0]:
+                    if self.get_tile_at(j, i).region == self.regions[0]:
                         picked_region = randint(1, len(self.regions) - 1)
                         if randint(0, 100) < self.regions[picked_region].freq:
                             self._generate_region_at(self.regions[picked_region], j, i)
@@ -132,7 +133,7 @@ class GameMap(MGUI.Widget):
         # Assign levels to tiles based on region
         for i in range(self.height):
             for j in range(self.width):
-                cur_tile = self.map_data[j][i]
+                cur_tile = self.get_tile_at(j, i)
                 cur_region = cur_tile.region
                 level_path = "levels/" + cur_region.name.lower() + "/"
                 try:
@@ -151,7 +152,7 @@ class GameMap(MGUI.Widget):
         self.tilelist.empty()
         for i in range(self.height):
             for j in range(self.width):
-                cur_tile = self.map_data[i][j]
+                cur_tile = self.get_tile_at(j, i)
                 cur_region = cur_tile.region
                 tile_x = j * 48
                 tile_y = i * 48
@@ -160,7 +161,7 @@ class GameMap(MGUI.Widget):
                 neighbor_top = False
                 neighbor_top_owned = False
                 if i > 0:
-                    neighbor = self.map_data[i - 1][j]
+                    neighbor = self.get_tile_at(j, i - 1)
                     if neighbor.region == cur_tile.region \
                             or (neighbor.region.group and neighbor.region.group == cur_tile.region.group):
                         neighbor_top = True
@@ -171,7 +172,7 @@ class GameMap(MGUI.Widget):
                 neighbor_bottom = False
                 neighbor_bottom_owned = False
                 if i < self.height - 1:
-                    neighbor = self.map_data[i + 1][j]
+                    neighbor = self.get_tile_at(j, i + 1)
                     if neighbor.region == cur_tile.region \
                             or (neighbor.region.group and neighbor.region.group == cur_tile.region.group):
                         neighbor_bottom = True
@@ -182,7 +183,7 @@ class GameMap(MGUI.Widget):
                 neighbor_left = False
                 neighbor_left_owned = False
                 if j > 0:
-                    neighbor = self.map_data[i][j - 1]
+                    neighbor = self.get_tile_at(j - 1, i)
                     if neighbor.region == cur_tile.region \
                             or (neighbor.region.group and neighbor.region.group == cur_tile.region.group):
                         neighbor_left = True
@@ -193,7 +194,7 @@ class GameMap(MGUI.Widget):
                 neighbor_right = False
                 neighbor_right_owned = False
                 if j < self.width - 1:
-                    neighbor = self.map_data[i][j + 1]
+                    neighbor = self.get_tile_at(j + 1, i)
                     if neighbor.region == cur_tile.region \
                             or (neighbor.region.group and neighbor.region.group == cur_tile.region.group):
                         neighbor_right = True
