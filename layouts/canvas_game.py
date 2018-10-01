@@ -15,6 +15,7 @@ class CanvasGame(MGUI.GUICanvas):
         self.energy_ps = player_data.start_energyps
 
         self.ticker = 0
+        self.paused = False
 
         # Load base buildings/units
         with open("assets/buildings.json", "r") as file:
@@ -55,17 +56,31 @@ class CanvasGame(MGUI.GUICanvas):
         self.energy_img.set_position(tmp_x, 6)
         self.add_element(self.energy_img)
 
+        # Paused label
+        self.paused_label = MGUI.Label(0, 0, 0, 0, font, "PAUSED")
+        self.paused_label.set_text_resize(res_hor=True, res_ver=True, padding=8)
+        self.paused_label.set_border(True)
+        tmp_x = width / 2 - self.paused_label.get_width() / 2
+        tmp_y = height / 2 - self.paused_label.get_height() / 2
+        self.paused_label.set_position(tmp_x, tmp_y)
+        self.paused_label.set_visible(False)
+        self.add_element(self.paused_label, layer=10)
+
     def init_data(self, src_tile):
         self.levelmap.load_level(src_tile.region.name, src_tile.level_id)
         self.levelmap.set_visible(True)
+
+    def add_energy(self, mod):
+        self.energy += mod
+        if self.buildmenu.is_visible():
+            self.buildmenu.update_data(self.energy)
 
     def place_building(self, building_name):
         bdata = self.base_buildings[building_name]
         sel_tile = self.map_coll.selected_tile
 
         if self.energy >= bdata["cost"]:
-            self.energy -= bdata["cost"]
-        self.buildmenu.update_data(self.energy)
+            self.add_energy(-bdata["cost"])
         self.create_building_at(sel_tile.x, sel_tile.y, True, building_name)
 
     def create_building_at(self, x, y, player_owned, building_name):
@@ -91,6 +106,13 @@ class CanvasGame(MGUI.GUICanvas):
                 return b
         return None
 
+    def remove_building(self, building, sell=False):
+        if building in self.building_list:
+            self.building_list.remove(building)
+            self.remove_element(building)
+            if sell:
+                self.add_energy(math.floor(building.cost * 0.4))
+
     def create_unit_at(self, x, y, player_owned, unit_name):
         unit_data = self.base_units[unit_name]
         new_unit = units.Unit(0, 0, player_owned, unit_data)
@@ -103,7 +125,15 @@ class CanvasGame(MGUI.GUICanvas):
         self.unit_list.append(new_unit)
         self.add_element(new_unit, layer=2)
 
+    def remove_unit(self, unit):
+        if unit in self.unit_list:
+            self.unit_list.remove(unit)
+            self.remove_element(unit)
+
     def tick(self):
+        if self.paused:
+            return
+
         for b in self.building_list:
             b.tick()
             if b.type == buildings.buildtype_spawner:
@@ -120,21 +150,28 @@ class CanvasGame(MGUI.GUICanvas):
             if u_mapx >= self.levelmap.width:
                 remove_units.append(u)
         for u in remove_units:
-            self.unit_list.remove(u)
-            self.remove_element(u)
-
-        if self.ticker == 0:
-            self.energy += self.energy_ps
-            if self.buildmenu.is_visible():
-                self.buildmenu.update_data(self.energy)
+            self.remove_unit(u)
 
         self.ticker = (self.ticker + 1) % 60
+        if self.ticker == 0:
+            self.add_energy(self.energy_ps)
 
     def handle_event(self, event_list):
         super().handle_event(event_list)
 
         self.tick()
 
+        # Open buildings panel when selecting tile
+        sel_tile = self.map_coll.selected_tile
+        if sel_tile and sel_tile.owned and not self.get_building_at(sel_tile.x, sel_tile.y):
+            if not self.buildmenu.is_visible():
+                self.buildmenu.set_visible(True)
+                self.buildmenu.update_data(self.energy)
+        else:
+            if self.buildmenu.is_visible():
+                self.buildmenu.set_visible(False)
+
+        # Handle events
         for event in event_list:
             if event.type in {pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP, pygame.MOUSEBUTTONDOWN}:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -145,6 +182,12 @@ class CanvasGame(MGUI.GUICanvas):
                     self.map_coll.set_hovered(True)
                 else:
                     self.map_coll.set_hovered(False)
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:  # Pause game
+                    self.paused = not self.paused
+                elif event.key == pygame.K_DELETE:  # Delete building
+                    if sel_tile:
+                        self.remove_building(self.get_building_at(sel_tile.x, sel_tile.y), sell=True)
 
         self.map_coll.handle_event(event_list)
         self.map_coll.update()
@@ -161,17 +204,11 @@ class CanvasGame(MGUI.GUICanvas):
             if not u.get_position() == (ux + cam_x, uy + cam_y):
                 u.set_position(ux + cam_x, uy + cam_y)
 
-        # Open buildings panel when selecting tile
-        sel_tile = self.map_coll.selected_tile
-        if sel_tile and sel_tile.owned and not self.get_building_at(sel_tile.x, sel_tile.y):
-            if not self.buildmenu.is_visible():
-                self.buildmenu.set_visible(True)
-                self.buildmenu.update_data(self.energy)
-        else:
-            if self.buildmenu.is_visible():
-                self.buildmenu.set_visible(False)
-
         # Update energy label
         energy_txt = millify_num(self.energy) + " energy"
         if not self.energy_label.get_text() == energy_txt:
             self.energy_label.set_text(energy_txt)
+
+        # Update pause label
+        if not self.paused_label.is_visible() == self.paused:
+            self.paused_label.set_visible(self.paused)

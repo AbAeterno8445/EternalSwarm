@@ -13,6 +13,7 @@ class Building(MGUI.ImageWidget):
         self.x = x
         self.y = y
         self.type = ""
+        self.cost = 0
         self.player_owned = player_owned
 
         if building_data:
@@ -37,21 +38,38 @@ class BuildingTimedEffect(Building):
     Buildings that produce an effect after a delayed time. Includes a progress bar.
     """
     def __init__(self, x, y, player_owned, building_data=None):
+        self.effect_bar = MGUI.Healthbar(4, 4, 40, 4)
+        self.effect_bar.set_background((20, 20, 20))
+        self.effect_bar.set_color((150, 50, 150))
+
         self.effect_time = 0
         self.effect_ticker = 0
         super().__init__(x, y, player_owned, building_data)
+
+    def update_effect_bar(self):
+        if self.effect_time > 0 and self.effect_ticker > 0:
+            self.effect_bar.set_percentage(self.effect_ticker / self.effect_time)
+        else:
+            self.effect_bar.set_percentage(0)
+        self.mark_dirty()
 
     def tick(self):
         if self.effect_ticker < self.effect_time:
             self.effect_ticker += 1
         else:
             self.effect()
+        self.update_effect_bar()
 
     def reset_ticker(self):
         self.effect_ticker = 0
 
     def effect(self):
         pass
+
+    def _get_appearance(self, *args):
+        surface = super()._get_appearance(*args)
+        surface.blit(self.effect_bar._get_appearance(*args), self.effect_bar.get_position())
+        return surface
 
 
 class BuildingSpawner(BuildingTimedEffect):
@@ -70,6 +88,7 @@ class BuildingSpawner(BuildingTimedEffect):
         super().load_building(building_data)
         self.effect_time = math.ceil(building_data["spawn_time"] * 60)
         self.effect_ticker = 0
+        self.update_effect_bar()
 
     def effect(self):
         self.spawn_ready = True
