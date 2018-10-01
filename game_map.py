@@ -161,7 +161,8 @@ class GameMap(MGUI.Widget):
                 neighbor_top_owned = False
                 if i > 0:
                     neighbor = self.map_data[i - 1][j]
-                    if neighbor.region == cur_tile.region:
+                    if neighbor.region == cur_tile.region \
+                            or (neighbor.region.group and neighbor.region.group == cur_tile.region.group):
                         neighbor_top = True
                     neighbor_top_owned = neighbor.owned
                     if cur_tile.owned:
@@ -171,7 +172,8 @@ class GameMap(MGUI.Widget):
                 neighbor_bottom_owned = False
                 if i < self.height - 1:
                     neighbor = self.map_data[i + 1][j]
-                    if neighbor.region == cur_tile.region:
+                    if neighbor.region == cur_tile.region \
+                            or (neighbor.region.group and neighbor.region.group == cur_tile.region.group):
                         neighbor_bottom = True
                     neighbor_bottom_owned = neighbor.owned
                     if cur_tile.owned:
@@ -181,7 +183,8 @@ class GameMap(MGUI.Widget):
                 neighbor_left_owned = False
                 if j > 0:
                     neighbor = self.map_data[i][j - 1]
-                    if neighbor.region == cur_tile.region:
+                    if neighbor.region == cur_tile.region \
+                            or (neighbor.region.group and neighbor.region.group == cur_tile.region.group):
                         neighbor_left = True
                     neighbor_left_owned = neighbor.owned
                     if cur_tile.owned:
@@ -191,7 +194,8 @@ class GameMap(MGUI.Widget):
                 neighbor_right_owned = False
                 if j < self.width - 1:
                     neighbor = self.map_data[i][j + 1]
-                    if neighbor.region == cur_tile.region:
+                    if neighbor.region == cur_tile.region \
+                            or (neighbor.region.group and neighbor.region.group == cur_tile.region.group):
                         neighbor_right = True
                     neighbor_right_owned = neighbor.owned
                     if cur_tile.owned:
@@ -316,8 +320,9 @@ class GameMap(MGUI.Widget):
 class MapRegion(object):
     def __init__(self, name, img):
         self.name = name
+        self.group = ""
         self.img = img
-        self.spawn_dist = 0  # Distance from spawnpoint, used in generation
+        self.spawn_dist = 2  # Distance from spawnpoint, used in generation
         self.max_size = 1
         self.decor = []
         self.decor_density = 2
