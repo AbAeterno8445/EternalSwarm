@@ -40,6 +40,9 @@ class CanvasTerrain(MGUI.GUICanvas):
                     self.map_coll.set_hovered(True)
                 else:
                     self.map_coll.set_hovered(False)
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:  # Center camera to spawnpoint
+                    self.map_coll.center_camera()
 
         self.map_coll.handle_event(event_list)
         self.map_coll.update()

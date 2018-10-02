@@ -22,13 +22,9 @@ class MapCollection(MGUI.WidgetCollection):
         self.add_widget(map_obj, "map", layer=-1)
 
         # Camera
-        sp_x, sp_y = map_obj.spawn_point
-        cam_x = -sp_x * 48 + math.floor(width / 2) - 24
-        cam_y = -sp_y * 48 + math.floor(height / 2) - 24
-        self.camera = MapCamera(cam_x, cam_y)
+        self.camera = MapCamera(0, 0)
         self.camera_drag = False
-
-        map_obj.set_position(cam_x, cam_y)
+        self.center_camera()
 
         # Mouse-hover rectangle widget
         mouse_hover = MGUI.ImageWidget(0, 0, 48, 48)
@@ -47,6 +43,14 @@ class MapCollection(MGUI.WidgetCollection):
 
     def get_camera_position(self):
         return self.camera.get_position()
+
+    def center_camera(self):
+        if not self.camera_drag:
+            sp_x, sp_y = self["map"].spawn_point
+            cam_x = -sp_x * 48 + math.floor(self.width / 2) - 24
+            cam_y = -sp_y * 48 + math.floor(self.height / 2) - 24
+            self.camera.set_position(cam_x, cam_y)
+            self["map"].set_position(*self.camera.get_position())
 
     def handle_event(self, event_list):
         for event in event_list:
@@ -123,6 +127,10 @@ class MapCamera(object):
         self.y = y
         self.drag_x = 0
         self.drag_y = 0
+
+    def set_position(self, x, y):
+        self.x = x
+        self.y = y
 
     def get_position(self):
         return self.x, self.y

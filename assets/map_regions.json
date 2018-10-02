@@ -25,7 +25,7 @@
     "img_path": "tile_snow.png",
     "decor": ["snowytree1.png", "snowytree2.png"],
     "decor_density": 1,
-    "max_size": 18,
+    "max_size": 10,
     "freq": 12,
     "expansion": 50
   },
