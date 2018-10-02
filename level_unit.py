@@ -1,4 +1,5 @@
 import MGUI
+import math
 
 
 class Unit(MGUI.AnimSprite):
@@ -8,6 +9,12 @@ class Unit(MGUI.AnimSprite):
         self.draw_y = y
         self.speed = 0
         self.player_owned = player_owned
+
+        self.maxhp = 1
+        self.hp = self.maxhp
+        self.dmg_phys = 1
+        self.attspd = 1
+        self.att_ticker = 0
 
         if unit_data:
             self.load_unit(unit_data)
@@ -29,6 +36,8 @@ class Unit(MGUI.AnimSprite):
                     self.set_flip(flip_hor, flip_ver)
             elif hasattr(self, attr):
                 setattr(self, attr, unit_data[attr])
+        self.hp = self.maxhp
+        self.attspd = math.ceil(self.attspd * 60)
 
     def set_draw_position(self, x, y):
         self.draw_x = x

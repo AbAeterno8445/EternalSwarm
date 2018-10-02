@@ -5,7 +5,10 @@
       "frames": 2,
       "anim_delay": 8
     },
-    "speed": 1
+    "speed": 1,
+    "maxhp": 10,
+    "dmg_phys": 2,
+    "attspd": 1.55
   },
   "Selenian": {
     "img_data": {
