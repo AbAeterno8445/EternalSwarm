@@ -19,6 +19,7 @@ class ImageWidget(Widget):
         """
         super().__init__(x, y, width, height)
         self.set_transparent(True)
+        self._alpha = 255
         self._smooth = smooth
         self._autosize = autosize
         self._autoscale = False
@@ -40,6 +41,22 @@ class ImageWidget(Widget):
         self._smooth = bool(smooth)
         self.mark_dirty()
         return self
+
+    def set_alpha(self, alpha):
+        """
+        Set the Widget's alpha value
+        parameters:     int alpha value 0-255
+        return values:  -
+        """
+        self._alpha = max(0, min(255, alpha))
+
+    def get_alpha(self):
+        """
+        Return the Widget's alpha value
+        parameters:     -
+        return values:  int widget's alpha value
+        """
+        return self._alpha
 
     def set_icon_autoscale(self, autoscale):
         """
@@ -143,4 +160,6 @@ class ImageWidget(Widget):
         else:
             self._icon = surface
 
+        if not self._alpha == 255:
+            surface.set_alpha(self._alpha)
         return surface
