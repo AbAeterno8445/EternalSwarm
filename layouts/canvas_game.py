@@ -43,6 +43,9 @@ class CanvasGame(MGUI.GUICanvas):
         self.unit_layer = MGUI.GUICanvas(0, 0, *self.get_size())
         self.unit_layer.backg_widget.set_transparent(True)
 
+        for i in range(8):
+            self.create_building_at(11, i, False, "Slime Spawner")
+
         font = pygame.font.Font("assets/Dosis.otf", 18)
         # Energy img & label
         self.energy_label = MGUI.Label(width / 2, 8, 0, 0, font, millify_num(self.energy) + " energy")
@@ -147,8 +150,11 @@ class CanvasGame(MGUI.GUICanvas):
             u.tick()
             ux, uy = u.get_position()
             u_mapx = math.floor(abs(mapx - ux) / 48)
-            if u_mapx >= self.levelmap.width:
-                remove_units.append(u)
+            if (ux and ux < mapx - 8) or u_mapx >= self.levelmap.width:
+                if u.get_alpha() > 0:
+                    u.set_alpha(u.get_alpha() - 15)
+                else:
+                    remove_units.append(u)
         for u in remove_units:
             self.remove_unit(u)
 
@@ -161,15 +167,7 @@ class CanvasGame(MGUI.GUICanvas):
 
         self.tick()
 
-        # Open buildings panel when selecting tile
         sel_tile = self.map_coll.selected_tile
-        if sel_tile and sel_tile.owned and not self.get_building_at(sel_tile.x, sel_tile.y):
-            if not self.buildmenu.is_visible():
-                self.buildmenu.set_visible(True)
-                self.buildmenu.update_data(self.energy)
-        else:
-            if self.buildmenu.is_visible():
-                self.buildmenu.set_visible(False)
 
         # Handle events
         for event in event_list:
@@ -188,6 +186,15 @@ class CanvasGame(MGUI.GUICanvas):
                 elif event.key == pygame.K_DELETE:  # Delete building
                     if sel_tile:
                         self.remove_building(self.get_building_at(sel_tile.x, sel_tile.y), sell=True)
+
+        # Open buildings panel when selecting tile
+        if sel_tile and sel_tile.owned and not self.get_building_at(sel_tile.x, sel_tile.y):
+            if not self.buildmenu.is_visible():
+                self.buildmenu.set_visible(True)
+                self.buildmenu.update_data(self.energy)
+        else:
+            if self.buildmenu.is_visible():
+                self.buildmenu.set_visible(False)
 
         self.map_coll.handle_event(event_list)
         self.map_coll.update()

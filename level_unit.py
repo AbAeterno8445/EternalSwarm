@@ -23,7 +23,7 @@ class Unit(MGUI.AnimSprite):
                     self.set_animation_order(anim_data["anim_order"])
                 if "rotate" in anim_data:
                     self.set_rotation(anim_data["rotate"])
-                flip_hor = "flip_hor" in anim_data
+                flip_hor = "flip_hor" in anim_data and self.player_owned or not self.player_owned  # Flip enemy units
                 flip_ver = "flip_ver" in anim_data
                 if flip_hor or flip_ver:
                     self.set_flip(flip_hor, flip_ver)
@@ -39,4 +39,8 @@ class Unit(MGUI.AnimSprite):
 
     def tick(self):
         mx, my = self.get_draw_position()
-        self.set_draw_position(mx + self.speed, my)
+        if self.player_owned:
+            mx += self.speed
+        else:
+            mx -= self.speed
+        self.set_draw_position(mx, my)

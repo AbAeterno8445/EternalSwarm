@@ -18,7 +18,7 @@
     "decor_density": 1,
     "max_size": 8,
     "freq": 14,
-    "expansion": 50
+    "expansion": 100
   },
   {
     "name": "Tundra",
@@ -27,23 +27,24 @@
     "decor_density": 1,
     "max_size": 10,
     "freq": 12,
-    "expansion": 50
+    "expansion": 100
   },
   {
     "name": "Mountains",
     "img_path": "tile_stone.png",
     "decor": ["mountain.png"],
     "max_size": 5,
-    "freq": 12
+    "freq": 12,
+    "expansion": 100
   },
   {
     "name": "Lake",
     "img_path": "tile_water.png",
     "decor": ["lake/lilypad1.png", "lake/lilypad2.png", "lake/lilypad3.png"],
     "decor_density": -2,
-    "max_size": 10,
+    "max_size": 8,
     "freq": 10,
-    "expansion": 25
+    "expansion": 100
   },
   {
     "name": "Desert",
@@ -51,6 +52,7 @@
     "decor": ["cactus.png"],
     "decor_density": -1,
     "max_size": 10,
-    "freq": 10
+    "freq": 10,
+    "expansion": 100
   }
 ]
