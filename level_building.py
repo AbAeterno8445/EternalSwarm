@@ -16,6 +16,9 @@ class Building(MGUI.ImageWidget):
         self.cost = 0
         self.player_owned = player_owned
 
+        self.maxhp = 1
+        self.hp = self.maxhp
+
         if building_data:
             self.load_building(building_data)
 
@@ -25,6 +28,8 @@ class Building(MGUI.ImageWidget):
                 self.set_icon("assets/buildings/" + building_data[attr])
             elif hasattr(self, attr):
                 setattr(self, attr, building_data[attr])
+
+        self.hp = self.maxhp
 
     def get_draw_position(self):
         return 8 + self.x * 48, 8 + self.y * 48

@@ -26,12 +26,12 @@ def main():
     tmp_x = cv_materials.get_width() + 32
     tmp_width = disp_w - tmp_x - 16
     cv_terrain = layouts.CanvasTerrain(tmp_x, 16, tmp_width, disp_h - 100)
-    cv_units = layouts.CanvasUnits(tmp_x, 16, *cv_terrain.get_size())
+    cv_buildings = layouts.CanvasUnits(tmp_x, 16, *cv_terrain.get_size())
 
     current_main_canvas = "terrain"
     cv_main = {
         "terrain": cv_terrain,
-        "units": cv_units
+        "buildings": cv_buildings
     }
 
     tmp_y = cv_terrain.get_height() + 24

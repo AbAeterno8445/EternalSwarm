@@ -49,6 +49,7 @@ class ImageWidget(Widget):
         return values:  -
         """
         self._alpha = max(0, min(255, alpha))
+        self.mark_dirty()
 
     def get_alpha(self):
         """

@@ -73,6 +73,10 @@ class CanvasGame(MGUI.GUICanvas):
         self.levelmap.load_level(src_tile.region.name, src_tile.level_id)
         self.levelmap.set_visible(True)
 
+        self.unit_list = []
+        for _ in range(self.levelmap.height):
+            self.unit_list.append([])
+
     def add_energy(self, mod):
         self.energy += mod
         if self.buildmenu.is_visible():
@@ -118,14 +122,9 @@ class CanvasGame(MGUI.GUICanvas):
 
     def create_unit_at(self, x, y, player_owned, unit_name):
         unit_data = self.base_units[unit_name]
-        new_unit = units.Unit(0, 0, player_owned, unit_data)
+        new_unit = units.Unit(x, y, player_owned, unit_data)
 
-        # Set position to center of tile (x, y)
-        unit_x = 32 + x * 48 - math.floor(new_unit.get_width() / 2)
-        unit_y = 42 + y * 48 - new_unit.get_height()
-        new_unit.set_draw_position(unit_x, unit_y)
-
-        self.unit_list.append(new_unit)
+        self.unit_list[y].append(new_unit)
         self.add_element(new_unit, layer=2)
 
     def remove_unit(self, unit):
@@ -146,14 +145,28 @@ class CanvasGame(MGUI.GUICanvas):
 
         remove_units = []
         mapx, mapy = self.levelmap.get_position()
-        for u in self.unit_list:
-            u.tick()
-            ux, uy = u.get_position()
-            u_mapx = math.floor(abs(mapx - ux) / 48)
-            if (ux and ux < mapx - 8) or u_mapx >= self.levelmap.width:
-                if u.get_alpha() > 0:
-                    u.set_alpha(u.get_alpha() - 15)
-                else:
+        for h in range(self.levelmap.height):
+            for u in self.unit_list[h]:
+                u.tick()
+
+                u_x, u_y = u.get_position()
+                if u.state == units.state_walk:
+                    # Check for opposing units to battle
+                    u_range = 8 + math.floor(u.get_width() / 2)  # TODO change to unit range variable
+                    for u_other in self.unit_list[h]:
+                        if u is u_other or u_other.player_owned == u.player_owned or not u_other.state == units.state_walk:
+                            continue
+                        u_otherx, u_othery = u_other.get_position()
+                        if abs(u_x - u_otherx) < u_range:
+                            u.set_battle_target(u_other)
+                            u_other.set_battle_target(u)
+
+                    # Check if unit is out of bounds and fade/delete it if so
+                    if not u.state == units.state_fade:
+                        u_mapx = math.floor(abs(mapx - u_x) / 48)
+                        if (u_x and u_x < mapx - 8) or u_mapx >= self.levelmap.width:
+                            u.state = units.state_fade
+                elif u.state == units.state_delete:
                     remove_units.append(u)
         for u in remove_units:
             self.remove_unit(u)
@@ -206,10 +219,11 @@ class CanvasGame(MGUI.GUICanvas):
             if not b.get_position() == (bx + cam_x, by + cam_y):
                 b.set_position(bx + cam_x, by + cam_y)
         # Update units
-        for u in self.unit_list:
-            ux, uy = u.get_draw_position()
-            if not u.get_position() == (ux + cam_x, uy + cam_y):
-                u.set_position(ux + cam_x, uy + cam_y)
+        for h in range(self.levelmap.height):
+            for u in self.unit_list[h]:
+                ux, uy = u.get_draw_position()
+                if not u.get_position() == (ux + cam_x, uy + cam_y):
+                    u.set_position(ux + cam_x, uy + cam_y)
 
         # Update energy label
         energy_txt = millify_num(self.energy) + " energy"

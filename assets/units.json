@@ -8,7 +8,7 @@
     "speed": 1,
     "maxhp": 10,
     "dmg_phys": 2,
-    "attspd": 1.55
+    "attspd": 0.5
   },
   "Selenian": {
     "img_data": {
