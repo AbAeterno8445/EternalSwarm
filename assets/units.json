@@ -14,9 +14,18 @@
     "img_data": {
       "img": "selenian.png",
       "frames": 17,
-      "anim_order": [9, 10, 11, 12, 13, 14, 15, 16],
+      "anim_order": {
+        "idle": [0],
+        "base": [9, 10, 11, 12, 13, 14, 15, 16],
+        "battle": [2, 3, 4, "battle_spin"],
+        "battle_spin": [5, 6, 7, 8],
+        "death": [1]
+      },
       "flip_hor": 1
     },
-    "speed": 2
+    "speed": 2,
+    "maxhp": 20,
+    "dmg_phys": 1,
+    "attspd": 0.2
   }
 }

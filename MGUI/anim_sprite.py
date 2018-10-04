@@ -12,7 +12,8 @@ class AnimSprite(ImageWidget):
         self._anim_framecount = frames
         self._anim_delay = 5
         self._anim_ticker = 0
-        self._anim_order = []
+        self._animations = {}
+        self._current_anim = "base"
         self._anim_order_pos = 0
 
         self._update_animation_set(self._icon)
@@ -29,7 +30,8 @@ class AnimSprite(ImageWidget):
             if type(new_icon) is str:
                 new_icon = pygame.image.load(new_icon)
             og_texture = new_icon
-            self._anim_order = []
+            self._animations = {}
+            self._current_anim = "base"
             self.image_list = []
             frame_height = og_texture.get_height() / self._anim_framecount
             frame_width = og_texture.get_width()
@@ -42,11 +44,11 @@ class AnimSprite(ImageWidget):
                 self.set_icon(self.image_list[i])
                 self.image_list_modified.append(self._icon)
 
-        if not self._anim_order:
+        if not self._animations:
             new_anim_order = []
             for i in range(self._anim_framecount):
                 new_anim_order.append(i)
-            self.set_animation_order(new_anim_order)
+            self.set_animation_data({"base": new_anim_order})
 
     def set_icon_autosize(self, autosize):
         super().set_icon_autosize(autosize)
@@ -68,15 +70,20 @@ class AnimSprite(ImageWidget):
         super().set_flip(flip_hor, flip_ver)
         self._update_animation_set()
 
-    def set_animation_order(self, order_list):
+    def set_animation_current(self, anim_name):
+        if not self._current_anim == anim_name and anim_name in self._animations:
+            self._current_anim = anim_name
+            self._anim_order_pos = 0
+            self.mark_dirty()
+
+    def set_animation_data(self, order_dict):
         """
         Sets the frame animation order for the sprite
         parameters:     list of ints for each frame ID in order
         return values:  -
         """
-        self._anim_order = order_list
-        if self._anim_order_pos > len(self._anim_order):
-            self._anim_order_pos = 0
+        self._animations = order_dict
+        self._anim_order_pos = 0
 
     def set_animation_delay(self, delay):
         """
@@ -95,19 +102,25 @@ class AnimSprite(ImageWidget):
         self._anim_framecount = frames
         self.set_animation_delay(anim_delay)
         if anim_order:
-            self.set_animation_order(anim_order)
+            self.set_animation_data({"base": anim_order})
         self._update_animation_set(icon)
 
     def update(self, *args):
         self._anim_ticker += 1
+        current_anim = self._animations[self._current_anim]
         if self._anim_ticker >= self._anim_delay:
-            if not self.image_list_modified:
-                self._icon = self.image_list[self._anim_order[self._anim_order_pos]]
-            else:
-                self._icon = self.image_list_modified[self._anim_order[self._anim_order_pos]]
-            self._anim_order_pos += 1
-            if self._anim_order_pos >= len(self._anim_order):
+            frame = current_anim[self._anim_order_pos]
+            if type(frame) is str:
+                self._current_anim = frame
                 self._anim_order_pos = 0
+            else:
+                if not self.image_list_modified:
+                    self._icon = self.image_list[frame]
+                else:
+                    self._icon = self.image_list_modified[frame]
+                self._anim_order_pos += 1
+                if self._anim_order_pos >= len(current_anim):
+                    self._anim_order_pos = 0
 
             self._anim_ticker = 0
             self.mark_dirty()

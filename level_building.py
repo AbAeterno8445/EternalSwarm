@@ -22,7 +22,7 @@ class Building(MGUI.ImageWidget):
         if building_data:
             self.load_building(building_data)
 
-        self.healthbar = MGUI.Healthbar(8, self.get_height() - 8, 40, 4)
+        self.healthbar = MGUI.Healthbar(4, self.get_height() - 8, 40, 4)
         self.healthbar.set_background((20, 20, 20))
         self.healthbar.set_color((50, 255, 50))
 

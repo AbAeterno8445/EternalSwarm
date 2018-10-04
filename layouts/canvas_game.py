@@ -142,16 +142,6 @@ class CanvasGame(MGUI.GUICanvas):
         remove_units = []
         mapx, mapy = self.levelmap.get_position()
         for h in range(self.levelmap.height):
-            # Process buildings
-            for b in self.building_list[h]:
-                b.tick()
-                if b.type == buildings.buildtype_spawner:
-                    if b.is_unit_ready():
-                        self.create_unit_at(b.x, b.y, b.player_owned, b.spawn_unit)
-                        b.reset_spawn()
-                if b.hp <= 0:
-                    remove_buildings.append(b)
-
             # Process units
             for u in self.unit_list[h]:
                 u.tick()
@@ -174,19 +164,28 @@ class CanvasGame(MGUI.GUICanvas):
                     if not u.state == units.state_fade:
                         u_mapx = math.floor(abs(mapx - u_x) / 48)
                         if (u_x and u_x < mapx - 8) or u_mapx >= self.levelmap.width:
-                            u.state = units.state_fade
+                            u.switch_state(units.state_fade)
                 # Process battling units
                 elif u.state == units.state_battle:
                     if u.is_attack_ready() and u.battle_target:
                         u.battle_target.hurt(u.get_damage())
                         if u.battle_target.hp <= 0:
                             u.battle_target = None
-                            u.state = units.state_walk
+                            u.switch_state(units.state_walk)
                         else:
                             u.reset_attack()
                 # Delete units
                 elif u.state == units.state_delete:
                     remove_units.append(u)
+            # Process buildings
+            for b in self.building_list[h]:
+                b.tick()
+                if b.type == buildings.buildtype_spawner:
+                    if b.is_unit_ready():
+                        self.create_unit_at(b.x, b.y, b.player_owned, b.spawn_unit)
+                        b.reset_spawn()
+                if b.hp <= 0:
+                    remove_buildings.append(b)
         for b in remove_buildings:
             self.remove_building(b)
         for u in remove_units:

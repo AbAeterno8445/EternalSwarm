@@ -49,7 +49,7 @@ class Unit(MGUI.AnimSprite):
                 if "anim_delay" in anim_data:
                     self.set_animation_delay(anim_data["anim_delay"])
                 if "anim_order" in anim_data:
-                    self.set_animation_order(anim_data["anim_order"])
+                    self.set_animation_data(anim_data["anim_order"])
                 if "rotate" in anim_data:
                     self.set_rotation(anim_data["rotate"])
                 flip_hor = "flip_hor" in anim_data
@@ -79,7 +79,7 @@ class Unit(MGUI.AnimSprite):
     # Target can be building or unit
     def set_battle_target(self, target):
         if target:
-            self.state = state_battle
+            self.switch_state(state_battle)
             self.battle_target = target
 
     def is_attack_ready(self):
@@ -88,11 +88,22 @@ class Unit(MGUI.AnimSprite):
     def reset_attack(self):
         self.att_ticker = self.attspd
 
+    def switch_state(self, state):
+        self.state = state
+        if state == state_idle:
+            self.set_animation_current("idle")
+        elif state == state_walk:
+            self.set_animation_current("base")
+        elif state == state_battle:
+            self.set_animation_current("battle")
+        elif state == state_fade:
+            self.set_animation_current("death")
+
     def tick(self):
         # Death
         if not self.state == state_delete:
             if self.hp <= 0:
-                self.state = state_fade
+                self.switch_state(state_fade)
             else:
                 # Handle healthbar
                 if self.hp < self.maxhp:
@@ -126,7 +137,7 @@ class Unit(MGUI.AnimSprite):
             if tmp_alpha > 0:
                 self.set_alpha(tmp_alpha - 15)
             else:
-                self.state = state_delete
+                self.switch_state(state_delete)
 
     def _get_appearance(self, *args):
         surface = super()._get_appearance(*args)
