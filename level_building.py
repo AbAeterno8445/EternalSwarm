@@ -22,6 +22,10 @@ class Building(MGUI.ImageWidget):
         if building_data:
             self.load_building(building_data)
 
+        self.healthbar = MGUI.Healthbar(8, self.get_height() - 8, 40, 4)
+        self.healthbar.set_background((20, 20, 20))
+        self.healthbar.set_color((50, 255, 50))
+
     def load_building(self, building_data):
         for attr in building_data:
             if attr == "base_img":
@@ -34,8 +38,32 @@ class Building(MGUI.ImageWidget):
     def get_draw_position(self):
         return 8 + self.x * 48, 8 + self.y * 48
 
+    def hurt(self, dmg, dmg_type=None):
+        self.hp -= dmg
+        self.mark_dirty()
+
     def tick(self):
-        pass
+        # Handle healthbar
+        if 0 < self.hp < self.maxhp:
+            self.healthbar.set_visible(True)
+            perc = self.hp / self.maxhp
+            self.healthbar.set_percentage(perc)
+
+            # Color (green when healthy, red when damaged)
+            col_perc = math.floor(205 * (1 - perc))
+            col_r = 50 + col_perc
+            col_g = 255 - col_perc
+            self.healthbar.set_color((col_r, col_g, 50))
+        else:
+            if self.healthbar.is_visible():
+                self.healthbar.set_visible(False)
+                self.mark_dirty()
+
+    def _get_appearance(self, *args):
+        surface = super()._get_appearance(*args)
+        if self.healthbar.is_visible():
+            surface.blit(self.healthbar._get_appearance(*args), self.healthbar.get_position())
+        return surface
 
 
 class BuildingTimedEffect(Building):
@@ -59,6 +87,7 @@ class BuildingTimedEffect(Building):
         self.mark_dirty()
 
     def tick(self):
+        super().tick()
         if self.effect_ticker < self.effect_time:
             self.effect_ticker += 1
         else:

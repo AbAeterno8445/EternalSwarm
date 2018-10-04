@@ -43,9 +43,6 @@ class CanvasGame(MGUI.GUICanvas):
         self.unit_layer = MGUI.GUICanvas(0, 0, *self.get_size())
         self.unit_layer.backg_widget.set_transparent(True)
 
-        for i in range(8):
-            self.create_building_at(11, i, False, "Slime Spawner")
-
         font = pygame.font.Font("assets/Dosis.otf", 18)
         # Energy img & label
         self.energy_label = MGUI.Label(width / 2, 8, 0, 0, font, millify_num(self.energy) + " energy")
@@ -74,8 +71,13 @@ class CanvasGame(MGUI.GUICanvas):
         self.levelmap.set_visible(True)
 
         self.unit_list = []
+        self.building_list = []
         for _ in range(self.levelmap.height):
             self.unit_list.append([])
+            self.building_list.append([])
+
+        for i in range(8):
+            self.create_building_at(11, i, False, "Slime Spawner")
 
     def add_energy(self, mod):
         self.energy += mod
@@ -104,18 +106,18 @@ class CanvasGame(MGUI.GUICanvas):
         if not new_building:
             new_building = buildings.Building(x, y, player_owned, building_data)
 
-        self.building_list.append(new_building)
+        self.building_list[y].append(new_building)
         self.add_element(new_building, layer=1)
 
     def get_building_at(self, x, y):
-        for b in self.building_list:
-            if b.x == x and b.y == y:
+        for b in self.building_list[y]:
+            if b.x == x:
                 return b
         return None
 
     def remove_building(self, building, sell=False):
-        if building in self.building_list:
-            self.building_list.remove(building)
+        if building in self.building_list[building.y]:
+            self.building_list[building.y].remove(building)
             self.remove_element(building)
             if sell:
                 self.add_energy(math.floor(building.cost * 0.4))
@@ -128,46 +130,65 @@ class CanvasGame(MGUI.GUICanvas):
         self.add_element(new_unit, layer=2)
 
     def remove_unit(self, unit):
-        if unit in self.unit_list:
-            self.unit_list.remove(unit)
+        if unit in self.unit_list[unit.row]:
+            self.unit_list[unit.row].remove(unit)
             self.remove_element(unit)
 
     def tick(self):
         if self.paused:
             return
 
-        for b in self.building_list:
-            b.tick()
-            if b.type == buildings.buildtype_spawner:
-                if b.is_unit_ready():
-                    self.create_unit_at(b.x, b.y, b.player_owned, b.spawn_unit)
-                    b.reset_spawn()
-
+        remove_buildings = []
         remove_units = []
         mapx, mapy = self.levelmap.get_position()
         for h in range(self.levelmap.height):
+            # Process buildings
+            for b in self.building_list[h]:
+                b.tick()
+                if b.type == buildings.buildtype_spawner:
+                    if b.is_unit_ready():
+                        self.create_unit_at(b.x, b.y, b.player_owned, b.spawn_unit)
+                        b.reset_spawn()
+                if b.hp <= 0:
+                    remove_buildings.append(b)
+
+            # Process units
             for u in self.unit_list[h]:
                 u.tick()
 
                 u_x, u_y = u.get_position()
+                u_w = u.get_width()
+                # Process walking units
                 if u.state == units.state_walk:
                     # Check for opposing units to battle
-                    u_range = 8 + math.floor(u.get_width() / 2)  # TODO change to unit range variable
-                    for u_other in self.unit_list[h]:
-                        if u is u_other or u_other.player_owned == u.player_owned or not u_other.state == units.state_walk:
+                    u_range = 20 + u.get_width() / 2  # TODO change to unit range variable
+                    for u_other in self.unit_list[h] + self.building_list[h]:
+                        if u is u_other or u_other.player_owned == u.player_owned or u_other.hp <= 0:
                             continue
                         u_otherx, u_othery = u_other.get_position()
-                        if abs(u_x - u_otherx) < u_range:
+                        u_otherw = u_other.get_width()
+                        if abs((u_x + u_w / 2) - (u_otherx + u_otherw / 2)) < u_range:
                             u.set_battle_target(u_other)
-                            u_other.set_battle_target(u)
 
                     # Check if unit is out of bounds and fade/delete it if so
                     if not u.state == units.state_fade:
                         u_mapx = math.floor(abs(mapx - u_x) / 48)
                         if (u_x and u_x < mapx - 8) or u_mapx >= self.levelmap.width:
                             u.state = units.state_fade
+                # Process battling units
+                elif u.state == units.state_battle:
+                    if u.is_attack_ready() and u.battle_target:
+                        u.battle_target.hurt(u.get_damage())
+                        if u.battle_target.hp <= 0:
+                            u.battle_target = None
+                            u.state = units.state_walk
+                        else:
+                            u.reset_attack()
+                # Delete units
                 elif u.state == units.state_delete:
                     remove_units.append(u)
+        for b in remove_buildings:
+            self.remove_building(b)
         for u in remove_units:
             self.remove_unit(u)
 
@@ -213,13 +234,14 @@ class CanvasGame(MGUI.GUICanvas):
         self.map_coll.update()
 
         cam_x, cam_y = self.map_coll.get_camera_position()
-        # Update buildings
-        for b in self.building_list:
-            bx, by = b.get_draw_position()
-            if not b.get_position() == (bx + cam_x, by + cam_y):
-                b.set_position(bx + cam_x, by + cam_y)
-        # Update units
         for h in range(self.levelmap.height):
+            # Update buildings
+            for b in self.building_list[h]:
+                bx, by = b.get_draw_position()
+                if not b.get_position() == (bx + cam_x, by + cam_y):
+                    b.set_position(bx + cam_x, by + cam_y)
+
+            # Update units
             for u in self.unit_list[h]:
                 ux, uy = u.get_draw_position()
                 if not u.get_position() == (ux + cam_x, uy + cam_y):

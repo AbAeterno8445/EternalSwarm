@@ -16,6 +16,7 @@ class Unit(MGUI.AnimSprite):
         # Draw position is relative to the level canvas
         self.draw_x = 0
         self.draw_y = 0
+        self.row = y
         self.state = "walk"
         self.battle_target = None
 
@@ -33,7 +34,7 @@ class Unit(MGUI.AnimSprite):
 
         self.healthbar = MGUI.Healthbar(0, self.get_height() - 2, self.get_width(), 2)
         self.healthbar.set_background((20, 20, 20))
-        self.healthbar.set_color((100, 255, 100))
+        self.healthbar.set_color((50, 255, 50))
 
         # Center draw position to assigned tile
         unit_x = 32 + x * 48 - math.floor(self.get_width() / 2)
@@ -69,6 +70,9 @@ class Unit(MGUI.AnimSprite):
     def get_draw_position(self):
         return self.draw_x, self.draw_y
 
+    def get_damage(self):
+        return self.dmg_phys
+
     def hurt(self, dmg, dmg_type=None):
         self.hp -= dmg  # TODO handle damage types
 
@@ -78,17 +82,31 @@ class Unit(MGUI.AnimSprite):
             self.state = state_battle
             self.battle_target = target
 
+    def is_attack_ready(self):
+        return self.att_ticker == 0
+
+    def reset_attack(self):
+        self.att_ticker = self.attspd
+
     def tick(self):
         # Death
-        if self.hp <= 0:
-            self.state = state_fade
-        else:
-            # Handle healthbar
-            if self.hp < self.maxhp:
-                self.healthbar.set_visible(True)
-                self.healthbar.set_percentage(self.hp / max(1, self.maxhp))
+        if not self.state == state_delete:
+            if self.hp <= 0:
+                self.state = state_fade
             else:
-                self.healthbar.set_visible(False)
+                # Handle healthbar
+                if self.hp < self.maxhp:
+                    self.healthbar.set_visible(True)
+                    perc = self.hp / self.maxhp
+                    self.healthbar.set_percentage(perc)
+
+                    # Color (green when healthy, red when damaged)
+                    col_perc = math.floor(205 * (1 - perc))
+                    col_r = 50 + col_perc
+                    col_g = 255 - col_perc
+                    self.healthbar.set_color((col_r, col_g, 50))
+                else:
+                    self.healthbar.set_visible(False)
 
         # Walking state
         if self.state == state_walk:
@@ -102,16 +120,6 @@ class Unit(MGUI.AnimSprite):
         elif self.state == state_battle:
             if self.att_ticker > 0:
                 self.att_ticker -= 1
-            else:
-                if self.battle_target:
-                    dmg = self.dmg_phys  # TODO add other damage types when necessary
-                    self.battle_target.hurt(dmg)
-                    if self.battle_target.hp <= 0:
-                        self.battle_target = None
-                    self.att_ticker = self.attspd
-                else:
-                    self.state = state_walk
-
         # Fading state (out of bounds)
         elif self.state == state_fade:
             tmp_alpha = self.get_alpha()
