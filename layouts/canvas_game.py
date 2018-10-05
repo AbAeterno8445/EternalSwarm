@@ -76,8 +76,12 @@ class CanvasGame(MGUI.GUICanvas):
             self.unit_list.append([])
             self.building_list.append([])
 
-        for i in range(8):
-            self.create_building_at(11, i, False, "Slime Spawner")
+        # Load level buildings
+        level_buildings = self.levelmap.level_buildings
+        for bname in level_buildings:
+            building_list = level_buildings[bname]
+            for b in building_list:
+                self.create_building_at(b[0], b[1], b[2], bname)
 
     def add_energy(self, mod):
         self.energy += mod

@@ -6,10 +6,5 @@
     "spawn_time": 4,
     "spawn_unit": "Slime",
     "maxhp": 20
-  },
-  "Shrine": {
-    "cost": 45,
-    "base_img": "shrine.png",
-    "maxhp": 10
   }
 }
