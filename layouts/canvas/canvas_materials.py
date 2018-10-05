@@ -1,8 +1,9 @@
 import pygame
 import MGUI
+from .cvswitcher import CanvasSwitcher
 
 
-class CanvasMaterials(MGUI.GUICanvas):
+class CanvasMaterials(CanvasSwitcher):
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, (40, 0, 40))
 

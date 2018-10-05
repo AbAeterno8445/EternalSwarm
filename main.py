@@ -26,11 +26,13 @@ def main():
     tmp_x = cv_materials.get_width() + 32
     tmp_width = disp_w - tmp_x - 16
     cv_terrain = layouts.CanvasTerrain(tmp_x, 16, tmp_width, disp_h - 100)
-    cv_buildings = layouts.CanvasUnits(tmp_x, 16, *cv_terrain.get_size())
+    cv_levelinfo = layouts.CanvasLevelInfo(tmp_x, 16, *cv_terrain.get_size())
+    cv_buildings = layouts.CanvasBuildings(tmp_x, 16, *cv_terrain.get_size())
 
     current_main_canvas = "terrain"
     cv_main = {
         "terrain": cv_terrain,
+        "terrain_lvlinfo": cv_levelinfo,
         "buildings": cv_buildings
     }
 
@@ -59,16 +61,18 @@ def main():
             cv_game.handle_event(caught_events)
             upd_rects += cv_game.draw(display)
         else:
-            # Shortcuts canvas - switch main canvas
-            sel_shortcut = cv_shortcuts.get_sel_shortcut()
-            if sel_shortcut and not sel_shortcut == current_main_canvas:
-                current_main_canvas = sel_shortcut
-                cv_main[current_main_canvas].backg_widget.mark_dirty()  # Update whole canvas on switch
-
             # Draw main canvas
             cur_canvas = cv_main[current_main_canvas]
             cur_canvas.handle_event(caught_events)
             upd_rects += cur_canvas.draw(display)
+
+            switch_cv = cur_canvas.get_switch_canvas()
+            if switch_cv:
+                # Switch main canvas
+                if switch_cv in cv_main:
+                    current_main_canvas = switch_cv
+                    cv_main[current_main_canvas].backg_widget.mark_dirty()
+
             if isinstance(cur_canvas, layouts.CanvasTerrain):
                 if cur_canvas.start_game:
                     cv_game.init_data(cur_canvas.map_coll.selected_tile)

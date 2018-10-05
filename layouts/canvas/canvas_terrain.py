@@ -1,11 +1,11 @@
 import pygame
-import MGUI
+from .cvswitcher import CanvasSwitcher
 from game_map import GameMap
 from map_collection import MapCollection
 from .cv_terrain_levelinfo import TerrainLevelinfo
 
 
-class CanvasTerrain(MGUI.GUICanvas):
+class CanvasTerrain(CanvasSwitcher):
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, (0, 110, 110))
 
@@ -14,6 +14,7 @@ class CanvasTerrain(MGUI.GUICanvas):
 
         self.backg_widget.set_border(True, (0, 150, 150))
 
+        self.selected_tile = None
         self.gamemap = GameMap(0, 0, 32, 32, "assets/map_regions.json")
         self.map_coll = MapCollection(x, y, width, height, self.gamemap)
         self.add_element(self.map_coll.get_widgets_list())
@@ -26,6 +27,16 @@ class CanvasTerrain(MGUI.GUICanvas):
 
     def capture_click(self):
         self.start_game = True
+
+    def select_tile(self, tile):
+        self.selected_tile = tile
+        if self.selected_tile:
+            if not self.panel_tileinfo.is_visible():
+                self.panel_tileinfo.set_visible(True)
+            self.panel_tileinfo.update_data(self.selected_tile)
+        else:
+            if self.panel_tileinfo.is_visible():
+                self.panel_tileinfo.set_visible(False)
 
     def handle_event(self, event_list):
         super().handle_event(event_list)
@@ -47,14 +58,6 @@ class CanvasTerrain(MGUI.GUICanvas):
         self.map_coll.handle_event(event_list)
         self.map_coll.update()
 
-    def draw(self, tgt_surface):
         sel_tile = self.map_coll.selected_tile
-        if sel_tile:
-            if not self.panel_tileinfo.is_visible():
-                self.panel_tileinfo.set_visible(True)
-            self.panel_tileinfo.update_data(sel_tile)
-        else:
-            if self.panel_tileinfo.is_visible():
-                self.panel_tileinfo.set_visible(False)
-
-        return super().draw(tgt_surface)
+        if not sel_tile == self.selected_tile:
+            self.select_tile(sel_tile)

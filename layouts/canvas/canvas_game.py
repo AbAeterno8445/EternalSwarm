@@ -1,4 +1,5 @@
 import pygame, MGUI, json, math
+from .cvswitcher import CanvasSwitcher
 from millify import millify_num
 from level_map import LevelMap
 from map_collection import MapCollection
@@ -7,7 +8,7 @@ import level_building as buildings
 import level_unit as units
 
 
-class CanvasGame(MGUI.GUICanvas):
+class CanvasGame(CanvasSwitcher):
     def __init__(self, x, y, width, height, player_data):
         super().__init__(x, y, width, height)
         self.player_data = player_data
@@ -25,7 +26,7 @@ class CanvasGame(MGUI.GUICanvas):
 
         self.backg_widget.set_border(True, (200, 200, 200))
 
-        self.levelmap = LevelMap(0, 0, 12, 8)
+        self.levelmap = LevelMap(0, 0, 0, 0)
         self.levelmap.set_visible(False)
 
         self.map_coll = MapCollection(x, y, width, height, self.levelmap)
@@ -75,6 +76,7 @@ class CanvasGame(MGUI.GUICanvas):
         for _ in range(self.levelmap.height):
             self.unit_list.append([])
             self.building_list.append([])
+        self.map_coll.center_camera()
 
         # Load level buildings
         level_buildings = self.levelmap.level_buildings
@@ -120,11 +122,14 @@ class CanvasGame(MGUI.GUICanvas):
         return None
 
     def remove_building(self, building, sell=False):
-        if building in self.building_list[building.y]:
+        if building and building in self.building_list[building.y]:
+            if sell:
+                if building.player_owned:
+                    self.add_energy(math.floor(building.cost * 0.4))
+                else:
+                    return
             self.building_list[building.y].remove(building)
             self.remove_element(building)
-            if sell:
-                self.add_energy(math.floor(building.cost * 0.4))
 
     def create_unit_at(self, x, y, player_owned, unit_name):
         unit_data = self.base_units[unit_name]

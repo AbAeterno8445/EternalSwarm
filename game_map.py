@@ -1,8 +1,4 @@
-import pygame
-import json
-import math
-import os
-import MGUI
+import pygame, json, math, os, MGUI
 from tile_splitter import split_tile
 from random import randint
 
@@ -10,6 +6,8 @@ from random import randint
 class GameMap(MGUI.Widget):
     def __init__(self, x, y, width, height, regions_json=None):
         super().__init__(x, y, width, height)
+        self.spawn_point = (0, 0)
+
         self.set_map_size(width, height)
         self.set_transparent(True)
 
@@ -20,7 +18,6 @@ class GameMap(MGUI.Widget):
         self.tilemap_surface = pygame.Surface(self.get_size()).convert()
         self.tilemap_surface.set_colorkey((0, 0, 0))
 
-        self.spawn_point = (math.floor((width + randint(0, 1)) / 2), math.floor((height + randint(0, 1)) / 2))
         self.map_data = []
         self.regions = []
         if regions_json:
@@ -33,6 +30,9 @@ class GameMap(MGUI.Widget):
         widget_width = 16 + width * 48
         widget_height = 16 + height * 48
         super().set_bounds_size(widget_width, widget_height)
+        self.tilemap_surface = pygame.Surface(self.get_size()).convert()
+        self.tilemap_surface.set_colorkey((0, 0, 0))
+        self.spawn_point = (math.floor((width + randint(0, 1)) / 2), math.floor((height + randint(0, 1)) / 2))
 
     def load_regions_json(self, json_path, gen_map=True):
         with open(json_path, "r") as json_file:

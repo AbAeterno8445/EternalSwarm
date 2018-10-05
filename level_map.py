@@ -10,6 +10,8 @@ class LevelMap(GameMap):
         # Keys are building name and value is a list of coordinate tuples for each building of that type
         self.level_buildings = {}
 
+        self.enemy_buildings = 0
+
     def load_level(self, region_name, level_id):
         region_name = region_name.lower()
         self.load_regions_json("levels/" + region_name + "/regions.json", False)
@@ -23,15 +25,17 @@ class LevelMap(GameMap):
             # Load tiles & buildings
             tmp_mapdata = level_data["map_data"]
 
-            self.height = len(tmp_mapdata)
+            height = len(tmp_mapdata)
             # Turn strings into lists
-            for i in range(self.height):
+            for i in range(height):
                 tmp_mapdata[i] = [t.strip() for t in tmp_mapdata[i].split(',')]
 
-            self.width = len(tmp_mapdata[0])
+            width = len(tmp_mapdata[0])
+            self.set_map_size(width, height)
 
             self.map_data.clear()
             self.level_buildings.clear()
+            self.enemy_buildings = 0
             for i in range(self.height):
                 self.map_data.append([])
                 for j in range(self.width):
@@ -50,5 +54,7 @@ class LevelMap(GameMap):
                                 if bname not in self.level_buildings:
                                     self.level_buildings[bname] = []
                                 self.level_buildings[bname].append((j, i, tmp_tile.owned))
+                                if not tmp_tile.owned:
+                                    self.enemy_buildings += 1
 
         self.update_tilemap()
