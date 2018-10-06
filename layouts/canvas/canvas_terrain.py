@@ -21,12 +21,9 @@ class CanvasTerrain(CanvasSwitcher):
 
         # Tile level information widget
         self.panel_tileinfo = TerrainLevelinfo(4, 4, 150, 200)
-        self.panel_tileinfo["capture_button"].set_callback(self.capture_click)
+        self.panel_tileinfo["capture_button"].set_callback(self.switch_target, ["game"])
         self.panel_tileinfo.set_visible(False)
         self.add_element(self.panel_tileinfo.get_widgets_list())
-
-    def capture_click(self):
-        self.start_game = True
 
     def select_tile(self, tile):
         self.selected_tile = tile

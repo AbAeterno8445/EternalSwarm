@@ -3,7 +3,7 @@ import MGUI
 
 class CanvasSwitcher(MGUI.GUICanvas):
     """
-    Subclasses GUICanvas, provides functionality for canvas switching in main.py
+    Subclasses GUICanvas, provides functionality for canvas switching
     """
     def __init__(self, x, y, width, height, bgcolor=None):
         if bgcolor:
@@ -11,12 +11,12 @@ class CanvasSwitcher(MGUI.GUICanvas):
         else:
             super().__init__(x, y, width, height)
 
-        self.switch_cvname = ""
+        self.switch_tgtname = ""
 
-    def switch_canvas(self, newcanvas):
-        self.switch_cvname = newcanvas
+    def switch_target(self, newtarget):
+        self.switch_tgtname = newtarget
 
-    def get_switch_canvas(self):
-        old_cvname = self.switch_cvname
-        self.switch_cvname = ""
+    def get_switch(self):
+        old_cvname = self.switch_tgtname
+        self.switch_tgtname = ""
         return old_cvname
