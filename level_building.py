@@ -13,6 +13,7 @@ class Building(MGUI.ImageWidget):
         self.x = x
         self.y = y
         self.type = ""
+        self.map_color = (255, 0, 0)
         self.cost = 0
         self.player_owned = player_owned
 

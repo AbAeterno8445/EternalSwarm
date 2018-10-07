@@ -18,13 +18,7 @@ class TerrainLevelinfo(MGUI.WidgetCollection):
         region_label.set_transparent(True)
         self.add_widget(region_label, "region_label", layer=3)
 
-        # Level difficulty
-        diff_label = MGUI.Label(8, 34, 0, 22, font)
-        diff_label.set_text_resize(res_hor=True, padding=4)
-        diff_label.set_transparent(True)
-        self.add_widget(diff_label, "diff_label", layer=3)
-
-        # Capture terrain (begin level) button
+        # Capture terrain (jump to terrain info screen) button
         capture_button = MGUI.Button(8, height - 28, width - 8, 24, font, "Capture")
         capture_button.set_border(True)
         capture_button.set_hovered_color((150, 150, 150, 100))
@@ -39,7 +33,6 @@ class TerrainLevelinfo(MGUI.WidgetCollection):
 
     def update_data(self, selected_tile):
         self["region_label"].set_text(selected_tile.region.name)
-        self["diff_label"].set_text("Diff: " + str(selected_tile.difficulty))
 
         if selected_tile.owned:
             # Tile owned - deactivate capture button and activate info label

@@ -3,6 +3,7 @@
     "name": "Woods",
     "img_path": "tile_grass_woods.png",
     "decor": ["tree1.png", "tree2.png"],
-    "decor_density": 1
+    "decor_density": 1,
+    "color": [0, 153, 0]
   }
 ]

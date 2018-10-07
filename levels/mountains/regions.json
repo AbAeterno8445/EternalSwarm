@@ -1,6 +1,7 @@
 [
   {
     "name": "Stone",
-    "img_path": "tile_stone.png"
+    "img_path": "tile_stone.png",
+    "color": [192, 192, 192]
   }
 ]

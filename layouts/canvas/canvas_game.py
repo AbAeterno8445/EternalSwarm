@@ -67,8 +67,10 @@ class CanvasGame(CanvasSwitcher):
         self.paused_label.set_visible(False)
         self.add_element(self.paused_label, layer=10)
 
-    def init_data(self, src_tile):
-        self.levelmap.load_level(src_tile.region.name, src_tile.level_id)
+    def init_data(self, source_tile):
+        self.paused = True
+
+        self.levelmap.load_level_fromtile(source_tile)
         self.levelmap.set_visible(True)
 
         self.unit_list = []
@@ -179,6 +181,8 @@ class CanvasGame(CanvasSwitcher):
                     if u.is_attack_ready() and u.battle_target:
                         u.battle_target.hurt(u.get_damage())
                         if u.battle_target.hp <= 0:
+                            if isinstance(u.battle_target, buildings.Building) and not u.battle_target.player_owned:
+                                self.levelmap.enemy_buildings -= 1
                             u.battle_target = None
                             u.switch_state(units.state_walk)
                         else:

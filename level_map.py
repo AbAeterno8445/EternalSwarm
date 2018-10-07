@@ -12,7 +12,10 @@ class LevelMap(GameMap):
 
         self.enemy_buildings = 0
 
-    def load_level(self, region_name, level_id):
+    def load_level_fromtile(self, source_tile, update_levelmap=True):
+        self.load_level(source_tile.region.name, source_tile.level_id, update_levelmap)
+
+    def load_level(self, region_name, level_id, update_levelmap=True):
         region_name = region_name.lower()
         self.load_regions_json("levels/" + region_name + "/regions.json", False)
         lvl_path = "levels/" + region_name + "/level" + str(level_id)
@@ -57,4 +60,5 @@ class LevelMap(GameMap):
                                 if not tmp_tile.owned:
                                     self.enemy_buildings += 1
 
-        self.update_tilemap()
+        if update_levelmap:
+            self.update_tilemap()

@@ -329,6 +329,7 @@ class MapRegion(object):
         self.decor_density = 2
         self.freq = 100
         self.expansion = 33
+        self.color = (0, 0, 0)
 
 
 class MapTile(object):

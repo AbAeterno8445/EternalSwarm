@@ -7,3 +7,4 @@ from .canvas.canvas_terrain import CanvasTerrain
 
 from .screen.screen_main import ScreenMain
 from .screen.screen_game import ScreenGame
+from .screen.screen_levelinfo import ScreenLevelInfo

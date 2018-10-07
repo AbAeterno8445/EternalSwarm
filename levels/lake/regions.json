@@ -1,6 +1,7 @@
 [
   {
     "name": "Water",
-    "img_path": "tile_water.png"
+    "img_path": "tile_water.png",
+    "color": [51, 153, 255]
   }
 ]

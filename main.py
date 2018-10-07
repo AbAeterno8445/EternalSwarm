@@ -17,11 +17,13 @@ def main():
 
     # Init screens
     screen_main = layouts.ScreenMain(display, player_data)
+    screen_levelinfo = layouts.ScreenLevelInfo(display)
     screen_game = layouts.ScreenGame(display, player_data)
 
     current_screen = "main"
     screens = {
         "main": screen_main,
+        "levelinfo": screen_levelinfo,
         "game": screen_game
     }
 

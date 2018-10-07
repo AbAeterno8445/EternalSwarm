@@ -1,5 +1,6 @@
 {
   "Slime Spawner": {
+    "map_color": [178, 102, 255],
     "cost": 20,
     "base_img": "spawner_slime.png",
     "type": "spawner",

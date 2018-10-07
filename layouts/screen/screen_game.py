@@ -12,6 +12,6 @@ class ScreenGame(Screen):
 
     def init_screen(self, source_screen=None):
         if source_screen:
-            # Initialize game from main screen
-            if isinstance(source_screen, layouts.ScreenMain):
-                self.cv_game.init_data(source_screen.terrain_selected)
+            # Initialize game from level info screen
+            if isinstance(source_screen, layouts.ScreenLevelInfo):
+                self.cv_game.init_data(source_screen.selected_tile)
