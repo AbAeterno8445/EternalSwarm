@@ -71,10 +71,14 @@ class GUICanvas(object):
                     element.set_background(self.backg_widget.get_background())
 
     def remove_element(self, element):
-        if element in self.sprite_list:
-            self.sprite_list.remove(element)
-        if element in self.widgets_list:
-            self.widgets_list.remove(element)
+        if type(element) is list:
+            for e in element:
+                self.remove_element(e)
+        else:
+            if element in self.sprite_list:
+                self.sprite_list.remove(element)
+            if element in self.widgets_list:
+                self.widgets_list.remove(element)
 
     def handle_event(self, event_list):
         for event in event_list:

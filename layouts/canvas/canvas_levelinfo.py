@@ -3,6 +3,7 @@ import MGUI
 import json
 from level_map import LevelMap
 from .cvswitcher import CanvasSwitcher
+from millify import millify_num
 
 
 class CanvasLevelInfo(CanvasSwitcher):
@@ -29,6 +30,7 @@ class CanvasLevelInfo(CanvasSwitcher):
         tmp_x = width / 2 - self.title_label.get_width() / 2
         self.title_label.set_position(tmp_x, 4)
         self.title_label.set_transparent(True)
+        self.title_label.set_font_color((255, 100, 255))
         self.add_element(self.title_label)
 
         # Level preview box
@@ -61,16 +63,47 @@ class CanvasLevelInfo(CanvasSwitcher):
         self.add_element(self.leveldiff_label)
 
         tmp_y = self.previewbox.get_position()[1] + self.previewbox.get_height() + 16
-        # Buildings in level table
-        self.building_label = MGUI.Label(16, tmp_y, 0, 0, font_21, "Building")
+        # Enemy buildings label
+        self.buildings_label = MGUI.Label(16, tmp_y, 0, 0, font_21, "Enemy buildings:")
+        self.buildings_label.set_text_resize(res_hor=True, res_ver=True)
+        self.buildings_label.set_transparent(True)
+        self.buildings_label.set_font_color((255, 100, 255))
+        self.add_element(self.buildings_label)
+
+        tmp_y += self.buildings_label.get_height() + 8
+        # List for enemy building buttons
+        self.building_buttons = []
+        self.building_buttons_y = tmp_y
 
         # Capture button
-        self.capture_button = MGUI.Button(width / 2 - 100, height - 46, 200, 30, font_21, "Capture")
+        self.capture_button = MGUI.Button(width / 2 + 2, height - 46, 200, 30, font_21, "Capture")
         self.capture_button.set_callback(self.switch_target, ["game"])
-        self.capture_button.set_border(True)
-        self.capture_button.set_hovered_color((150, 150, 150, 100))
-        self.capture_button.set_pressed_color((100, 100, 100, 150))
+        self.capture_button.set_border(True, (255, 100, 255))
+        self.capture_button.set_hovered_color((150, 50, 150, 100))
+        self.capture_button.set_pressed_color((100, 20, 100, 150))
         self.add_element(self.capture_button)
+
+        tmp_x, tmp_y = self.capture_button.get_position()
+        tmp_x -= self.capture_button.get_width() + 4
+        # Return button
+        self.return_button = MGUI.Button(tmp_x, tmp_y, 200, 30, font_21, "Return")
+        self.return_button.set_callback(self.switch_target, ["main"])
+        self.return_button.set_border(True, (255, 100, 255))
+        self.return_button.set_hovered_color((150, 50, 150, 100))
+        self.return_button.set_pressed_color((100, 20, 100, 150))
+        self.add_element(self.return_button)
+
+    # Create button for a building
+    def _create_building_button(self, bname, amount):
+        bdata = self.base_buildings[bname]
+        # Calculate position for new button
+        new_x = 16
+        for b in self.building_buttons:
+            new_x += 16 + b.total_width
+
+        new_button = BuildingButton(new_x, self.building_buttons_y, bdata, bname, amount)
+        self.building_buttons.append(new_button)
+        self.add_element(new_button.get_widgets_list())
 
     def init_data(self, source_tile):
         self.level_tile = source_tile
@@ -88,6 +121,10 @@ class CanvasLevelInfo(CanvasSwitcher):
                 if cur_tile.owned:
                     tile_color = (255, 255, 0)
                 pygame.draw.rect(previewbox_surface, tile_color, (j * 8, i * 8, 8, 8))
+
+        for b in self.building_buttons:
+            self.remove_element(b.get_widgets_list())
+        self.building_buttons.clear()
         # Draw buildings
         for bname in self.levelmap.level_buildings:
             bdata = self.base_buildings[bname]
@@ -95,9 +132,63 @@ class CanvasLevelInfo(CanvasSwitcher):
             for b in building_list:
                 pygame.draw.rect(previewbox_surface, bdata["map_color"], (b[0] * 8, b[1] * 8, 8, 8))
 
+            # Add building button
+            self._create_building_button(bname, len(building_list))
+
         self.previewbox.set_icon(previewbox_surface)
 
         # Update labels with level information
         self.region_label.set_text("Region: %s" % source_tile.region.name)
         self.levelsize_label.set_text("Size: %i x %i" % (self.levelmap.width, self.levelmap.height))
         self.leveldiff_label.set_text("Hazard level: %i" % source_tile.difficulty)
+
+
+class BuildingButton(MGUI.WidgetCollection):
+    def __init__(self, x, y, bdata, bname, amount):
+        super().__init__()
+
+        font_16 = pygame.font.Font("assets/Dosis.otf", 16)
+        font_21 = pygame.font.Font("assets/Dosis.otf", 21)
+
+        self.total_width = 191
+
+        # Building info frame
+        buildinfo_frame = MGUI.Widget(x, y, self.total_width, 234)
+        buildinfo_frame.set_transparent(True)
+        buildinfo_frame.set_border(True, (255, 100, 255))
+        self.add_widget(buildinfo_frame, "buildinfo_frame")
+
+        tmp_x = x + 2
+        tmp_y = y + 2
+        # Building map icon reference
+        build_mapicon = MGUI.Widget(tmp_x, tmp_y, 28, 28)
+        build_mapicon.set_background(bdata["map_color"])
+        self.add_widget(build_mapicon, "build_mapicon")
+
+        tmp_width = buildinfo_frame.get_width() - 5 - build_mapicon.get_width()
+        # Building name
+        build_name_label = MGUI.Label(tmp_x + build_mapicon.get_width() + 1, tmp_y, tmp_width,
+                                      build_mapicon.get_height(), font_21, bname)
+        build_name_label.set_transparent(True)
+        build_name_label.set_border(True, (255, 100, 255))
+        self.add_widget(build_name_label, "build_name_label", layer=1)
+
+        tmp_y += build_name_label.get_height() + 1
+        # Building image
+        build_image = MGUI.ImageWidget(tmp_x, tmp_y, 64, 64, "assets/buildings/" + bdata["base_img"])
+        build_image.set_border(True, (255, 100, 255))
+        self.add_widget(build_image, "build_image")
+
+        tmp_x += build_image.get_width() + 4
+        # Building health
+        build_health_label = MGUI.Label(tmp_x, tmp_y, 0, 0, font_16, "Health: " + millify_num(bdata["maxhp"]))
+        build_health_label.set_transparent(True)
+        build_health_label.set_text_resize(res_hor=True, res_ver=True)
+        self.add_widget(build_health_label, "build_health_label")
+
+        tmp_y += build_health_label.get_height() + 2
+        # Building amount in level
+        build_amt_label = MGUI.Label(tmp_x, tmp_y, 0, 0, font_16, "Amount in level: " + str(amount))
+        build_amt_label.set_transparent(True)
+        build_amt_label.set_text_resize(res_hor=True, res_ver=True)
+        self.add_widget(build_amt_label, "build_amt_label")

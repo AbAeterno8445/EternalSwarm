@@ -11,6 +11,7 @@ class ScreenLevelInfo(Screen):
         self.add_canvas(self.cv_levelinfo)
 
     def init_screen(self, source_screen=None):
+        super().init_screen(source_screen)
         if source_screen:
             # Init screen from main screen
             if isinstance(source_screen, layouts.ScreenMain):

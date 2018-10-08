@@ -11,6 +11,7 @@ class ScreenGame(Screen):
         self.add_canvas(self.cv_game)
 
     def init_screen(self, source_screen=None):
+        super().init_screen(source_screen)
         if source_screen:
             # Initialize game from level info screen
             if isinstance(source_screen, layouts.ScreenLevelInfo):

@@ -7,10 +7,14 @@ class Screen(object):
         self.canvas_list = []
         self.switch_screen = ""
 
+        self.just_switched = False
+
     # Used to initialize screen data, called on screen switch
     # Source screen is used to get any data from the previous screen that needs to be transferred
     def init_screen(self, source_screen=None):
-        pass
+        self.just_switched = True
+        for cv in self.canvas_list:
+            cv.backg_widget.mark_dirty()
 
     def add_canvas(self, canvas):
         if type(canvas) is list:
@@ -32,6 +36,12 @@ class Screen(object):
 
     def update(self, event_list):
         upd_rects = []
+        # Update whole screen on switch
+        if self.just_switched:
+            self.display.fill((0, 0, 0))
+            upd_rects.append(self.display.get_rect())
+            self.just_switched = False
+
         for cv in self.canvas_list:
             cv.handle_event(event_list)
             self.check_switch(cv)
