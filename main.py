@@ -1,4 +1,5 @@
 import pygame
+import random
 from pygame.locals import DOUBLEBUF
 from playerdata import PlayerData
 import layouts
@@ -8,7 +9,9 @@ def main():
     # Init display & clock
     display = pygame.display.set_mode((800, 600), DOUBLEBUF)
     pygame.display.set_caption("Eternal Swarm")
-    display_icon = pygame.transform.scale(pygame.image.load("assets/materials/sapphire.png"), (64, 64))
+
+    gem_list = ["amber", "amethyst", "emerald", "ruby", "sapphire", "topaz"]
+    display_icon = pygame.transform.scale(pygame.image.load("assets/materials/" + random.choice(gem_list) + ".png"), (64, 64))
     pygame.display.set_icon(display_icon)
     clock = pygame.time.Clock()
 
