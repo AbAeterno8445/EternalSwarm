@@ -4,6 +4,7 @@ from millify import millify_num
 from level_map import LevelMap
 from map_collection import MapCollection
 from .cv_game_playerbuild import PlayerBuildMenu
+from .cv_game_finishmsg import GameFinishMSG
 import level_building as buildings
 import level_unit as units
 
@@ -12,11 +13,12 @@ class CanvasGame(CanvasSwitcher):
     def __init__(self, x, y, width, height, player_data):
         super().__init__(x, y, width, height)
         self.player_data = player_data
-        self.energy = player_data.start_energy
-        self.energy_ps = player_data.start_energyps
+        self.energy = 0
+        self.energy_ps = 0
 
         self.ticker = 0
         self.paused = False
+        self.victory = False
 
         # Load base buildings/units
         with open("assets/buildings.json", "r") as file:
@@ -32,9 +34,16 @@ class CanvasGame(CanvasSwitcher):
         self.map_coll = MapCollection(x, y, width, height, self.levelmap)
         self.add_element(self.map_coll.get_widgets_list())
 
+        # Buildings menu panel
         self.buildmenu = PlayerBuildMenu(4, 4, 200, height - 8, self.base_buildings, player_data, self.place_building)
         self.buildmenu.set_visible(False)
         self.add_element(self.buildmenu.get_widgets_list())
+
+        # Game finished message panel
+        self.finishmsg = GameFinishMSG(width / 2, height / 2)
+        self.finishmsg["continue_button"].set_callback(self.switch_target, ["main"])
+        self.finishmsg.set_visible(False)
+        self.add_element(self.finishmsg.get_widgets_list())
 
         # Buildings data
         self.building_list = []
@@ -59,8 +68,9 @@ class CanvasGame(CanvasSwitcher):
 
         # Paused label
         self.paused_label = MGUI.Label(0, 0, 0, 0, font, "PAUSED")
+        self.paused_label.set_background((60, 20, 60))
         self.paused_label.set_text_resize(res_hor=True, res_ver=True, padding=8)
-        self.paused_label.set_border(True)
+        self.paused_label.set_border(True, (150, 20, 150))
         tmp_x = width / 2 - self.paused_label.get_width() / 2
         tmp_y = height / 2 - self.paused_label.get_height() / 2
         self.paused_label.set_position(tmp_x, tmp_y)
@@ -69,12 +79,25 @@ class CanvasGame(CanvasSwitcher):
 
     def init_data(self, source_tile):
         self.paused = True
+        self.victory = False
+        self.finishmsg.set_visible(False)
+        self.energy = self.player_data.start_energy
+        self.energy_ps = self.player_data.start_energyps
 
         self.levelmap.load_level_fromtile(source_tile)
         self.levelmap.set_visible(True)
 
-        self.unit_list = []
-        self.building_list = []
+        if len(self.unit_list) > 0:
+            for i in range(len(self.unit_list)):
+                for u in reversed(range(len(self.unit_list[i]))):
+                    self.remove_unit(self.unit_list[i][u])
+        if len(self.building_list) > 0:
+            for i in range(len(self.building_list)):
+                for b in reversed(range(len(self.building_list[i]))):
+                    self.remove_building(self.building_list[i][b])
+
+        self.unit_list.clear()
+        self.building_list.clear()
         for _ in range(self.levelmap.height):
             self.unit_list.append([])
             self.building_list.append([])
@@ -181,8 +204,6 @@ class CanvasGame(CanvasSwitcher):
                     if u.is_attack_ready() and u.battle_target:
                         u.battle_target.hurt(u.get_damage())
                         if u.battle_target.hp <= 0:
-                            if isinstance(u.battle_target, buildings.Building) and not u.battle_target.player_owned:
-                                self.levelmap.enemy_buildings -= 1
                             u.battle_target = None
                             u.switch_state(units.state_walk)
                         else:
@@ -197,19 +218,39 @@ class CanvasGame(CanvasSwitcher):
                     if b.is_unit_ready():
                         self.create_unit_at(b.x, b.y, b.player_owned, b.spawn_unit)
                         b.reset_spawn()
-                if b.hp <= 0:
+                if b.hp <= 0:  # Building destroyed
                     remove_buildings.append(b)
+                    # If building is owned by enemy, progress level
+                    if not b.player_owned:
+                        self.levelmap.enemy_buildings -= 1
         for b in remove_buildings:
             self.remove_building(b)
         for u in remove_units:
             self.remove_unit(u)
 
+        # Victory check
+        if self.levelmap.enemy_buildings <= 0:
+            self.finish_level(True)
+
         self.ticker = (self.ticker + 1) % 60
         if self.ticker == 0:
             self.add_energy(self.energy_ps)
 
+    def finish_level(self, victory):
+        self.victory = victory
+        if self.victory:
+            self.finishmsg.set_finish_message("VICTORY!")
+            self.finishmsg.set_extra_message("These lands now belong to you.")
+        else:
+            self.finishmsg.set_finish_message("DEFEAT!")
+            self.finishmsg.set_extra_message("These lands demand preparation!")
+        self.finishmsg.set_visible(True)
+
     def handle_event(self, event_list):
         super().handle_event(event_list)
+
+        if self.finishmsg.is_visible():
+            return
 
         self.tick()
 

@@ -32,6 +32,16 @@ class ScreenMain(Screen):
 
         self.add_canvas([self.cv_materials, self.cv_shortcuts, self.cv_main[self.current_main_canvas]])
 
+    def init_screen(self, source_screen=None):
+        super().init_screen(source_screen)
+
+        # Coming back from game, check if captured (victory)
+        if isinstance(source_screen, layouts.ScreenGame):
+            if source_screen.victory:
+                capt_tile = source_screen.level_tile
+                self.cv_main["terrain"].gamemap.capture_tile(capt_tile.x, capt_tile.y)
+                self.cv_main["terrain"].select_tile(capt_tile)
+
     def update(self, event_list):
         self.terrain_selected = self.cv_terrain.map_coll.selected_tile
         self.cv_materials.update_data(self.player_data)

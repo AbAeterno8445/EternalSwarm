@@ -33,8 +33,17 @@ class CanvasLevelInfo(CanvasSwitcher):
         self.title_label.set_font_color((255, 100, 255))
         self.add_element(self.title_label)
 
+        tmp_y = self.title_label.get_height() + 8
+        # Preview label
+        self.preview_label = MGUI.Label(16, tmp_y, 0, 0, font_21, "Level preview:")
+        self.preview_label.set_text_resize(res_hor=True, res_ver=True)
+        self.preview_label.set_transparent(True)
+        self.preview_label.set_font_color((255, 100, 255))
+        self.add_element(self.preview_label)
+
+        tmp_y += self.preview_label.get_height() + 4
         # Level preview box
-        self.previewbox = MGUI.ImageWidget(16, 96, 128, 128)
+        self.previewbox = MGUI.ImageWidget(16, tmp_y, 128, 128)
         self.previewbox.set_transparent(False)
         self.previewbox.set_icon_autoscale(True)
         self.previewbox.set_border(True)
@@ -180,6 +189,7 @@ class BuildingButton(MGUI.WidgetCollection):
         self.add_widget(build_image, "build_image")
 
         tmp_x += build_image.get_width() + 4
+        tmp_y += 8
         # Building health
         build_health_label = MGUI.Label(tmp_x, tmp_y, 0, 0, font_16, "Health: " + millify_num(bdata["maxhp"]))
         build_health_label.set_transparent(True)

@@ -314,6 +314,11 @@ class GameMap(MGUI.Widget):
         self.tilelist.draw(self.tilemap_surface)
         self.mark_dirty()
 
+    def capture_tile(self, x, y):
+        tile = self.get_tile_at(x, y)
+        tile.owned = True
+        self.update_tilemap()
+
     def _get_appearance(self, *args):
         return self.tilemap_surface
 
