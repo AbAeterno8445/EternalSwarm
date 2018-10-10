@@ -48,6 +48,12 @@ class Label(TextWidget):
 
             self.set_bounds_size(res_hor, res_ver)
 
+    def _render_font(self, surface):
+        size = self._font.size(self._text)
+        center = surface.get_rect().center
+        coords = (center[0] - size[0] / 2, center[1] - size[1] / 2)
+        surface.blit(self._font.render(str(self._text), pygame.SRCALPHA, self._font_color, self._background), coords)
+
     def _get_appearance(self, *args):
         """
         Blits the text to the Label's Surface and returns the result.
@@ -58,11 +64,7 @@ class Label(TextWidget):
         if self._text:
             self._apply_text_resize()
 
-            size = self._font.size(self._text)
             surface = super()._get_appearance(*args)
-
-            center = surface.get_rect().center
-            coords = (center[0] - size[0] / 2, center[1] - size[1] / 2)
-            surface.blit(self._font.render(str(self._text), pygame.SRCALPHA, self._font_color, self._background), coords)
+            self._render_font(surface)
             return surface
         return super()._get_appearance(*args)

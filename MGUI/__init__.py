@@ -2,8 +2,8 @@ from .widget import Widget
 from .anim_sprite import AnimSprite
 from .image_widget import ImageWidget
 from .canvas import GUICanvas
-from .text_widget import TextWidget
 from .label import Label
+from .input_box import InputBox
 from .button import Button
 from .healthbar import Healthbar
 from .widget_collection import WidgetCollection
