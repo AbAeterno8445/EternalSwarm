@@ -16,11 +16,13 @@ class ScreenMain(Screen):
         tmp_width = disp_w - tmp_x - 16
         self.cv_terrain = layouts.CanvasTerrain(tmp_x, 16, tmp_width, disp_h - 100)
         self.cv_buildings = layouts.CanvasBuildings(tmp_x, 16, *self.cv_terrain.get_size())
+        self.cv_savegame = layouts.CanvasSaveGame(tmp_x, 16, *self.cv_terrain.get_size())
 
         self.current_main_canvas = "terrain"
         self.cv_main = {
             "terrain": self.cv_terrain,
-            "buildings": self.cv_buildings
+            "buildings": self.cv_buildings,
+            "savegame": self.cv_savegame
         }
 
         # Shortcuts canvas
@@ -50,7 +52,7 @@ class ScreenMain(Screen):
     def check_switch(self, canvas):
         sw = canvas.get_switch()
         if sw in self.cv_main:
-            self.remove_canvas(self.current_main_canvas)
+            self.remove_canvas(self.cv_main[self.current_main_canvas])
             self.current_main_canvas = sw
             self.add_canvas(self.cv_main[self.current_main_canvas])
         else:

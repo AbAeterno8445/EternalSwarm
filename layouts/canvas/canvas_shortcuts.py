@@ -39,10 +39,10 @@ class CanvasShortcuts(CanvasSwitcher):
         tmp_x += self.button_buildings.get_width() + 12
         # Save game button
         self.button_save = MGUI.Button(tmp_x, 10, 0, 26, font, "Save")
-        # self.button_save.set_callback()
+        self.button_save.set_callback(self.switch_target, ["savegame"])
         self.button_save.set_text_resize(res_hor=True, padding=8)
-        self.button_save.set_font_color((200, 200, 0))
-        self.button_save.set_border(True, (100, 100, 50))
+        self.button_save.set_font_color((255, 102, 0))
+        self.button_save.set_border(True, (255, 100, 50))
         self.button_save.set_hovered_color((100, 100, 100, 80))
         self.button_save.set_pressed_color((100, 100, 100, 150))
         self.add_element(self.button_save)
@@ -52,15 +52,8 @@ class CanvasShortcuts(CanvasSwitcher):
         self.button_load = MGUI.Button(tmp_x, 10, 0, 26, font, "Load")
         self.button_load.set_callback(self.switch_target, ["load"])
         self.button_load.set_text_resize(res_hor=True, padding=8)
-        self.button_load.set_font_color((200, 200, 0))
-        self.button_load.set_border(True, (100, 100, 50))
+        self.button_load.set_font_color((255, 102, 0))
+        self.button_load.set_border(True, (255, 100, 50))
         self.button_load.set_hovered_color((100, 100, 100, 80))
         self.button_load.set_pressed_color((100, 100, 100, 150))
         self.add_element(self.button_load)
-
-        tmp_x += self.button_load.get_width() + 12
-        self.input_test = MGUI.InputBox(tmp_x, 10, 200, 26, font, "test")
-        self.input_test.set_selected_bordercolor((100, 100, 255))
-        self.input_test.set_border(True)
-        self.input_test.set_character_limit(10)
-        self.add_element(self.input_test)

@@ -152,6 +152,7 @@ class CanvasLevelInfo(CanvasSwitcher):
         self.leveldiff_label.set_text("Hazard level: %i" % source_tile.difficulty)
 
 
+# TODO Fix buttons drawn once persisting on levels that don't have that building
 class BuildingButton(MGUI.WidgetCollection):
     def __init__(self, x, y, bdata, bname, amount):
         super().__init__()
