@@ -132,7 +132,8 @@ class CanvasLevelInfo(CanvasSwitcher):
                 pygame.draw.rect(previewbox_surface, tile_color, (j * 8, i * 8, 8, 8))
 
         for b in self.building_buttons:
-            self.remove_element(b.get_widgets_list())
+            for w in b.get_widgets_list():
+                self.remove_element(w[0])
         self.building_buttons.clear()
         # Draw buildings
         for bname in self.levelmap.level_buildings:

@@ -8,7 +8,7 @@ import layouts
 def main():
     # Init display & clock
     display = pygame.display.set_mode((800, 600), DOUBLEBUF)
-    pygame.display.set_caption("Eternal Swarm")
+    pygame.display.set_caption("Infinity Swarm")
 
     gem_list = ["amber", "amethyst", "emerald", "ruby", "sapphire", "topaz"]
     display_icon = pygame.transform.scale(pygame.image.load("assets/materials/" + random.choice(gem_list) + ".png"), (64, 64))
