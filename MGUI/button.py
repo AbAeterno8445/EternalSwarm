@@ -141,6 +141,8 @@ class Button(Label, ImageWidget):
                         self._change_state(2)
                     else:
                         self._change_state(1)
+                elif self._state:
+                    self._change_state(0)
             elif event.type == pygame.MOUSEMOTION:
                 if self.rect.collidepoint(event.pos):
                     if event.buttons[0]:

@@ -17,12 +17,18 @@ class ScreenMain(Screen):
         self.cv_terrain = layouts.CanvasTerrain(tmp_x, 16, tmp_width, disp_h - 100)
         self.cv_buildings = layouts.CanvasBuildings(tmp_x, 16, *self.cv_terrain.get_size())
         self.cv_savegame = layouts.CanvasSaveGame(tmp_x, 16, *self.cv_terrain.get_size())
+        self.cv_loadgame = layouts.CanvasLoadGame(tmp_x, 16, *self.cv_terrain.get_size())
+
+        # Savegame data
+        self.cv_savegame.add_save_object(self.player_data, "playerdata")
+        self.cv_savegame.add_save_object(self.cv_terrain.gamemap, "gamemap")
 
         self.current_main_canvas = "terrain"
         self.cv_main = {
             "terrain": self.cv_terrain,
             "buildings": self.cv_buildings,
-            "savegame": self.cv_savegame
+            "savegame": self.cv_savegame,
+            "loadgame": self.cv_loadgame
         }
 
         # Shortcuts canvas

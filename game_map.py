@@ -20,6 +20,7 @@ class GameMap(MGUI.Widget):
 
         self.map_data = []
         self.regions = []
+        self.regions_file = ""
         if regions_json:
             self.load_regions_json(regions_json)
 
@@ -34,7 +35,11 @@ class GameMap(MGUI.Widget):
         self.tilemap_surface.set_colorkey((0, 0, 0))
         self.spawn_point = (math.floor((width + randint(0, 1)) / 2), math.floor((height + randint(0, 1)) / 2))
 
+    def get_region_by_name(self, region_name):
+        return next([r.name for r in self.regions if r.name == region_name], None)
+
     def load_regions_json(self, json_path, gen_map=True):
+        self.regions_file = json_path
         with open(json_path, "r") as json_file:
             loaded_regions = json.loads(json_file.read())
 
@@ -54,6 +59,40 @@ class GameMap(MGUI.Widget):
 
         if gen_map:
             self.generate_tilemap()
+
+    def json_save(self):
+        map_json_data = []
+        for i in range(len(self.map_data)):
+            map_json_data.append([])
+            for tile in self.map_data[i]:
+                map_json_data[i].append(tile.json_save())
+
+        save_dict = {
+            "width": self.width,
+            "height": self.height,
+            "spawn_point": list(self.spawn_point),
+            "regions_file": self.regions_file,
+            "map_data": map_json_data
+        }
+        return save_dict
+
+    def json_load(self, json_data):
+        # Load regions
+        self.load_regions_json(json_data["regions_file"], False)
+        # Load map data
+        self.map_data.clear()
+        for i in range(len(json_data["map_data"])):
+            self.map_data.append([])
+            for tile in json_data["map_data"][i]:
+                new_tile = MapTile(0, 0, self.get_region_by_name(tile["region"]))
+                new_tile.json_load(tile)
+                self.map_data[i].append(new_tile)
+
+        self.width = json_data["width"]
+        self.height = json_data["height"]
+        self.spawn_point = tuple(json_data["spawn_point"])
+
+        self.update_tilemap()
 
     def get_tile_at(self, x, y):
         return self.map_data[y][x]
@@ -346,3 +385,22 @@ class MapTile(object):
         self.owned = False
         self.capturable = False
         self.level_id = 1
+
+    def json_save(self):
+        save_dict = {
+            "x": self.x,
+            "y": self.y,
+            "difficulty": self.difficulty,
+            "region": self.region.name,
+            "owned": self.owned,
+            "capturable": self.capturable,
+            "level_id": self.level_id
+        }
+        return save_dict
+
+    def json_load(self, json_data):
+        for data in json_data:
+            if data == "region":  # Region loading handled in GameMap
+                continue
+            if hasattr(self, data):
+                setattr(self, data, json_data[data])

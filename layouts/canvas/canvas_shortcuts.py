@@ -50,7 +50,7 @@ class CanvasShortcuts(CanvasSwitcher):
         tmp_x += self.button_save.get_width() + 12
         # Load game button
         self.button_load = MGUI.Button(tmp_x, 10, 0, 26, font, "Load")
-        self.button_load.set_callback(self.switch_target, ["load"])
+        self.button_load.set_callback(self.switch_target, ["loadgame"])
         self.button_load.set_text_resize(res_hor=True, padding=8)
         self.button_load.set_font_color((255, 102, 0))
         self.button_load.set_border(True, (255, 100, 50))

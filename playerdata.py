@@ -20,3 +20,11 @@ class PlayerData(object):
 
     def ccps_tick(self, tick_len):
         self.carb_crystals += self.ccps / tick_len
+
+    def json_save(self):
+        return self.__dict__
+
+    def json_load(self, json_data):
+        for data in json_data:
+            if hasattr(self, data):
+                setattr(self, data, json_data[data])
