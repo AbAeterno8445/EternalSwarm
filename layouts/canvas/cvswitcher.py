@@ -16,6 +16,10 @@ class CanvasSwitcher(MGUI.GUICanvas):
     def switch_target(self, newtarget):
         self.switch_tgtname = newtarget
 
+    # Runs when a canvas gets switched to
+    def on_switch(self):
+        pass
+
     def get_switch(self):
         old_cvname = self.switch_tgtname
         self.switch_tgtname = ""

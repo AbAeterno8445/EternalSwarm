@@ -36,7 +36,10 @@ class GameMap(MGUI.Widget):
         self.spawn_point = (math.floor((width + randint(0, 1)) / 2), math.floor((height + randint(0, 1)) / 2))
 
     def get_region_by_name(self, region_name):
-        return next([r.name for r in self.regions if r.name == region_name], None)
+        for r in self.regions:
+            if r.name == region_name:
+                return r
+        return None
 
     def load_regions_json(self, json_path, gen_map=True):
         self.regions_file = json_path

@@ -214,6 +214,7 @@ class Widget(pygame.sprite.DirtySprite):
         """
         self._border = border
         self._border_color = border_color
+        self.mark_dirty()
 
     def get_border_color(self):
         """

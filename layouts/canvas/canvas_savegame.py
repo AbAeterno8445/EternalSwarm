@@ -3,14 +3,16 @@ import MGUI
 import os
 import math
 import json
+import datetime
 from .cvswitcher import CanvasSwitcher
 
 
 class CanvasSaveGame(CanvasSwitcher):
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y, width, height, player_data):
         super().__init__(x, y, width, height, (70, 25, 0))
+        self.player_data = player_data
 
-        self.save_data = {}
+        self.save_objs = {}
 
         self.backg_widget.set_border(True, (204, 102, 0))
 
@@ -80,7 +82,7 @@ class CanvasSaveGame(CanvasSwitcher):
     # json_save must return a dictionary with the object data
     def add_save_object(self, save_obj, obj_name):
         if hasattr(save_obj, "json_save"):
-            self.save_data[obj_name] = save_obj
+            self.save_objs[obj_name] = save_obj
         else:
             raise Exception("Save object " + str(type(save_obj)) + " is missing the json_save method.")
 
@@ -95,13 +97,22 @@ class CanvasSaveGame(CanvasSwitcher):
 
     def create_savefile(self):
         save_name = self.savename_input.get_text().strip()
-        save_dict = {}
-        for s in self.save_data:
-            save_dict[s] = self.save_data[s].json_save()
+        save_dict = {
+            "metadata": {
+                "player_name": self.player_data.name,
+                "crystals": self.player_data.carb_crystals,
+                "time": datetime.datetime.now().strftime("%c")
+            }
+        }
+        for s in self.save_objs:
+            save_dict[s] = self.save_objs[s].json_save()
         if len(save_name) > 0:
             with open("saves/" + save_name + ".issf", "w") as file:
                 file.write(json.dumps(save_dict, indent=2))
             self.update_savefiles()
+
+    def on_switch(self):
+        self.update_savefiles()
 
     def scroll_buttons(self, scroll):
         self.save_buttons_pad = max(0, min(len(self.save_buttons) - self.save_buttons_limit + 1, self.save_buttons_pad + scroll))
@@ -128,9 +139,10 @@ class CanvasSaveGame(CanvasSwitcher):
         savebt_x += 1
         savebt_y += 1
         font_16 = pygame.font.Font("assets/Dosis.otf", 16)
-        but_height = font_16.size("a")[1]
+        but_height = font_16.size("A")[1]
 
         self.save_buttons_limit = math.floor(self.exsaves_backg.get_height() / but_height)
+        box_height = 0
         for s in saves:
             # Infinity Swarm Save File
             if len(s) > 5 and not s[-5:] == ".issf":
@@ -147,7 +159,9 @@ class CanvasSaveGame(CanvasSwitcher):
 
             if len(self.save_buttons) >= self.save_buttons_limit:
                 save_button.set_visible(False)
+                box_height += save_button.get_height()
 
             savebt_y += save_button.get_height()
+        self.exsaves_backg.set_bounds_size(self.exsaves_backg.get_width(), max(self.exsaves_backg.get_height(), box_height + 2))
 
         self.scroll_buttons(0)

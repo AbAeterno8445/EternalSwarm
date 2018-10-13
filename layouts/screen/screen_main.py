@@ -16,12 +16,15 @@ class ScreenMain(Screen):
         tmp_width = disp_w - tmp_x - 16
         self.cv_terrain = layouts.CanvasTerrain(tmp_x, 16, tmp_width, disp_h - 100)
         self.cv_buildings = layouts.CanvasBuildings(tmp_x, 16, *self.cv_terrain.get_size())
-        self.cv_savegame = layouts.CanvasSaveGame(tmp_x, 16, *self.cv_terrain.get_size())
+        self.cv_savegame = layouts.CanvasSaveGame(tmp_x, 16, *self.cv_terrain.get_size(), self.player_data)
         self.cv_loadgame = layouts.CanvasLoadGame(tmp_x, 16, *self.cv_terrain.get_size())
 
         # Savegame data
         self.cv_savegame.add_save_object(self.player_data, "playerdata")
         self.cv_savegame.add_save_object(self.cv_terrain.gamemap, "gamemap")
+        # Load data
+        self.cv_loadgame.add_load_object(self.player_data, "playerdata")
+        self.cv_loadgame.add_load_object(self.cv_terrain.gamemap, "gamemap")
 
         self.current_main_canvas = "terrain"
         self.cv_main = {
@@ -61,5 +64,6 @@ class ScreenMain(Screen):
             self.remove_canvas(self.cv_main[self.current_main_canvas])
             self.current_main_canvas = sw
             self.add_canvas(self.cv_main[self.current_main_canvas])
+            self.cv_main[self.current_main_canvas].on_switch()
         else:
             self.switch_screen = sw

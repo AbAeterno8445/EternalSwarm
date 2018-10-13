@@ -54,6 +54,7 @@ class InputBox(Label):
         else:
             self._cursor_visible = False
             self._cursor_ticker = 0
+            self._held_key = None
 
             if self._selected_color and self._old_color:
                 self.set_border(self.has_border(), self._old_color)
