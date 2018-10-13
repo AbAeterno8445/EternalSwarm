@@ -7,14 +7,14 @@ class CanvasMaterials(CanvasSwitcher):
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, (40, 0, 40))
 
-        self.backg_widget.set_border(True, (110, 40, 110))
+        self.backg_widget.set_border(True, (160, 40, 160))
 
         font_18 = pygame.font.Font("assets/Dosis.otf", 18)
         font_12 = pygame.font.Font("assets/Dosis.otf", 12)
         # Player name
         self.plname_label = MGUI.Label(8, 8, self.get_width() - 16, 24, font_18)
         self.plname_label.set_background((15, 0, 15))
-        self.plname_label.set_border(True, (110, 40, 110))
+        self.plname_label.set_border(True, self.backg_widget.get_border_color())
         self.plname_label.set_font_color((255, 200, 255))
         self.add_element(self.plname_label)
 

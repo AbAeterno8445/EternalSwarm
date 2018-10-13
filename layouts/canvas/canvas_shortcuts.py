@@ -5,12 +5,12 @@ from .cvswitcher import CanvasSwitcher
 
 class CanvasShortcuts(CanvasSwitcher):
     def __init__(self, x, y, width, height):
-        super().__init__(x, y, width, height, (0, 0, 50))
+        super().__init__(x, y, width, height, (40, 0, 40))
 
         # Variables
         self.sel_shortcut = "terrain"
 
-        self.backg_widget.set_border(True, (0, 0, 150))
+        self.backg_widget.set_border(True, (160, 40, 160))
 
         font = pygame.font.Font("assets/Dosis.otf", 18)
 

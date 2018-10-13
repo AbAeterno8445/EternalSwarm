@@ -7,12 +7,12 @@ from .cv_terrain_levelinfo import TerrainLevelinfo
 
 class CanvasTerrain(CanvasSwitcher):
     def __init__(self, x, y, width, height):
-        super().__init__(x, y, width, height, (0, 110, 110))
+        super().__init__(x, y, width, height)
 
         # Variables
         self.start_game = False  # Set to true to begin game using selected tile data
 
-        self.backg_widget.set_border(True, (0, 150, 150))
+        self.backg_widget.set_border(True, (160, 40, 160))
 
         self.selected_tile = None
         self.gamemap = GameMap(0, 0, 32, 32, "assets/map_regions.json")
