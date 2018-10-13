@@ -1,4 +1,5 @@
 import pygame
+import traceback
 from .label import Label
 from .image_widget import ImageWidget
 
@@ -79,6 +80,8 @@ class Button(Label, ImageWidget):
         if callable(callback):
             self._callback = callback
         if callback_args:
+            if type(callback_args) not in {list, set, tuple}:
+                callback_args = [callback_args]
             self._callback_args = callback_args
         return self
 
@@ -131,8 +134,8 @@ class Button(Label, ImageWidget):
                         if self._callback:
                             try:
                                 self._callback(*self._callback_args)
-                            except Exception as e:
-                                print(e)
+                            except:
+                                traceback.print_exc()
                         if self._state >= 2:
                             self._change_state(1)
             elif event.type == pygame.MOUSEBUTTONDOWN:
