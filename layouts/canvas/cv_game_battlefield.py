@@ -28,11 +28,12 @@ def process_battle(cv_game):
                     if abs((u_x + u_w / 2) - (u_otherx + u_otherw / 2)) < u_range:
                         u.set_battle_target(u_other)
 
-                # Check if unit is out of bounds and fade/delete it if so
+                # Check if unit is out of bounds and fade/delete it if so, damage player as well
                 if not u.state == units.state_fade:
                     u_mapx = math.floor(abs(mapx - u_x) / 48)
                     if (u_x and u_x < mapx - 8) or u_mapx >= cv_game.levelmap.width:
                         u.switch_state(units.state_fade)
+                        cv_game.add_health(-u.dmg_player)
             # Process battling units
             elif u.state == units.state_battle:
                 if u.is_attack_ready() and u.battle_target:

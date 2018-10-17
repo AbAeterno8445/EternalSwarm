@@ -1,4 +1,5 @@
-import pygame, MGUI, json, math, game_battlefield
+import pygame, MGUI, json, math
+from .cv_game_battlefield import process_battle
 from .cvswitcher import CanvasSwitcher
 from millify import millify_num
 from level_map import LevelMap
@@ -15,6 +16,7 @@ class CanvasGame(CanvasSwitcher):
         self.player_data = player_data
         self.energy = 0
         self.energy_ps = 0
+        self.health = 0
 
         self.ticker = 0
         self.paused = False
@@ -63,8 +65,20 @@ class CanvasGame(CanvasSwitcher):
 
         self.energy_img = MGUI.AnimSprite(0, 0, 0, 0, "assets/materials/energy.png", 4)
         tmp_x = self.energy_label.get_position()[0] - self.energy_img.get_width() - 2
-        self.energy_img.set_position(tmp_x, 6)
-        self.add_element(self.energy_img)
+        self.energy_img.set_position(tmp_x, self.energy_label.get_position()[1] - 2)
+        self.add_element(self.energy_img, layer=10)
+
+        # Health img & label
+        self.health_label = MGUI.Label(width / 2, 10 + self.energy_label.get_height(), 0, 0, font, millify_num(self.health) + " health")
+        self.health_label.set_text_resize(res_hor=True, res_ver=True, padding=2)
+        self.health_label.set_transparent(True)
+        self.health_label.set_font_color((255, 210, 210))
+        self.add_element(self.health_label, layer=10)
+
+        self.health_img = MGUI.AnimSprite(0, 0, 0, 0, "assets/materials/health.png", 4)
+        tmp_x = self.health_label.get_position()[0] - self.health_img.get_width() - 2
+        self.health_img.set_position(tmp_x, self.health_label.get_position()[1] - 2)
+        self.add_element(self.health_img, layer=10)
 
         # Paused label
         self.paused_label = MGUI.Label(0, 0, 0, 0, font, "PAUSED")
@@ -83,6 +97,7 @@ class CanvasGame(CanvasSwitcher):
         self.finishmsg.set_visible(False)
         self.energy = self.player_data.start_energy
         self.energy_ps = self.player_data.start_energyps
+        self.health = self.player_data.start_health
 
         self.levelmap.load_level_fromtile(source_tile)
         self.levelmap.set_visible(True)
@@ -114,6 +129,9 @@ class CanvasGame(CanvasSwitcher):
         self.energy += mod
         if self.buildmenu.is_visible():
             self.buildmenu.update_data(self.energy)
+
+    def add_health(self, mod):
+        self.health = max(0, self.health + mod)
 
     def place_building(self, building_name):
         bdata = self.base_buildings[building_name]
@@ -172,15 +190,17 @@ class CanvasGame(CanvasSwitcher):
         if self.paused:
             return
 
-        battle_data = game_battlefield.process_battle(self)
+        battle_data = process_battle(self)
         for b in battle_data["remove_buildings"]:
             self.remove_building(b)
         for u in battle_data["remove_units"]:
             self.remove_unit(u)
 
-        # Victory check
+        # Victory/Defeat check
         if self.levelmap.enemy_buildings <= 0:
             self.finish_level(True)
+        elif self.health <= 0:
+            self.finish_level(False)
 
         self.ticker = (self.ticker + 1) % 60
         if self.ticker == 0:
@@ -252,8 +272,11 @@ class CanvasGame(CanvasSwitcher):
 
         # Update energy label
         energy_txt = millify_num(self.energy) + " energy"
-        if not self.energy_label.get_text() == energy_txt:
-            self.energy_label.set_text(energy_txt)
+        self.energy_label.set_text(energy_txt)
+
+        # Update health label
+        health_txt = millify_num(self.health) + " health"
+        self.health_label.set_text(health_txt)
 
         # Update pause label
         if not self.paused_label.is_visible() == self.paused:

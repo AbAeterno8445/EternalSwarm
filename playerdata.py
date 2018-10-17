@@ -12,6 +12,8 @@ class PlayerData(object):
         self.start_energyps = 1
         self.owned_buildings = ["Slime Spawner"]
 
+        self.start_health = 50
+
     def get_carbcrystals_str(self):
         return millify_num(self.carb_crystals)
 

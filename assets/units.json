@@ -8,6 +8,7 @@
     "speed": 1,
     "maxhp": 10,
     "dmg_phys": 2,
+    "dmg_player": 6,
     "attspd": 0.5
   },
   "Selenian": {
@@ -26,6 +27,7 @@
     "speed": 2,
     "maxhp": 20,
     "dmg_phys": 1,
+    "dmg_player": 25,
     "attspd": 0.2
   },
   "Turtle": {
@@ -45,6 +47,7 @@
     "speed": 1,
     "maxhp": 50,
     "dmg_phys": 0,
+    "dmg_player": 15,
     "attspd": 100
   }
 }
