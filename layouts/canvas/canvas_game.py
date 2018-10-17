@@ -1,4 +1,4 @@
-import pygame, MGUI, json, math
+import pygame, MGUI, json, math, game_battlefield
 from .cvswitcher import CanvasSwitcher
 from millify import millify_num
 from level_map import LevelMap
@@ -172,60 +172,10 @@ class CanvasGame(CanvasSwitcher):
         if self.paused:
             return
 
-        remove_buildings = []
-        remove_units = []
-        mapx, mapy = self.levelmap.get_position()
-        for h in range(self.levelmap.height):
-            # Process units
-            for u in self.unit_list[h]:
-                u.tick()
-
-                u_x, u_y = u.get_position()
-                u_w = u.get_width()
-                # Process walking units
-                if u.state == units.state_walk:
-                    # Check for opposing units to battle
-                    u_range = 20 + u.get_width() / 2  # TODO change to unit range variable
-                    for u_other in self.unit_list[h] + self.building_list[h]:
-                        if u is u_other or u_other.player_owned == u.player_owned or u_other.hp <= 0:
-                            continue
-                        u_otherx, u_othery = u_other.get_position()
-                        u_otherw = u_other.get_width()
-                        if abs((u_x + u_w / 2) - (u_otherx + u_otherw / 2)) < u_range:
-                            u.set_battle_target(u_other)
-
-                    # Check if unit is out of bounds and fade/delete it if so
-                    if not u.state == units.state_fade:
-                        u_mapx = math.floor(abs(mapx - u_x) / 48)
-                        if (u_x and u_x < mapx - 8) or u_mapx >= self.levelmap.width:
-                            u.switch_state(units.state_fade)
-                # Process battling units
-                elif u.state == units.state_battle:
-                    if u.is_attack_ready() and u.battle_target:
-                        u.battle_target.hurt(u.get_damage())
-                        if u.battle_target.hp <= 0:
-                            u.battle_target = None
-                            u.switch_state(units.state_walk)
-                        else:
-                            u.reset_attack()
-                # Delete units
-                elif u.state == units.state_delete:
-                    remove_units.append(u)
-            # Process buildings
-            for b in self.building_list[h]:
-                b.tick()
-                if b.type == buildings.buildtype_spawner:
-                    if b.is_unit_ready():
-                        self.create_unit_at(b.x, b.y, b.player_owned, b.spawn_unit)
-                        b.reset_spawn()
-                if b.hp <= 0:  # Building destroyed
-                    remove_buildings.append(b)
-                    # If building is owned by enemy, progress level
-                    if not b.player_owned:
-                        self.levelmap.enemy_buildings -= 1
-        for b in remove_buildings:
+        battle_data = game_battlefield.process_battle(self)
+        for b in battle_data["remove_buildings"]:
             self.remove_building(b)
-        for u in remove_units:
+        for u in battle_data["remove_units"]:
             self.remove_unit(u)
 
         # Victory check
