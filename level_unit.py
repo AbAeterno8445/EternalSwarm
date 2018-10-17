@@ -48,8 +48,8 @@ class Unit(MGUI.AnimSprite):
                 self.set_icon_animated("assets/units/" + anim_data["img"], anim_data["frames"])
                 if "anim_delay" in anim_data:
                     self.set_animation_delay(anim_data["anim_delay"])
-                if "anim_order" in anim_data:
-                    self.set_animation_data(anim_data["anim_order"])
+                if "animations" in anim_data:
+                    self.set_animation_data(anim_data["animations"])
                 if "rotate" in anim_data:
                     self.set_rotation(anim_data["rotate"])
                 flip_hor = "flip_hor" in anim_data

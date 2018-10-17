@@ -7,5 +7,14 @@
     "spawn_time": 4,
     "spawn_unit": "Slime",
     "maxhp": 20
+  },
+  "Turtle Spawner": {
+    "map_color": [20, 140, 20],
+    "cost": 30,
+    "base_img": "spawner_slime.png",
+    "type": "spawner",
+    "spawn_time": 8,
+    "spawn_unit": "Turtle",
+    "maxhp": 50
   }
 }

@@ -14,7 +14,7 @@
     "img_data": {
       "img": "selenian.png",
       "frames": 17,
-      "anim_order": {
+      "animations": {
         "idle": [0],
         "base": [9, 10, 11, 12, 13, 14, 15, 16],
         "battle": [2, 3, 4, "battle_spin"],
@@ -27,5 +27,24 @@
     "maxhp": 20,
     "dmg_phys": 1,
     "attspd": 0.2
+  },
+  "Turtle": {
+    "img_data": {
+      "img": "turtle.png",
+      "frames": 8,
+      "anim_delay": 8,
+      "animations": {
+        "idle": [0],
+        "base": [0, 1, 2, 3, 4],
+        "battle": [5, 6, "battle_hidden"],
+        "battle_hidden": [7],
+        "death": [4]
+      },
+      "flip_hor": 1
+    },
+    "speed": 1,
+    "maxhp": 50,
+    "dmg_phys": 0,
+    "attspd": 100
   }
 }
