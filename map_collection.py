@@ -33,7 +33,7 @@ class MapCollection(MGUI.WidgetCollection):
         self.add_widget(mouse_hover, "mouse_hover", layer=1)
 
         # Selected tile widget
-        selected_tile_widg = MGUI.ImageWidget(0, 0, 48, 48, "assets/selected_tile.png")
+        selected_tile_widg = MGUI.ImageWidget(0, 0, 48, 48, "assets/UI/selected_tile.png")
         selected_tile_widg.set_border(True, (1, 1, 1))
         selected_tile_widg.set_visible(False)
         self.add_widget(selected_tile_widg, "selected_tile_widg", layer=2)

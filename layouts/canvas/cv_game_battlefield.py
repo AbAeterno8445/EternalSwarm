@@ -4,7 +4,7 @@ import level_unit as units
 
 
 # Process game battle (buildings and units)
-# Returns a dictionary with relevant battle data
+# Returns a dictionary with relevant battle data, to be used by canvas_game
 def process_battle(cv_game):
     remove_buildings = []
     remove_units = []

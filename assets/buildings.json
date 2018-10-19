@@ -9,9 +9,9 @@
     "maxhp": 20
   },
   "Turtle Spawner": {
-    "map_color": [20, 140, 20],
+    "map_color": [20, 160, 20],
     "cost": 30,
-    "base_img": "spawner_slime.png",
+    "base_img": "spawner_turtle.png",
     "type": "spawner",
     "spawn_time": 8,
     "spawn_unit": "Turtle",

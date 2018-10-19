@@ -4,6 +4,7 @@ import json
 from level_map import LevelMap
 from .cvswitcher import CanvasSwitcher
 from millify import millify_num
+import level_building as buildings
 
 
 class CanvasLevelInfo(CanvasSwitcher):
@@ -110,7 +111,7 @@ class CanvasLevelInfo(CanvasSwitcher):
         for b in self.building_buttons:
             new_x += 16 + b.total_width
 
-        new_button = BuildingButton(new_x, self.building_buttons_y, bdata, bname, amount)
+        new_button = BuildingButton(new_x, self.building_buttons_y, bdata, bname, amount, self.base_units)
         self.building_buttons.append(new_button)
         self.add_element(new_button.get_widgets_list())
 
@@ -153,11 +154,11 @@ class CanvasLevelInfo(CanvasSwitcher):
         self.leveldiff_label.set_text("Hazard level: %i" % source_tile.difficulty)
 
 
-# TODO Fix buttons drawn once persisting on levels that don't have that building
 class BuildingButton(MGUI.WidgetCollection):
-    def __init__(self, x, y, bdata, bname, amount):
+    def __init__(self, x, y, bdata, bname, amount, bunits):
         super().__init__()
 
+        font_12 = pygame.font.Font("assets/Dosis.otf", 14)
         font_16 = pygame.font.Font("assets/Dosis.otf", 16)
         font_21 = pygame.font.Font("assets/Dosis.otf", 21)
 
@@ -204,3 +205,89 @@ class BuildingButton(MGUI.WidgetCollection):
         build_amt_label.set_transparent(True)
         build_amt_label.set_text_resize(res_hor=True, res_ver=True)
         self.add_widget(build_amt_label, "build_amt_label")
+
+        tmp_x, tmp_y = build_image.get_position()
+        tmp_y += build_image.get_height() + 1
+        # Spawner unit info
+        if bdata["type"] == buildings.buildtype_spawner:
+            unitsp = bunits[bdata["spawn_unit"]]
+            unitsp_imgdata = unitsp["img_data"]
+
+            # Unit name label
+            unitsp_label = MGUI.Label(tmp_x, tmp_y, buildinfo_frame.get_width() - 4, 0, font_21, bdata["spawn_unit"])
+            unitsp_label.set_text_resize(res_ver=True)
+            unitsp_label.set_transparent(True)
+            unitsp_label.set_border(True, (255, 100, 255))
+            self.add_widget(unitsp_label, "unitsp_label")
+
+            # Animated unit image
+            tmp_y += unitsp_label.get_height() + 1
+            unitsp_image = MGUI.AnimSprite(tmp_x, tmp_y, *build_image.get_size(),
+                                           icon="assets/units/" + unitsp_imgdata["img"],
+                                           frames=unitsp_imgdata["frames"],
+                                           autosize=False)
+            if "animations" in unitsp_imgdata and "base" in unitsp_imgdata["animations"]:
+                unitsp_image.set_animation_data({"base": unitsp_imgdata["animations"]["base"]})
+            unitsp_image.set_border(True, (255, 100, 255))
+            self.add_widget(unitsp_image, "unitsp_image")
+
+            tmp_y += 2
+            tmp_x += unitsp_image.get_width() + 4
+            # Unit health icon
+            unithealth_img = MGUI.ImageWidget(tmp_x, tmp_y, 18, 18, "assets/UI/heart.png", smooth=True)
+            unithealth_img.set_icon_autoscale(True)
+            self.add_widget(unithealth_img, "unithealth_img")
+
+            tmp_x += unithealth_img.get_width() + 4
+            # Unit health label
+            unithealth_label = MGUI.Label(tmp_x, tmp_y - 1, 0, 0, font_16, millify_num(unitsp["maxhp"]))
+            unithealth_label.set_text_resize(res_hor=True, res_ver=True)
+            unithealth_label.set_transparent(True)
+            unithealth_label.set_font_color((255, 110, 110))
+            self.add_widget(unithealth_label, "unithealth_label")
+
+            tmp_x += unithealth_label.get_width() + 8
+            # Unit speed icon
+            unitspeed_img = MGUI.ImageWidget(tmp_x, tmp_y, 18, 18, "assets/UI/speed_boot.png")
+            unitspeed_img.set_icon_autoscale(True)
+            self.add_widget(unitspeed_img, "unitspeed_img")
+
+            tmp_x += unitspeed_img.get_width() + 4
+            # Unit speed label
+            unitspeed_label = MGUI.Label(tmp_x, tmp_y - 1, 0, 0, font_16, millify_num(unitsp["speed"]))
+            unitspeed_label.set_text_resize(res_hor=True, res_ver=True)
+            unitspeed_label.set_transparent(True)
+            unitspeed_label.set_font_color((110, 255, 110))
+            self.add_widget(unitspeed_label, "unitspeed_label")
+
+            tmp_x = unithealth_img.get_position()[0]
+            tmp_y += unithealth_img.get_height() + 2
+            # Unit physical damage icon
+            unit_physdmg_img = MGUI.ImageWidget(tmp_x, tmp_y, 18, 18, "assets/UI/attack_swords.png")
+            unit_physdmg_img.set_icon_autoscale(True)
+            self.add_widget(unit_physdmg_img, "unit_physdmg_img")
+
+            tmp_x += unit_physdmg_img.get_width() + 4
+            # Unit physical damage label
+            tmp_text = "0"
+            if "dmg_phys" in unitsp:
+                tmp_text = millify_num(unitsp["dmg_phys"])
+            unit_physdmg_label = MGUI.Label(tmp_x, tmp_y, 0, 0, font_16, tmp_text)
+            unit_physdmg_label.set_text_resize(res_hor=True, res_ver=True)
+            unit_physdmg_label.set_transparent(True)
+            self.add_widget(unit_physdmg_label, "unit_physdmg_label")
+
+            tmp_x = unit_physdmg_img.get_position()[0]
+            tmp_y += unit_physdmg_img.get_height() + 2
+            # Unit damage to player icon
+            unit_pldmg_img = MGUI.ImageWidget(tmp_x, tmp_y, 18, 18, "assets/UI/escape.png")
+            unit_pldmg_img.set_icon_autoscale(True)
+            self.add_widget(unit_pldmg_img, "unit_pldmg_img")
+
+            tmp_x += unit_pldmg_img.get_width() + 4
+            # Unit damage to player label
+            unit_pldmg_label = MGUI.Label(tmp_x, tmp_y, 0, 0, font_16, millify_num(unitsp["dmg_player"]))
+            unit_pldmg_label.set_text_resize(res_ver=True, res_hor=True)
+            unit_pldmg_label.set_transparent(True)
+            unit_pldmg_label.set_font_color((255, 255, 110))
+            self.add_widget(unit_pldmg_label, "unit_pldmg_label")

@@ -78,8 +78,8 @@ class AnimSprite(ImageWidget):
 
     def set_animation_data(self, order_dict):
         """
-        Sets the frame animation order for the sprite
-        parameters:     list of ints for each frame ID in order
+        Sets the animations for the sprite
+        parameters:     dict with keys as animation name and values as a list of ints with the frame order
         return values:  -
         """
         self._animations = order_dict
