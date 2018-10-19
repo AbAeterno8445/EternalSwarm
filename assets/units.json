@@ -8,7 +8,14 @@
     "speed": 1,
     "maxhp": 10,
     "dmg_phys": 2,
+    "dmg_fire": 0,
+    "dmg_cold": 0,
+    "dmg_lightning": 0,
     "dmg_player": 6,
+    "armor": 0,
+    "res_fire": 0,
+    "res_cold": 0,
+    "res_lightning": 0,
     "attspd": 0.5
   },
   "Selenian": {

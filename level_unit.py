@@ -26,7 +26,14 @@ class Unit(MGUI.AnimSprite):
         self.maxhp = 1
         self.hp = self.maxhp
         self.dmg_phys = 1
+        self.dmg_fire = 0
+        self.dmg_cold = 0
+        self.dmg_lightning = 0
         self.dmg_player = 1
+        self.armor = 0
+        self.res_fire = 0
+        self.res_cold = 0
+        self.res_lightning = 0
         self.attspd = 1
         self.att_ticker = 0
 

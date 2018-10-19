@@ -262,6 +262,23 @@ class BuildingButton(MGUI.WidgetCollection):
 
             tmp_x = unithealth_img.get_position()[0]
             tmp_y += unithealth_img.get_height() + 2
+            # Unit damage to player icon
+            unit_pldmg_img = MGUI.ImageWidget(tmp_x, tmp_y, 18, 18, "assets/UI/escape.png")
+            unit_pldmg_img.set_icon_autoscale(True)
+            self.add_widget(unit_pldmg_img, "unit_pldmg_img")
+
+            tmp_x += unit_pldmg_img.get_width() + 4
+            # Unit damage to player label
+            unit_pldmg_label = MGUI.Label(tmp_x, tmp_y, 0, 0, font_16, millify_num(unitsp["dmg_player"]))
+            unit_pldmg_label.set_text_resize(res_ver=True, res_hor=True)
+            unit_pldmg_label.set_transparent(True)
+            unit_pldmg_label.set_font_color((255, 255, 110))
+            self.add_widget(unit_pldmg_label, "unit_pldmg_label")
+
+            # region ---- UNIT DAMAGE TYPES INFORMATION ----
+            tmp_x, tmp_y = unitsp_image.get_position()
+            tmp_x += 2
+            tmp_y += unitsp_image.get_height() + 4
             # Unit physical damage icon
             unit_physdmg_img = MGUI.ImageWidget(tmp_x, tmp_y, 18, 18, "assets/UI/attack_swords.png")
             unit_physdmg_img.set_icon_autoscale(True)
@@ -277,17 +294,124 @@ class BuildingButton(MGUI.WidgetCollection):
             unit_physdmg_label.set_transparent(True)
             self.add_widget(unit_physdmg_label, "unit_physdmg_label")
 
-            tmp_x = unit_physdmg_img.get_position()[0]
-            tmp_y += unit_physdmg_img.get_height() + 2
-            # Unit damage to player icon
-            unit_pldmg_img = MGUI.ImageWidget(tmp_x, tmp_y, 18, 18, "assets/UI/escape.png")
-            unit_pldmg_img.set_icon_autoscale(True)
-            self.add_widget(unit_pldmg_img, "unit_pldmg_img")
+            tmp_x += unit_physdmg_label.get_width() + 8
+            # Unit fire damage image
+            unit_firedmg_img = MGUI.ImageWidget(tmp_x, tmp_y, 18, 18, "assets/UI/firedmg_swords.png")
+            unit_firedmg_img.set_icon_autoscale(True)
+            self.add_widget(unit_firedmg_img, "unit_firedmg_img")
 
-            tmp_x += unit_pldmg_img.get_width() + 4
-            # Unit damage to player label
-            unit_pldmg_label = MGUI.Label(tmp_x, tmp_y, 0, 0, font_16, millify_num(unitsp["dmg_player"]))
-            unit_pldmg_label.set_text_resize(res_ver=True, res_hor=True)
-            unit_pldmg_label.set_transparent(True)
-            unit_pldmg_label.set_font_color((255, 255, 110))
-            self.add_widget(unit_pldmg_label, "unit_pldmg_label")
+            tmp_x += unit_firedmg_img.get_width() + 4
+            tmp_text = "0"
+            if "dmg_fire" in unitsp:
+                tmp_text = millify_num(unitsp["dmg_fire"])
+            # Unit fire damage label
+            unit_firedmg_label = MGUI.Label(tmp_x, tmp_y, 0, 0, font_16, tmp_text)
+            unit_firedmg_label.set_text_resize(res_hor=True, res_ver=True)
+            unit_firedmg_label.set_transparent(True)
+            unit_firedmg_label.set_font_color((255, 180, 110))
+            self.add_widget(unit_firedmg_label, "unit_firedmg_label")
+
+            tmp_x += unit_firedmg_label.get_width() + 8
+            # Unit cold damage image
+            unit_colddmg_img = MGUI.ImageWidget(tmp_x, tmp_y, 18, 18, "assets/UI/colddmg_swords.png")
+            unit_colddmg_img.set_icon_autoscale(True)
+            self.add_widget(unit_colddmg_img, "unit_colddmg_img")
+
+            tmp_x += unit_colddmg_img.get_width() + 4
+            tmp_text = "0"
+            if "dmg_cold" in unitsp:
+                tmp_text = millify_num(unitsp["dmg_cold"])
+            # Unit cold damage label
+            unit_colddmg_label = MGUI.Label(tmp_x, tmp_y, 0, 0, font_16, tmp_text)
+            unit_colddmg_label.set_text_resize(res_hor=True, res_ver=True)
+            unit_colddmg_label.set_transparent(True)
+            unit_colddmg_label.set_font_color((110, 200, 255))
+            self.add_widget(unit_colddmg_label, "unit_colddmg_label")
+
+            tmp_x += unit_colddmg_label.get_width() + 8
+            # Unit lightning damage image
+            unit_lningdmg_img = MGUI.ImageWidget(tmp_x, tmp_y, 18, 18, "assets/UI/lightningdmg_swords.png")
+            unit_lningdmg_img.set_icon_autoscale(True)
+            self.add_widget(unit_lningdmg_img, "unit_lningdmg_img")
+
+            tmp_x += unit_lningdmg_img.get_width() + 4
+            tmp_text = "0"
+            if "dmg_lightning" in unitsp:
+                tmp_text = millify_num(unitsp["dmg_lightning"])
+            # Unit lightning damage label
+            unit_lningdmg_label = MGUI.Label(tmp_x, tmp_y, 0, 0, font_16, tmp_text)
+            unit_lningdmg_label.set_text_resize(res_hor=True, res_ver=True)
+            unit_lningdmg_label.set_transparent(True)
+            unit_lningdmg_label.set_font_color((255, 200, 110))
+            self.add_widget(unit_lningdmg_label, "unit_lningdmg_label")
+            # endregion
+
+            # region ---- UNIT RESISTANCE TYPES INFORMATION ----
+            tmp_x = unit_physdmg_img.get_position()[0]
+            tmp_y += unit_physdmg_img.get_height() + 1
+            # Unit armor image
+            unitarmor_img = MGUI.ImageWidget(tmp_x, tmp_y, 18, 18, "assets/UI/armor.png")
+            unitarmor_img.set_icon_autoscale(True)
+            self.add_widget(unitarmor_img, "unitarmor_img")
+
+            tmp_x += unitarmor_img.get_width() + 4
+            tmp_text = "0"
+            if "armor" in unitsp:
+                tmp_text = millify_num(unitsp["armor"])
+            # Unit armor label
+            unitarmor_label = MGUI.Label(tmp_x, tmp_y, 0, 0, font_16, tmp_text)
+            unitarmor_label.set_text_resize(res_hor=True, res_ver=True)
+            unitarmor_label.set_transparent(True)
+            self.add_widget(unitarmor_label, "unitarmor_label")
+
+            tmp_x += unitarmor_label.get_width() + 8
+            # Unit fire resistance image
+            unit_fireres_img = MGUI.ImageWidget(tmp_x, tmp_y, 18, 18, "assets/UI/fire_res.png")
+            unit_fireres_img.set_icon_autoscale(True)
+            self.add_widget(unit_fireres_img, "unit_fireres_img")
+
+            tmp_x += unit_fireres_img.get_width() + 4
+            tmp_text = "0"
+            if "res_fire" in unitsp:
+                tmp_text = millify_num(unitsp["res_fire"])
+            # Unit fire resistance label
+            unit_fireres_label = MGUI.Label(tmp_x, tmp_y, 0, 0, font_16, tmp_text)
+            unit_fireres_label.set_text_resize(res_hor=True, res_ver=True)
+            unit_fireres_label.set_transparent(True)
+            unit_fireres_label.set_font_color(unit_firedmg_label.get_font_color())
+            self.add_widget(unit_fireres_label, "unit_fireres_label")
+
+            tmp_x += unit_fireres_label.get_width() + 8
+            # Unit cold resistance image
+            unit_coldres_img = MGUI.ImageWidget(tmp_x, tmp_y, 18, 18, "assets/UI/cold_res.png")
+            unit_coldres_img.set_icon_autoscale(True)
+            self.add_widget(unit_coldres_img, "unit_coldres_img")
+
+            tmp_x += unit_coldres_img.get_width() + 4
+            tmp_text = "0"
+            if "res_cold" in unitsp:
+                tmp_text = millify_num(unitsp["res_cold"])
+            # Unit cold resistance label
+            unit_coldres_label = MGUI.Label(tmp_x, tmp_y, 0, 0, font_16, tmp_text)
+            unit_coldres_label.set_text_resize(res_hor=True, res_ver=True)
+            unit_coldres_label.set_transparent(True)
+            unit_coldres_label.set_font_color(unit_colddmg_label.get_font_color())
+            self.add_widget(unit_coldres_label, "unit_coldres_label")
+
+            tmp_x += unit_coldres_label.get_width() + 8
+            # Unit lightning resistance image
+            unit_lningres_img = MGUI.ImageWidget(tmp_x, tmp_y, 18, 18, "assets/UI/lightning_res.png")
+            unit_lningres_img.set_icon_autoscale(True)
+            self.add_widget(unit_lningres_img, "unit_lningres_img")
+
+            tmp_x += unit_lningres_img.get_width() + 4
+            tmp_text = "0"
+            if "res_lightning" in unitsp:
+                tmp_text = millify_num(unitsp["res_lightning"])
+            # Unit lightning resistance label
+            unit_lningres_label = MGUI.Label(tmp_x, tmp_y, 0, 0, font_16, tmp_text)
+            unit_lningres_label.set_text_resize(res_hor=True, res_ver=True)
+            unit_lningres_label.set_transparent(True)
+            unit_lningres_label.set_font_color(unit_lningdmg_label.get_font_color())
+            self.add_widget(unit_lningres_label, "unit_lningres_label")
+            # endregion
