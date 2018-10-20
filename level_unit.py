@@ -10,9 +10,52 @@ state_fade = "fade"
 state_delete = "delete"
 
 
-class Unit(MGUI.AnimSprite):
+class HealthHandler(object):
+    """
+    Health handling class for both units and buildings.
+    Handles health/maxhealth values, armor, resistances and damages for each type, as well as receiving damage.
+    """
+    def __init__(self):
+        self.maxhp = 1
+        self.hp = self.maxhp
+        self.dmg_phys = 1
+        self.dmg_fire = 0
+        self.dmg_cold = 0
+        self.dmg_lightning = 0
+        self.armor = 0
+        self.res_fire = 0
+        self.res_cold = 0
+        self.res_lightning = 0
+
+    def get_damage_total(self):
+        return {
+            "phys": self.dmg_phys,
+            "fire": self.dmg_fire,
+            "cold": self.dmg_cold,
+            "lightning": self.dmg_lightning
+        }
+
+    # Receives a dict with keys as damage type (phys, fire, etc) and values as damage value
+    def hurt(self, dmg_dict):
+        dmg_recv = 0
+        for t in dmg_dict:
+            dmg_amt = dmg_dict[t]
+            if dmg_amt:
+                if t == "phys":
+                    dmg_recv += math.ceil(dmg_amt * (1 - self.armor / 100))
+                elif t == "fire":
+                    dmg_recv += math.ceil(dmg_amt * (1 - self.res_fire / 100))
+                elif t == "cold":
+                    dmg_recv += math.ceil(dmg_amt * (1 - self.res_cold / 100))
+                elif t == "lightning":
+                    dmg_recv += math.ceil(dmg_amt * (1 - self.res_lightning / 100))
+        self.hp = max(0, self.hp - dmg_recv)
+
+
+class Unit(MGUI.AnimSprite, HealthHandler):
     def __init__(self, x, y, player_owned, unit_data=None):
-        super().__init__(0, 0, 1, 1)
+        MGUI.AnimSprite.__init__(self, 0, 0, 1, 1)
+        HealthHandler.__init__(self)
         # Draw position is relative to the level canvas
         self.draw_x = 0
         self.draw_y = 0
@@ -23,17 +66,7 @@ class Unit(MGUI.AnimSprite):
         self.speed = 0
         self.player_owned = player_owned
 
-        self.maxhp = 1
-        self.hp = self.maxhp
-        self.dmg_phys = 1
-        self.dmg_fire = 0
-        self.dmg_cold = 0
-        self.dmg_lightning = 0
         self.dmg_player = 1
-        self.armor = 0
-        self.res_fire = 0
-        self.res_cold = 0
-        self.res_lightning = 0
         self.attspd = 1
         self.att_ticker = 0
 
@@ -78,11 +111,17 @@ class Unit(MGUI.AnimSprite):
     def get_draw_position(self):
         return self.draw_x, self.draw_y
 
-    def get_damage(self):
-        return self.dmg_phys
+    def get_damage_total(self):
+        return {
+            "phys": self.dmg_phys,
+            "fire": self.dmg_fire,
+            "cold": self.dmg_cold,
+            "lightning": self.dmg_lightning
+        }
 
-    def hurt(self, dmg, dmg_type=None):
-        self.hp -= dmg  # TODO handle damage types
+    def hurt(self, dmg_dict):
+        super().hurt(dmg_dict)
+        self.mark_dirty()
 
     # Target can be building or unit
     def set_battle_target(self, target):

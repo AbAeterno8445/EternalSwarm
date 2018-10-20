@@ -33,11 +33,12 @@ def process_battle(cv_game):
                     u_mapx = math.floor(abs(mapx - u_x) / 48)
                     if (u_x and u_x < mapx - 8) or u_mapx >= cv_game.levelmap.width:
                         u.switch_state(units.state_fade)
-                        cv_game.add_health(-u.dmg_player)
+                        if not u.player_owned:
+                            cv_game.add_health(-u.dmg_player)
             # Process battling units
             elif u.state == units.state_battle:
                 if u.is_attack_ready() and u.battle_target:
-                    u.battle_target.hurt(u.get_damage())
+                    u.battle_target.hurt(u.get_damage_total())
                     if u.battle_target.hp <= 0:
                         u.battle_target = None
                         u.switch_state(units.state_walk)

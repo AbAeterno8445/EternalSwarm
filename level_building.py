@@ -1,14 +1,16 @@
 import MGUI
 import math
+from level_unit import HealthHandler
 
 # Building types
 buildtype_spawner = "spawner"
 buildtype_support = "support"
 
 
-class Building(MGUI.ImageWidget):
+class Building(MGUI.ImageWidget, HealthHandler):
     def __init__(self, x, y, player_owned, building_data=None):
-        super().__init__(8 + x * 48, 8 + y * 48, 48, 48)
+        MGUI.ImageWidget.__init__(self, 8 + x * 48, 8 + y * 48, 48, 48)
+        HealthHandler.__init__(self)
         self.set_transparent(True)
         self.x = x
         self.y = y
@@ -16,9 +18,6 @@ class Building(MGUI.ImageWidget):
         self.map_color = (255, 0, 0)
         self.cost = 0
         self.player_owned = player_owned
-
-        self.maxhp = 1
-        self.hp = self.maxhp
 
         if building_data:
             self.load_building(building_data)
@@ -39,8 +38,8 @@ class Building(MGUI.ImageWidget):
     def get_draw_position(self):
         return 8 + self.x * 48, 8 + self.y * 48
 
-    def hurt(self, dmg, dmg_type=None):
-        self.hp -= dmg
+    def hurt(self, dmg_dict):
+        super().hurt(dmg_dict)
         self.mark_dirty()
 
     def tick(self):
