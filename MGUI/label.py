@@ -22,6 +22,10 @@ class Label(TextWidget):
         self._resize_ver = False
         self._padding = 0
 
+    def set_text(self, text):
+        super().set_text(text)
+        self._apply_text_resize()
+
     def set_text_resize(self, res_hor=False, res_ver=False, padding=0):
         """
         Set whether label surface resizes to match text width
@@ -62,8 +66,6 @@ class Label(TextWidget):
         return values:  pygame.Surface the underlying Widget's appearance
         """
         if self._text:
-            self._apply_text_resize()
-
             surface = super()._get_appearance(*args)
             self._render_font(surface)
             return surface
