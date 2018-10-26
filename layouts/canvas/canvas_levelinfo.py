@@ -158,7 +158,6 @@ class BuildingButton(MGUI.WidgetCollection):
     def __init__(self, x, y, bdata, bname, amount, bunits):
         super().__init__()
 
-        font_12 = pygame.font.Font("assets/Dosis.otf", 14)
         font_16 = pygame.font.Font("assets/Dosis.otf", 16)
         font_21 = pygame.font.Font("assets/Dosis.otf", 21)
 
@@ -181,6 +180,8 @@ class BuildingButton(MGUI.WidgetCollection):
         # Building name
         build_name_label = MGUI.Label(tmp_x + build_mapicon.get_width() + 1, tmp_y, tmp_width,
                                       build_mapicon.get_height(), font_21, bname)
+        if build_name_label.get_font().size(build_name_label.get_text())[0] > build_name_label.get_width():
+            build_name_label.set_text_resize(res_hor=True)
         build_name_label.set_transparent(True)
         build_name_label.set_border(True, (255, 100, 255))
         self.add_widget(build_name_label, "build_name_label", layer=1)
@@ -222,12 +223,20 @@ class BuildingButton(MGUI.WidgetCollection):
 
             # Animated unit image
             tmp_y += unitsp_label.get_height() + 1
-            unitsp_image = MGUI.AnimSprite(tmp_x, tmp_y, *build_image.get_size(),
+            unitsp_image = MGUI.AnimSprite(tmp_x, tmp_y, 0, 0,
                                            icon="assets/units/" + unitsp_imgdata["img"],
                                            frames=unitsp_imgdata["frames"],
-                                           autosize=False)
+                                           autosize=True)
+            unitsp_image.set_icon_autoscale(False)
+            if unitsp_image.get_bounds().width > build_image.get_width() or unitsp_image.get_bounds().height > build_image.get_height():
+                unitsp_image.set_icon_autoscale(True)
+            unitsp_image.set_icon_autosize(False)
+            unitsp_image.set_bounds_size(*build_image.get_size())
+
             if "animations" in unitsp_imgdata and "base" in unitsp_imgdata["animations"]:
                 unitsp_image.set_animation_data({"base": unitsp_imgdata["animations"]["base"]})
+            if "anim_delay" in unitsp_imgdata:
+                unitsp_image.set_animation_delay(unitsp_imgdata["anim_delay"])
             unitsp_image.set_border(True, (255, 100, 255))
             self.add_widget(unitsp_image, "unitsp_image")
 
@@ -415,3 +424,11 @@ class BuildingButton(MGUI.WidgetCollection):
             unit_lningres_label.set_font_color(unit_lningdmg_label.get_font_color())
             self.add_widget(unit_lningres_label, "unit_lningres_label")
             # endregion
+
+        # Fix width
+        for w in self.widgets_dict:
+            w = self.widgets_dict[w][0]
+            w_fullwidth = w.get_position()[0] - self["buildinfo_frame"].get_position()[0] + w.get_width()
+            if w_fullwidth > self.total_width:
+                self.total_width = w_fullwidth + 2
+                self["buildinfo_frame"].set_bounds_size(self.total_width, buildinfo_frame.get_height())

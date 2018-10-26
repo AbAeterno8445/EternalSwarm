@@ -7,12 +7,12 @@
     },
     "speed": 1,
     "maxhp": 10,
-    "dmg_phys": 2,
+    "dmg_phys": 0,
     "dmg_fire": 0,
     "dmg_cold": 0,
     "dmg_lightning": 0,
     "dmg_player": 6,
-    "armor": 0,
+    "armor": 1,
     "res_fire": 0,
     "res_cold": 0,
     "res_lightning": 0,
@@ -54,7 +54,48 @@
     "speed": 1,
     "maxhp": 50,
     "dmg_phys": 0,
+    "armor": 15,
     "dmg_player": 15,
     "attspd": 100
+  },
+  "Azure Beetle": {
+    "img_data": {
+      "img": "azure_beetle.png",
+      "frames": 2,
+      "anim_delay": 8,
+      "flip_hor": 1
+    },
+    "speed": 2,
+    "maxhp": 20,
+    "dmg_phys": 1,
+    "dmg_fire": 0,
+    "dmg_cold": 4,
+    "dmg_lightning": 0,
+    "dmg_player": 7,
+    "armor": 0,
+    "res_fire": -5,
+    "res_cold": 10,
+    "res_lightning": 0,
+    "attspd": 1.2
+  },
+  "Crimson Beetle": {
+    "img_data": {
+      "img": "crimson_beetle.png",
+      "frames": 2,
+      "anim_delay": 8,
+      "flip_hor": 1
+    },
+    "speed": 2,
+    "maxhp": 20,
+    "dmg_phys": 1,
+    "dmg_fire": 4,
+    "dmg_cold": 0,
+    "dmg_lightning": 0,
+    "dmg_player": 7,
+    "armor": 0,
+    "res_fire": 10,
+    "res_cold": -5,
+    "res_lightning": 0,
+    "attspd": 1.2
   }
 }
