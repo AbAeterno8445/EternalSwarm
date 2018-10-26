@@ -28,12 +28,13 @@ class HealthHandler(object):
         self.res_lightning = 0
 
     def get_damage_total(self):
-        return {
+        dmg_dict = {
             "phys": self.dmg_phys,
             "fire": self.dmg_fire,
             "cold": self.dmg_cold,
             "lightning": self.dmg_lightning
         }
+        return dmg_dict
 
     # Receives a dict with keys as damage type (phys, fire, etc) and values as damage value
     def hurt(self, dmg_dict):
@@ -110,14 +111,6 @@ class Unit(MGUI.AnimSprite, HealthHandler):
 
     def get_draw_position(self):
         return self.draw_x, self.draw_y
-
-    def get_damage_total(self):
-        return {
-            "phys": self.dmg_phys,
-            "fire": self.dmg_fire,
-            "cold": self.dmg_cold,
-            "lightning": self.dmg_lightning
-        }
 
     def hurt(self, dmg_dict):
         super().hurt(dmg_dict)

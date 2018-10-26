@@ -211,6 +211,12 @@ class CanvasGame(CanvasSwitcher):
         if self.victory:
             self.finishmsg.set_finish_message("VICTORY!")
             self.finishmsg.set_extra_message("These lands now belong to you.")
+
+            # Give level rewards to player
+            for rwd in self.levelmap.rewards:
+                amt = self.levelmap.rewards[rwd]
+                if rwd == "crystals":
+                    self.player_data.carb_crystals += amt
         else:
             self.finishmsg.set_finish_message("DEFEAT!")
             self.finishmsg.set_extra_message("These lands demand preparation!")

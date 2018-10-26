@@ -7,7 +7,7 @@
     },
     "speed": 1,
     "maxhp": 10,
-    "dmg_phys": 0,
+    "dmg_phys": 2,
     "dmg_fire": 0,
     "dmg_cold": 0,
     "dmg_lightning": 0,

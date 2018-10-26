@@ -6,6 +6,9 @@ class LevelMap(GameMap):
     def __init__(self, x, y, width, height, regions_json=None):
         super().__init__(x, y, width, height, regions_json)
 
+        self.rewards = {
+            "crystals": 0
+        }
         # List of buildings in level
         # Keys are building name and value is a list of coordinate tuples for each building of that type
         self.level_buildings = {}
@@ -21,6 +24,9 @@ class LevelMap(GameMap):
         lvl_path = "levels/" + region_name + "/level" + str(level_id)
         with open(lvl_path, "r") as file:
             level_data = json.loads(file.read())
+
+            # Rewards
+            self.rewards = level_data["reward"]
 
             # Tile building codes
             tile_build_codes = level_data["building_codes"]

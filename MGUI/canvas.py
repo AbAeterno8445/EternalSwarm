@@ -39,10 +39,10 @@ class GUICanvas(object):
         return self.focus_clicked
 
     def get_width(self):
-        return self.backg_widget.get_size()[0]
+        return self.backg_widget.get_width()
 
     def get_height(self):
-        return self.backg_widget.get_size()[1]
+        return self.backg_widget.get_height()
 
     def get_size(self):
         return self.backg_widget.get_size()

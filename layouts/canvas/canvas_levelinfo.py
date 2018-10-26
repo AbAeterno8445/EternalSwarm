@@ -72,6 +72,24 @@ class CanvasLevelInfo(CanvasSwitcher):
         self.leveldiff_label.set_transparent(True)
         self.add_element(self.leveldiff_label)
 
+        tmp_x = self.region_label.get_position()[0]
+        tmp_y = self.preview_label.get_position()[1]
+        # Level rewards label
+        self.rewards_label = MGUI.Label(tmp_x, tmp_y, 0, 0, font_21, "Level rewards:")
+        self.rewards_label.set_text_resize(res_hor=True, res_ver=True)
+        self.rewards_label.set_transparent(True)
+        self.rewards_label.set_font_color((255, 100, 255))
+        self.add_element(self.rewards_label)
+
+        # Level rewards background
+        self.rewards_backg = MGUI.Widget(0, 0, 0, 0)
+        self.rewards_backg.set_background((30, 0, 30))
+        self.rewards_backg.set_border(True, (255, 100, 255))
+        self.add_element(self.rewards_backg)
+
+        # List for reward images
+        self.reward_images = []
+
         tmp_y = self.previewbox.get_position()[1] + self.previewbox.get_height() + 16
         # Enemy buildings label
         self.buildings_label = MGUI.Label(16, tmp_y, 0, 0, font_21, "Enemy buildings:")
@@ -115,6 +133,22 @@ class CanvasLevelInfo(CanvasSwitcher):
         self.building_buttons.append(new_button)
         self.add_element(new_button.get_widgets_list())
 
+    # Create image for a reward
+    def _create_reward_image(self, reward_name, amount):
+        new_x, new_y = self.rewards_backg.get_position()
+        new_y += 4
+        for img in self.reward_images:
+            new_x += img.totalwidth + 4
+
+        new_image = RewardImage(new_x, new_y, reward_name, amount)
+        for w in new_image.get_widgets_list():
+            w = w[0]
+            pos_x, pos_y = w.get_position()
+            pos_x += new_image.totalwidth / 2 - 16
+            w.set_position(pos_x, pos_y)
+        self.reward_images.append(new_image)
+        self.add_element(new_image.get_widgets_list())
+
     def init_data(self, source_tile):
         self.level_tile = source_tile
         self.levelmap.load_level_fromtile(source_tile, update_levelmap=False)
@@ -152,6 +186,54 @@ class CanvasLevelInfo(CanvasSwitcher):
         self.region_label.set_text("Region: %s" % source_tile.region.name)
         self.levelsize_label.set_text("Size: %i x %i" % (self.levelmap.width, self.levelmap.height))
         self.leveldiff_label.set_text("Hazard level: %i" % source_tile.difficulty)
+
+        # Update level rewards info
+        tmp_x = self.region_label.get_position()[0] + self.region_label.get_width() + 16
+        tmp_y = self.rewards_label.get_position()[1]
+        self.rewards_label.set_position(tmp_x, tmp_y)
+
+        tmp_y += self.rewards_label.get_height() + 4
+        # Level rewards background
+        self.rewards_backg.set_position(tmp_x, tmp_y)
+        self.rewards_backg.set_bounds_size(self.get_width() - tmp_x - 8, 64)
+
+        # Level reward images
+        for r in self.reward_images:
+            for w in r.get_widgets_list():
+                self.remove_element(w[0])
+        self.reward_images.clear()
+        for rwd in self.levelmap.rewards:
+            self._create_reward_image(rwd, self.levelmap.rewards[rwd])
+
+
+class RewardImage(MGUI.WidgetCollection):
+    reward_images = {
+        "crystals": "assets/materials/carbcrystal.png",
+        "sapphires": "assets/materials/sapphire.png"
+    }
+
+    def __init__(self, x, y, reward_name, amount):
+        super().__init__()
+
+        self.totalwidth = 36
+
+        font_16 = pygame.font.Font("assets/Dosis.otf", 16)
+
+        # Reward image
+        reward_image = MGUI.ImageWidget(x, y, 32, 32, self.reward_images[reward_name])
+        reward_image.set_icon_autoscale(True)
+        self.add_widget(reward_image, "image")
+
+        tmp_x = x + reward_image.get_width() / 2
+        # Reward label
+        reward_label = MGUI.Label(0, 0, 0, 0, font_16, millify_num(amount))
+        reward_label.set_text_resize(res_hor=True, res_ver=True)
+        reward_label.set_position(tmp_x - reward_label.get_width() / 2, y + 32)
+        reward_label.set_transparent(True)
+        self.add_widget(reward_label, "label")
+
+        if reward_label.get_width() + 8 > self.totalwidth:
+            self.totalwidth = reward_label.get_width() + 8
 
 
 class BuildingButton(MGUI.WidgetCollection):
@@ -283,6 +365,19 @@ class BuildingButton(MGUI.WidgetCollection):
             unit_pldmg_label.set_transparent(True)
             unit_pldmg_label.set_font_color((255, 255, 110))
             self.add_widget(unit_pldmg_label, "unit_pldmg_label")
+
+            tmp_x += unit_pldmg_label.get_width() + 8
+            # Unit attack speed icon
+            unit_attspd_img = MGUI.ImageWidget(tmp_x, tmp_y, 0, 0, "assets/UI/attack_speed.png", True)
+            self.add_widget(unit_attspd_img, "unit_attspd_img")
+
+            tmp_x += unit_attspd_img.get_width() + 4
+            # Unit attack speed label
+            unit_attspd_label = MGUI.Label(tmp_x, tmp_y, 0, 0, font_16, str(unitsp["attspd"]))
+            unit_attspd_label.set_text_resize(res_ver=True, res_hor=True)
+            unit_attspd_label.set_transparent(True)
+            unit_attspd_label.set_font_color((110, 255, 110))
+            self.add_widget(unit_attspd_label, "unit_attspd_label")
 
             # region ---- UNIT DAMAGE TYPES INFORMATION ----
             tmp_x, tmp_y = unitsp_image.get_position()

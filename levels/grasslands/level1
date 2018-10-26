@@ -1,4 +1,7 @@
 {
+    "reward": {
+        "crystals": 100
+    },
     "building_codes": {
         "b0": "Slime Spawner",
         "b1": "Turtle Spawner",
