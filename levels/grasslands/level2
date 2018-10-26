@@ -1,0 +1,14 @@
+{
+    "reward": {
+        "crystals": 160
+    },
+    "building_codes": {
+        "b0": "Azure Beetle Spawner",
+        "b1": "Turtle Spawner"
+    },
+    "map_data": [
+        "0:o, 0:o, 0:o, 0, 0, 0, 0, 0, 0, 0, 0, 0",
+        "0:o, 0:o, 0:o, 0, 0, 0, 0, 0, 0, 0:b1, 0:b0, 0",
+        "0:o, 0:o, 0:o, 0, 0, 0, 0, 0, 0, 0, 0, 0"
+    ]
+}

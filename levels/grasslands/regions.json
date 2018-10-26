@@ -1,7 +1,24 @@
 [
   {
     "name": "Grass",
+    "group": "grass",
     "img_path": "tile_grass.png",
-    "color": [102, 255, 102]
+    "color": [102, 255, 102],
+    "decor": [
+      "grass/grass1.png", "grass/grass2.png", "grass/grass3.png", "grass/grass4.png", "grass/grass5.png",
+      "grass/grass6.png", "grass/grass7.png", "grass/grass8.png", "grass/grass9.png", "grass/grass10.png",
+      "grass/grass11.png", "grass/grass12.png", "grass/grass13.png", "grass/grass14.png", "grass/grass15.png",
+      "grass/grass16.png", "grass/grass17.png", "grass/grass18.png", "grass/grass19.png", "grass/grass20.png",
+      "grass/grass21.png", "grass/grass22.png", "grass/grass23.png"
+    ],
+    "decor_density": -1
+  },
+  {
+    "name": "Trees",
+    "group": "grass",
+    "img_path": "tile_grass.png",
+    "color": [102, 255, 102],
+    "decor": ["tree1.png", "tree2.png"],
+    "decor_density": 0
   }
 ]

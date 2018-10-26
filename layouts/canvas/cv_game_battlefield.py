@@ -44,6 +44,8 @@ def process_battle(cv_game):
                         u.switch_state(units.state_walk)
                     else:
                         u.reset_attack()
+                elif (u.battle_target and u.battle_target.hp <= 0) or not u.battle_target:
+                    u.switch_state(units.state_walk)
             # Delete units
             elif u.state == units.state_delete:
                 remove_units.append(u)
