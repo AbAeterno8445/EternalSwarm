@@ -21,9 +21,13 @@ class CanvasTerrain(CanvasSwitcher):
 
         # Tile level information widget
         self.panel_tileinfo = TerrainLevelinfo(4, 4, 150, 64)
-        self.panel_tileinfo["capture_button"].set_callback(self.switch_target, ["levelinfo"])
+        self.panel_tileinfo["capture_button"].set_callback(self.capture_selected, [])
         self.panel_tileinfo.set_visible(False)
         self.add_element(self.panel_tileinfo.get_widgets_list())
+
+    def capture_selected(self):
+        if self.selected_tile.capturable:
+            self.switch_target("levelinfo")
 
     def select_tile(self, tile):
         self.selected_tile = tile
@@ -51,6 +55,8 @@ class CanvasTerrain(CanvasSwitcher):
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:  # Center camera to spawnpoint
                     self.map_coll.center_camera()
+                elif event.key == pygame.K_RETURN:  # Go to level info of selected tile
+                    self.capture_selected()
 
         self.map_coll.handle_event(event_list)
         self.map_coll.update()
