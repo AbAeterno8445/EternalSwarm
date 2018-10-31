@@ -52,12 +52,28 @@ class MapCollection(MGUI.WidgetCollection):
             self.camera.set_position(cam_x, cam_y)
             self["map"].set_position(*self.camera.get_position())
 
+    def select_tile(self, tile_x, tile_y):
+        self.selected_tile = self["map"].get_tile_at(tile_x, tile_y)
+
     def handle_event(self, event_list):
         for event in event_list:
             if event.type == pygame.KEYDOWN:
                 # ESCAPE - Deselect tile
                 if event.key == pygame.K_ESCAPE:
                     self.selected_tile = None
+                # Selection movement via arrow keys
+                elif event.key == pygame.K_LEFT:
+                    if self.selected_tile and self.selected_tile.x > 0:
+                        self.select_tile(self.selected_tile.x - 1, self.selected_tile.y)
+                elif event.key == pygame.K_RIGHT:
+                    if self.selected_tile and self.selected_tile.x < self["map"].width - 1:
+                        self.select_tile(self.selected_tile.x + 1, self.selected_tile.y)
+                elif event.key == pygame.K_UP:
+                    if self.selected_tile and self.selected_tile.y > 0:
+                        self.select_tile(self.selected_tile.x, self.selected_tile.y - 1)
+                elif event.key == pygame.K_DOWN:
+                    if self.selected_tile and self.selected_tile.y < self["map"].height - 1:
+                        self.select_tile(self.selected_tile.x, self.selected_tile.y + 1)
 
             elif event.type in {pygame.MOUSEMOTION, pygame.MOUSEBUTTONUP}:
                 # Mouse related data
@@ -73,7 +89,7 @@ class MapCollection(MGUI.WidgetCollection):
                         if not self.camera_drag and self.hovered:
                             if mouse_in_map:
                                 if 0 <= tile_x < self["map"].width and 0 <= tile_y < self["map"].height:
-                                    self.selected_tile = self["map"].get_tile_at(tile_x, tile_y)
+                                    self.select_tile(tile_x, tile_y)
                             else:
                                 self.selected_tile = None
 

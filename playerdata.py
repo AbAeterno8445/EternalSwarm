@@ -8,9 +8,9 @@ class PlayerData(object):
         self.carb_crystals = 0
         self.ccps = 0  # Carbonic crystals per second
 
-        self.start_energy = 50
+        self.start_energy = 100
         self.start_energyps = 1
-        self.owned_buildings = ["Slime Spawner"]
+        self.owned_buildings = ["Slime Spawner", "Azure Beetle Spawner", "Turtle Spawner"]
 
         self.start_health = 50
 

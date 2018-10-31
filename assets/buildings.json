@@ -10,6 +10,7 @@
   },
   "Turtle Spawner": {
     "map_color": [20, 160, 20],
+    "cost": 40,
     "base_img": "spawner_turtle.png",
     "type": "spawner",
     "spawn_time": 8,
@@ -18,6 +19,7 @@
   },
   "Azure Beetle Spawner": {
     "map_color": [60, 60, 200],
+    "cost": 50,
     "base_img": "spawner_azure_beetle.png",
     "type": "spawner",
     "spawn_time": 6,
