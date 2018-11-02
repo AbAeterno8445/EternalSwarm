@@ -10,7 +10,7 @@ class PlayerData(object):
 
         self.start_energy = 100
         self.start_energyps = 1
-        self.owned_buildings = ["Slime Spawner", "Azure Beetle Spawner", "Crimson Beetle Spawner", "Turtle Spawner"]
+        self.owned_buildings = ["Slime Spawner", "Azure Beetle Spawner", "Crimson Beetle Spawner", "Turtle Spawner", "Spinner Spawner"]
 
         self.start_health = 50
 

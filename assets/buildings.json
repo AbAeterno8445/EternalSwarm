@@ -34,5 +34,14 @@
     "spawn_time": 6,
     "spawn_unit": "Crimson Beetle",
     "maxhp": 40
+  },
+  "Spinner Spawner": {
+    "map_color": [200, 160, 60],
+    "cost": 20,
+    "base_img": "spawner_spinner.png",
+    "type": "spawner",
+    "spawn_time": 5,
+    "spawn_unit": "Spinner",
+    "maxhp": 100
   }
 }
