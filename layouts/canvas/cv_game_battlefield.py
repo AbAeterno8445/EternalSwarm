@@ -26,7 +26,8 @@ def process_battle(cv_game):
                     u_otherx, u_othery = u_other.get_position()
                     u_otherw = u_other.get_width()
                     if abs((u_x + u_w / 2) - (u_otherx + u_otherw / 2)) < u_range:
-                        u.set_battle_target(u_other)
+                        if (u.player_owned and u_x < u_otherx) or (not u.player_owned and u_x > u_otherx):
+                            u.set_battle_target(u_other)
 
                 # Check if unit is out of bounds and fade/delete it if so, damage player as well
                 if not u.state == units.state_fade:

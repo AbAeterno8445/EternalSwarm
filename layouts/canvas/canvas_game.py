@@ -249,6 +249,13 @@ class CanvasGame(CanvasSwitcher):
                 elif event.key == pygame.K_DELETE:  # Delete building
                     if sel_tile:
                         self.remove_building(self.get_building_at(sel_tile.x, sel_tile.y), sell=True)
+                elif event.key in {pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9}:
+                    if self.buildmenu.is_visible():
+                        num_press = int(event.unicode) - 1
+                        try:
+                            self.place_building(self.player_data.owned_buildings[num_press])
+                        except IndexError:
+                            pass
 
         # Open buildings panel when selecting tile
         if sel_tile and sel_tile.owned and not self.get_building_at(sel_tile.x, sel_tile.y):

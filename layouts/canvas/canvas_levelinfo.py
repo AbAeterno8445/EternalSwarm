@@ -208,8 +208,7 @@ class CanvasLevelInfo(CanvasSwitcher):
 
 class RewardImage(MGUI.WidgetCollection):
     reward_images = {
-        "crystals": "assets/materials/carbcrystal.png",
-        "sapphires": "assets/materials/sapphire.png"
+        "crystals": "assets/materials/carbcrystal.png"
     }
 
     def __init__(self, x, y, reward_name, amount):

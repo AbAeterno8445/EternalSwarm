@@ -18,7 +18,7 @@
     "res_lightning": 0,
     "attspd": 0.5
   },
-  "Selenian": {
+  "Spinner": {
     "img_data": {
       "img": "selenian.png",
       "frames": 17,
@@ -32,10 +32,12 @@
       "flip_hor": 1
     },
     "speed": 2,
-    "maxhp": 20,
-    "dmg_phys": 1,
+    "maxhp": 30,
+    "dmg_fire": 3,
+    "res_fire": 20,
+    "res_cold": -10,
     "dmg_player": 25,
-    "attspd": 0.2
+    "attspd": 0.1
   },
   "Turtle": {
     "img_data": {
